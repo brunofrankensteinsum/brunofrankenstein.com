@@ -1,0 +1,8 @@
+// Configuración de Cloudflare: le dice que el sitio ya compilado está en la carpeta dist.
+{
+  "name": "brunofrankenstein-com",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
