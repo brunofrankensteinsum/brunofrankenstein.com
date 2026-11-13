@@ -1,0 +1,5 @@
+---
+// La raíz del dominio redirige al idioma principal definido en src/config/site.ts.
+import { defaultLang } from '../config/site';
+return Astro.redirect(`/${defaultLang}/`);
+---

@@ -1,0 +1,14 @@
+---
+// Genera una página por cada proyecto publicado en este idioma.
+import ProjectPage from '../../../components/pages/ProjectPage.astro';
+import { getProjects } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const projects = await getProjects('en');
+  return projects.map((project) => ({ params: { slug: project.slug }, props: { project } }));
+}
+
+const { project } = Astro.props;
+---
+
+<ProjectPage lang="en" project={project} />

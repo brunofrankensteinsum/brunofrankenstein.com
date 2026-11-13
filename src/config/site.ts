@@ -1,0 +1,43 @@
+// Configuración central del sitio. Lo que cambia acá se refleja en todas las páginas.
+
+export const languages = ['es', 'en'] as const;
+export type Lang = (typeof languages)[number];
+
+// Idioma principal: es al que redirige la raíz del dominio ("/").
+// Cambiarlo a 'en' no rompe ninguna URL, porque ambos idiomas llevan prefijo.
+// Al cambiarlo, actualizar también public/_redirects.
+export const defaultLang: Lang = 'es';
+
+export const site = {
+  name: 'Bruno Frankenstein',
+  url: 'https://brunofrankenstein.com',
+  tagline: {
+    es: 'Ingeniero mecánico. Proyectos y experiencias.',
+    en: 'Mechanical engineer. Projects and experience.',
+  },
+  // Completar con las direcciones reales (pista E).
+  social: {
+    linkedin: '',
+    github: 'https://github.com/brunofrankensteinsum',
+    youtube: '',
+  },
+};
+
+// Categorías de proyectos, en el orden en que se muestran.
+// "id" es lo que se escribe en el campo "categories" de cada proyecto.
+// "slug" es lo que aparece en la URL de cada idioma.
+export const categories = [
+  { id: 'impresion-3d', slug: { es: 'impresion-3d', en: '3d-printing' }, name: { es: 'Impresión 3D', en: '3D Printing' } },
+  { id: 'home-automation', slug: { es: 'home-automation', en: 'home-automation' }, name: { es: 'Home Automation', en: 'Home Automation' } },
+  { id: 'ingenieria-mecanica', slug: { es: 'ingenieria-mecanica', en: 'mechanical-engineering' }, name: { es: 'Ingeniería Mecánica', en: 'Mechanical Engineering' } },
+  { id: 'baterias', slug: { es: 'baterias', en: 'batteries' }, name: { es: 'Baterías', en: 'Batteries' } },
+  { id: 'vibe-code', slug: { es: 'vibe-code', en: 'vibe-code' }, name: { es: 'Vibe Code', en: 'Vibe Code' } },
+  { id: 'otros', slug: { es: 'otros', en: 'other' }, name: { es: 'Otros', en: 'Other' } },
+] as const;
+
+export type CategoryId = (typeof categories)[number]['id'];
+export const categoryIds = categories.map((c) => c.id) as [CategoryId, ...CategoryId[]];
+
+export function getCategory(id: string) {
+  return categories.find((c) => c.id === id);
+}

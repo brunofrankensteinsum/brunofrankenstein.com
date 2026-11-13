@@ -1,0 +1,3 @@
+# Redirección de la raíz al idioma principal (la lee Cloudflare).
+# Si cambia defaultLang en src/config/site.ts, cambiar también esta línea.
+/ /es/ 302

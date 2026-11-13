@@ -16,7 +16,7 @@ Cada agente lee primero "Decisiones tomadas" y "Contrato de contenido", y luego 
 | Generador | Astro (última versión estable), salida estática |
 | Contenido | Markdown en el repositorio, con colecciones de contenido de Astro |
 | Panel de edición | Sveltia CMS en `/admin`. Reemplazo si falla: Pages CMS |
-| Repositorio | GitHub |
+| Repositorio | GitHub, público: `brunofrankensteinsum/brunofrankenstein.com` |
 | Alojamiento | Cloudflare (Pages o Workers con assets estáticos, lo que Cloudflare recomiende hoy) |
 | Idiomas | Español e inglés, ambos con prefijo: `/es/` y `/en/`. La raíz `/` redirige al idioma principal |
 | Idioma principal | Español. Debe poder cambiarse con una sola constante de configuración |
@@ -64,6 +64,7 @@ Lo define la etapa 1 y lo usan todas las pistas. Cambiarlo después requiere avi
 ```
 src/
   config/site.ts          # idioma principal, categorías, datos de Bruno, redes
+  config/routes.ts        # URLs por idioma
   content/
     proyectos/<slug>/es.md
     proyectos/<slug>/en.md
@@ -72,14 +73,18 @@ src/
     experiencias/<slug>/en.md
   content.config.ts       # esquemas
   i18n/                   # textos de interfaz es/en
+  lib/content.ts          # lectura de contenido por idioma
   layouts/
   components/
+    pages/                # contenido de cada página, compartido por ambos idiomas
     seo/                  # pista C
     contact/              # pista D
   pages/
     index.astro           # redirige al idioma principal
-    [lang]/...
+    es/...                # un envoltorio por URL en español
+    en/...                # un envoltorio por URL en inglés
 public/
+  _redirects              # redirección de la raíz en Cloudflare
   admin/                  # pista B
 functions/                # pista D (o worker equivalente)
 ```
@@ -128,23 +133,23 @@ Si un proyecto existe en un solo idioma, se publica solo en ese y no se enlaza c
 
 ### Etapa 0: cuentas (Bruno, manual)
 
-- [ ] Comprar `brunofrankenstein.com` en Cloudflare.
+- [x] Comprar `brunofrankenstein.com` en Cloudflare.
 - [ ] Activar Email Routing y crear una dirección (por ejemplo `hola@`) que reenvíe al correo personal.
-- [ ] Crear un repositorio vacío en GitHub y abrirlo en Claude Code.
-- [ ] Copiar este archivo a la raíz del repositorio.
+- [x] Crear un repositorio vacío en GitHub y abrirlo en Claude Code.
+- [x] Copiar este archivo a la raíz del repositorio.
 
 ### Etapa 1: base (un solo agente, secuencial)
 
 Bloquea todo lo demás. No paralelizar.
 
-- [ ] Crear el proyecto Astro con TypeScript.
-- [ ] Escribir `src/config/site.ts`: idioma principal, lista ordenada de categorías con nombre y slug por idioma.
-- [ ] Escribir los esquemas de `proyectos` y `experiencias` según el contrato.
-- [ ] Armar las rutas `/es/` y `/en/`, la redirección de la raíz y un selector de idioma.
-- [ ] Crear un layout base con un hueco para la cabecera SEO (lo completa la pista C).
-- [ ] Cargar un proyecto y una experiencia de ejemplo en ambos idiomas, marcados para borrar antes del lanzamiento.
+- [x] Crear el proyecto Astro con TypeScript.
+- [x] Escribir `src/config/site.ts`: idioma principal, lista ordenada de categorías con nombre y slug por idioma.
+- [x] Escribir los esquemas de `proyectos` y `experiencias` según el contrato.
+- [x] Armar las rutas `/es/` y `/en/`, la redirección de la raíz y un selector de idioma.
+- [x] Crear un layout base con un hueco para la cabecera SEO (lo completa la pista C).
+- [x] Cargar un proyecto y una experiencia de ejemplo en ambos idiomas, marcados para borrar antes del lanzamiento.
 - [ ] Conectar el repositorio a Cloudflare y desplegar en el dominio.
-- [ ] Escribir un `CLAUDE.md` breve: comandos, estructura y reglas de este plan.
+- [x] Escribir un `CLAUDE.md` breve: comandos, estructura y reglas de este plan.
 
 **Listo cuando:** `brunofrankenstein.com` muestra el sitio de ejemplo en ambos idiomas y el build pasa sin errores.
 
@@ -287,4 +292,3 @@ Pista E (Bruno) ─────────────────────�
 - [ ] Verificar inicio de sesión y manejo de dos idiomas en Sveltia CMS (pista B).
 - [ ] Verificar envío de correo desde Cloudflare sin servicio externo (pista D).
 - [ ] Falta el texto del perfil de LinkedIn para "sobre mí" y los datos estructurados (pista E).
-- [ ] Repositorio público o privado: a definir por Bruno. Ambos funcionan con Cloudflare.
