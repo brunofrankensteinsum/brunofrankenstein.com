@@ -20,6 +20,8 @@ El plan completo, las decisiones tomadas y el contrato de contenido están en `P
 - `src/components/pages/`: el contenido real de cada página, compartido por ambos idiomas.
 - `src/components/seo/`: cabecera SEO (pista C).
 - `src/i18n/ui.ts`: textos de interfaz.
+- `docs/instructivo-publicar-proyecto.md`: cómo convertir la información de un proyecto en una publicación. Seguirlo cuando Bruno pida publicar un proyecto.
+- `docs/prompt-claude-design.md`: prompt para generar el diseño visual en Claude Design.
 
 ## Reglas
 

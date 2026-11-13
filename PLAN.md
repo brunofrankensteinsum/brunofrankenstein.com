@@ -148,7 +148,7 @@ Bloquea todo lo demás. No paralelizar.
 - [x] Armar las rutas `/es/` y `/en/`, la redirección de la raíz y un selector de idioma.
 - [x] Crear un layout base con un hueco para la cabecera SEO (lo completa la pista C).
 - [x] Cargar un proyecto y una experiencia de ejemplo en ambos idiomas, marcados para borrar antes del lanzamiento.
-- [ ] Conectar el repositorio a Cloudflare y desplegar en el dominio.
+- [x] Conectar el repositorio a Cloudflare y desplegar en el dominio.
 - [x] Escribir un `CLAUDE.md` breve: comandos, estructura y reglas de este plan.
 
 **Listo cuando:** `brunofrankenstein.com` muestra el sitio de ejemplo en ambos idiomas y el build pasa sin errores.
@@ -255,7 +255,8 @@ Requiere el dominio activo y Email Routing configurado.
 
 ### Etapa 5: diseño visual y crecimiento
 
-- [ ] Definir identidad visual: tipografía, colores, animaciones.
+- [ ] Definir identidad visual en Claude Design con `docs/prompt-claude-design.md`.
+- [ ] Traer la entrega del diseño al repositorio, en `design/`.
 - [ ] Aplicarla sobre las plantillas sin tocar el contrato de contenido.
 - [ ] Bruno sigue cargando proyectos. Objetivo: 5 o 6 publicados.
 
