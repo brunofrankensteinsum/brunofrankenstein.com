@@ -1,32 +1,13 @@
 ---
-// Listado de todos los proyectos. Versión provisoria sobre el layout nuevo:
-// las tarjetas llegan en el paso 3 y los filtros en el paso 5.
-import Base from '../../layouts/Base.astro';
-import PageIntro from '../ui/PageIntro.astro';
-import ProjectList from '../ProjectList.astro';
+// Listado de todos los proyectos. El contenido está en ProjectsIndex, que también usa cada categoría.
+import ProjectsIndex from '../project/ProjectsIndex.astro';
 import type { Lang } from '../../config/site';
-import { pageUrl, otherLang } from '../../config/routes';
-import { t } from '../../i18n/ui';
-import { getProjects, getUpcomingProjects } from '../../lib/content';
 
 interface Props {
   lang: Lang;
 }
 
 const { lang } = Astro.props;
-const projects = await getProjects(lang);
-const upcoming = await getUpcomingProjects(lang);
-const title = t(lang, 'projects.title');
-const intro = t(lang, 'projects.intro');
 ---
 
-<Base lang={lang} title={title} description={intro} section="projects" alternateUrl={pageUrl(otherLang(lang), 'projects')}>
-  <PageIntro label={t(lang, 'projects.label')} title={title} intro={intro} />
-  <div class="container cuerpo">
-    <ProjectList lang={lang} projects={projects} upcoming={upcoming} />
-  </div>
-</Base>
-
-<style>
-  .cuerpo { padding-block: var(--s-10) var(--s-18); }
-</style>
+<ProjectsIndex lang={lang} />

@@ -34,9 +34,11 @@ También quería que cualquiera pudiera imprimirlo en una impresora común, sin 
 - Ranuras arriba y abajo para que el aire pase por convección.
 - Encastre a presión: sin tornillos ni pegamento.
 
-![Marcador: foto del soporte montado](./01-soporte-montado.jpg "El soporte montado, con el sensor en su lugar.")
+![Marcador: foto del soporte montado](./01-soporte-montado.jpg)
+*El soporte montado, con el sensor en su lugar.*
 
-![Marcador: render del modelo en corte](./02-corte-modelo.jpg "Corte del modelo: las ranuras de ventilación.")
+![Marcador: render del modelo en corte](./02-corte-modelo.jpg)
+*Corte del modelo: las ranuras de ventilación.*
 
 ## Impresión
 

@@ -157,6 +157,17 @@ Traduce el sentido, no palabra por palabra, y usa el vocabulario técnico habitu
   ![Pieza recién impresa, todavía con los soportes](./01-pieza-recien-impresa.jpg)
   ```
 
+- **Pie de foto:** opcional. Se escribe en cursiva en la línea de abajo de la imagen, sin línea en blanco
+  en el medio. El sitio le antepone solo el rótulo «DET. A», «DET. B», etc.
+
+  ```markdown
+  ![Pieza recién impresa, todavía con los soportes](./01-pieza-recien-impresa.jpg)
+  *La pieza recién salida de la impresora.*
+  ```
+
+- **Dos imágenes seguidas** (cada una en su párrafo, sin texto entre medio) se muestran lado a lado.
+- **Notas:** una línea que empieza con `>` se muestra como un recuadro «NOTA».
+- **Subtítulos:** los `##` se numeran solos (01, 02…) y arman el índice lateral «En esta lámina».
 - **Texto alternativo:** obligatorio y descriptivo, en el idioma de cada archivo. Describe lo que se ve,
   no repitas el título.
 - **Ubicación:** pon cada imagen junto al párrafo que la explica, no todas al final.

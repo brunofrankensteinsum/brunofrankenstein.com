@@ -1,13 +1,7 @@
 ---
-// Página de una categoría: lista los proyectos que la tienen.
-// Versión provisoria; en el paso 5 se une con los filtros del índice de proyectos.
-import Base from '../../layouts/Base.astro';
-import PageIntro from '../ui/PageIntro.astro';
-import ProjectList from '../ProjectList.astro';
-import { getCategory, type CategoryId, type Lang } from '../../config/site';
-import { categoryUrl, otherLang } from '../../config/routes';
-import { t } from '../../i18n/ui';
-import { getProjects } from '../../lib/content';
+// Página de una categoría: el mismo índice de láminas, con esa categoría elegida.
+import ProjectsIndex from '../project/ProjectsIndex.astro';
+import type { CategoryId, Lang } from '../../config/site';
 
 interface Props {
   lang: Lang;
@@ -15,23 +9,6 @@ interface Props {
 }
 
 const { lang, categoryId } = Astro.props;
-const title = getCategory(categoryId)?.name[lang] ?? categoryId;
-const projects = (await getProjects(lang)).filter((p) => p.data.categories.includes(categoryId));
 ---
 
-<Base
-  lang={lang}
-  title={title}
-  description={`${t(lang, 'projects.title')}: ${title}`}
-  section="projects"
-  alternateUrl={categoryUrl(otherLang(lang), categoryId)}
->
-  <PageIntro label={t(lang, 'category.label')} title={title} />
-  <div class="container cuerpo">
-    <ProjectList lang={lang} projects={projects} />
-  </div>
-</Base>
-
-<style>
-  .cuerpo { padding-block: var(--s-10) var(--s-18); }
-</style>
+<ProjectsIndex lang={lang} categoryId={categoryId} />

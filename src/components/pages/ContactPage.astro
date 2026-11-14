@@ -1,12 +1,13 @@
 ---
-// Contacto. Por ahora es una ruta vacía: el formulario llega en el paso 3
+// Contacto: datos de contacto y formulario.
+// Por ahora el formulario es solo la interfaz: la validación llega en el paso 4
 // y el envío del correo es la pista D de PLAN.md.
 import Base from '../../layouts/Base.astro';
-import PageIntro from '../ui/PageIntro.astro';
-import Placeholder from '../ui/Placeholder.astro';
-import type { Lang } from '../../config/site';
+import Icon from '../ui/Icon.astro';
+import { site, type Lang } from '../../config/site';
+import { profile } from '../../config/profile';
 import { pageUrl, otherLang } from '../../config/routes';
-import { t } from '../../i18n/ui';
+import { t, type UiKey } from '../../i18n/ui';
 
 interface Props {
   lang: Lang;
@@ -15,15 +16,279 @@ interface Props {
 const { lang } = Astro.props;
 const title = t(lang, 'contact.title');
 const intro = t(lang, 'contact.intro');
+
+// Redes que se muestran en la ficha, con el usuario sacado de la dirección.
+const redes = (['linkedin', 'github'] as const).map((red) => {
+  const url = site.social[red];
+  return { red, url, usuario: url ? url.replace(/\/$/, '').split('/').pop() : undefined };
+});
+const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', 'contact.reason.work', 'contact.reason.other'];
 ---
 
 <Base lang={lang} title={title} description={intro} section="contact" alternateUrl={pageUrl(otherLang(lang), 'contact')}>
-  <PageIntro label={t(lang, 'contact.label')} title={title} intro={intro} />
-  <div class="container cuerpo">
-    <Placeholder variant="punteado" ratio="21 / 9" label={t(lang, 'wip')} />
-  </div>
+  <section class="container contacto">
+    <div class="contacto__info">
+      <p class="rotulo rotulo--acento contacto__rotulo">{t(lang, 'contact.label')}</p>
+      <h1 class="titulo-pagina">{title}</h1>
+      <p class="contacto__bajada">{intro}</p>
+      <p class="muted">{t(lang, 'contact.reply')}</p>
+
+      <dl class="ficha caja">
+        <div>
+          <dt>{t(lang, 'contact.email')}</dt>
+          <dd>
+            {
+              profile.email ? (
+                <a class="ficha__acento" href={`mailto:${profile.email}`}>
+                  {profile.email}
+                </a>
+              ) : (
+                <span class="marcador">{t(lang, 'contact.emailMissing')}</span>
+              )
+            }
+          </dd>
+        </div>
+        {
+          redes.map(({ red, url, usuario }) => (
+            <div>
+              <dt>{red}</dt>
+              <dd>
+                {url ? (
+                  <a class="ficha__externo" href={url} rel="me noopener">
+                    {usuario}
+                    <Icon name="ui-externo" size={16} />
+                  </a>
+                ) : (
+                  <span class="marcador">[{lang === 'es' ? 'Usuario' : 'User'}]</span>
+                )}
+              </dd>
+            </div>
+          ))
+        }
+        <div>
+          <dt>{t(lang, 'contact.location')}</dt>
+          <dd class="ficha__mono">
+            {profile.location[lang]} · <span class="ficha__acento">{profile.coords[lang]}</span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <form class="form caja" novalidate>
+      <p class="form__cabecera">
+        <span>{t(lang, 'contact.form')}</span>
+        <span>{t(lang, 'contact.required')}</span>
+      </p>
+      <div class="form__dos">
+        <div class="campo">
+          <label for="c-nombre">{t(lang, 'contact.name')}</label>
+          <input id="c-nombre" name="nombre" type="text" autocomplete="name" required />
+        </div>
+        <div class="campo">
+          <label for="c-email">{t(lang, 'contact.email')}</label>
+          <input id="c-email" name="email" type="email" autocomplete="email" required />
+        </div>
+      </div>
+      <fieldset class="motivo">
+        <legend>{t(lang, 'contact.reason')}</legend>
+        <div class="motivo__opciones">
+          {
+            motivos.map((clave, i) => (
+              <label>
+                <input type="radio" name="motivo" value={clave.split('.').pop()} checked={i === 0} />
+                {t(lang, clave)}
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+      <div class="campo">
+        <label for="c-mensaje">{t(lang, 'contact.message')}</label>
+        <textarea id="c-mensaje" name="mensaje" rows="7" required></textarea>
+      </div>
+      <div class="form__pie">
+        <span class="form__ayuda">{t(lang, 'contact.hint')}</span>
+        {/* type="button": todavía no envía nada. Pasa a "submit" cuando exista el envío (pista D). */}
+        <button class="form__enviar" type="button">
+          {t(lang, 'contact.send')}
+          <Icon name="ui-flecha" size={18} />
+        </button>
+      </div>
+    </form>
+  </section>
 </Base>
 
 <style>
-  .cuerpo { padding-block: var(--s-12) var(--s-18); }
+  .contacto {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-12);
+    padding-block: var(--s-12) var(--s-18);
+  }
+  .contacto__info {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .contacto__rotulo { letter-spacing: 0.1em; }
+  .contacto__bajada {
+    font-size: var(--fs-lead);
+    line-height: 1.45;
+  }
+
+  /* ---------- Ficha de datos ---------- */
+  .ficha { margin-top: var(--s-3); }
+  .ficha > div {
+    display: flex;
+    align-items: center;
+    gap: var(--s-4);
+    min-height: 52px;
+    padding: var(--s-2) var(--s-4);
+  }
+  .ficha > div + div { border-top: 1px dashed var(--c-line); }
+  .ficha dt {
+    flex: none;
+    width: 96px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .ficha dd { min-width: 0; overflow-wrap: anywhere; }
+  .ficha__acento { color: var(--c-accent); }
+  .ficha__externo {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 44px;
+  }
+  .ficha__mono {
+    font-family: var(--f-mono);
+    font-size: var(--fs-small);
+  }
+
+  /* ---------- Formulario ---------- */
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: var(--s-5);
+  }
+  .form__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-1) var(--s-4);
+    padding-bottom: var(--s-3);
+    border-bottom: 1px dashed var(--c-line);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .form__dos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-5);
+  }
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+  .campo label,
+  .motivo legend {
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .campo input,
+  .campo textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 14px;
+    background: var(--c-paper-deep);
+    border: 1px solid var(--c-line);
+    color: var(--c-ink);
+  }
+  .campo textarea {
+    padding: var(--s-3) 14px;
+    resize: vertical;
+  }
+  .campo input:focus-visible,
+  .campo textarea:focus-visible {
+    outline: none;
+    border-color: var(--c-accent);
+    box-shadow: 0 0 0 1px var(--c-accent);
+  }
+  .motivo {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+  .motivo legend { padding: 0 0 10px; }
+  .motivo__opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 15px;
+  }
+  .motivo label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--c-line);
+    cursor: pointer;
+  }
+  /* La opción elegida se marca con borde de acento. */
+  .motivo label:has(input:checked) { border-color: var(--c-accent); }
+  .motivo input {
+    margin: 0;
+    accent-color: var(--c-accent);
+  }
+  .form__pie {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4) var(--s-5);
+  }
+  .form__ayuda {
+    font-size: var(--fs-small);
+    color: var(--c-ink-muted);
+  }
+  .form__enviar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 48px;
+    padding: 0 var(--s-6);
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+    border: none;
+    cursor: pointer;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 640px) {
+    .form { padding: var(--s-8); }
+    .form__dos { grid-template-columns: 1fr 1fr; }
+  }
+  @media (min-width: 1024px) {
+    .contacto {
+      grid-template-columns: 5fr 7fr;
+      gap: 88px;
+      align-items: start;
+      padding-block: var(--s-18) 88px;
+    }
+  }
 </style>

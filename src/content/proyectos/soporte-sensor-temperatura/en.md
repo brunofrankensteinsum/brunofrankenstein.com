@@ -34,9 +34,11 @@ I also wanted anyone to be able to print it on an ordinary printer, without supp
 - Slots at the top and bottom so air moves through by convection.
 - Snap fit: no screws, no glue.
 
-![Placeholder: photo of the mount installed](./01-soporte-montado.jpg "The mount installed, with the sensor in place.")
+![Placeholder: photo of the mount installed](./01-soporte-montado.jpg)
+*The mount installed, with the sensor in place.*
 
-![Placeholder: section render of the model](./02-corte-modelo.jpg "Section view of the model: the ventilation slots.")
+![Placeholder: section render of the model](./02-corte-modelo.jpg)
+*Section view of the model: the ventilation slots.*
 
 ## Printing
 

@@ -1,0 +1,103 @@
+---
+// Botón. Si recibe "href" es un link; si no, un <button>.
+// - variant "primary": fondo de acento. "secondary": solo borde.
+// - disabled: borde punteado y sin acción (para cosas que todavía no existen).
+import Icon from './Icon.astro';
+
+interface Props {
+  href?: string;
+  variant?: 'primary' | 'secondary';
+  accent?: boolean; // en el secundario: borde y texto de acento
+  icon?: string; // nombre de un ícono; va a la derecha del texto
+  disabled?: boolean;
+  block?: boolean; // ocupa todo el ancho, con el ícono al final
+  [atributo: string]: unknown;
+}
+
+const { href, variant = 'primary', accent = false, icon, disabled = false, block = false, ...rest } = Astro.props;
+const clases = ['btn', `btn--${variant}`, accent && 'btn--acento', block && 'btn--bloque', disabled && 'btn--off'];
+---
+
+{
+  disabled ? (
+    <span class:list={clases} aria-disabled="true" {...rest}>
+      <slot />
+      {icon && <Icon name={icon} size={18} />}
+    </span>
+  ) : href ? (
+    <a class:list={clases} href={href} {...rest}>
+      <slot />
+      {icon && <Icon name={icon} size={18} />}
+    </a>
+  ) : (
+    <button class:list={clases} type="button" {...rest}>
+      <slot />
+      {icon && <Icon name={icon} size={18} />}
+    </button>
+  )
+}
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-3);
+    min-height: 44px;
+    padding: 0 var(--s-5);
+    border: 1px solid transparent;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  @media (min-width: 640px) {
+    .btn { min-height: 48px; }
+  }
+  .btn--primary {
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+  .btn--secondary {
+    background: var(--c-paper);
+    border-color: var(--c-line);
+    color: var(--c-ink);
+  }
+  .btn--acento {
+    border-color: var(--c-accent);
+    color: var(--c-accent);
+  }
+  .btn--bloque {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+  }
+  /* Con el mouse encima o con foco. (La flecha que se mueve y las esquinas de mira son del paso 4.) */
+  .btn--primary:focus-visible {
+    color: var(--c-on-accent);
+    text-decoration: none;
+  }
+  .btn--secondary:focus-visible {
+    border-color: var(--c-accent);
+    text-decoration: none;
+  }
+  @media (hover: hover) {
+    .btn--primary:hover {
+      color: var(--c-on-accent);
+      text-decoration: none;
+      filter: brightness(1.08);
+    }
+    .btn--secondary:hover {
+      border-color: var(--c-accent);
+      text-decoration: none;
+    }
+  }
+  .btn--off {
+    background: none;
+    border: 1px dashed var(--c-line);
+    color: var(--c-ink-muted);
+    cursor: not-allowed;
+  }
+</style>

@@ -1,14 +1,15 @@
 ---
-// Página de un proyecto. Versión provisoria sobre el layout nuevo: el detalle del diseño
-// (cajetín, índice lateral, figuras, video con fachada) llega en el paso 3.
+// Página de un proyecto (una «lámina»): encabezado, portada, texto, cajetín,
+// índice de secciones y navegación a otras láminas.
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import Placeholder from '../ui/Placeholder.astro';
+import Button from '../ui/Button.astro';
+import Icon from '../ui/Icon.astro';
 import { getCategory, type Lang } from '../../config/site';
-import { projectUrl, otherLang } from '../../config/routes';
-import { t, formatDate } from '../../i18n/ui';
-import { figLabel, projectExists, type Project } from '../../lib/content';
+import { pageUrl, projectUrl, categoryUrl, otherLang } from '../../config/routes';
+import { t, formatDay } from '../../i18n/ui';
+import { figLabel, getProjects, projectExists, type Project } from '../../lib/content';
 
 interface Props {
   lang: Lang;
@@ -17,71 +18,235 @@ interface Props {
 
 const { lang, project } = Astro.props;
 const { data, slug } = project;
-// Convierte el Markdown del proyecto en un componente que se puede mostrar.
-const { Content } = await render(project);
+// Convierte el Markdown del proyecto en un componente; "headings" son sus subtítulos.
+const { Content, headings } = await render(project);
+// Secciones para el índice lateral: los subtítulos de nivel 2 (los "##" del Markdown).
+const secciones = headings.filter((h) => h.depth === 2);
 
 const other = otherLang(lang);
 const alternateUrl = (await projectExists(other, slug)) ? projectUrl(other, slug) : undefined;
+
+// Lámina anterior y siguiente, según el número de lámina.
+const porFig = (await getProjects(lang)).sort((a, b) => a.data.fig - b.data.fig);
+const pos = porFig.findIndex((p) => p.slug === slug);
+const anterior = pos > 0 ? porFig[pos - 1] : undefined;
+const siguiente = pos < porFig.length - 1 ? porFig[pos + 1] : undefined;
+
+const dos = (n: number) => String(n).padStart(2, '0');
+const primeraCategoria = data.categories[0];
 ---
 
 <Base lang={lang} title={data.title} description={data.summary} section="projects" alternateUrl={alternateUrl}>
-  <article class="container proyecto">
-    <p class="rotulo">
-      FIG. {figLabel(data.fig)} · {formatDate(lang, data.date)} · {data.categories.map((id) => getCategory(id)?.name[lang]).join(' · ')}
-    </p>
-    <h1>{data.title}</h1>
-    <p class="resumen">{data.summary}</p>
-    {data.tags.length > 0 && <p class="rotulo">{data.tags.join(' · ')}</p>}
-    <Image class="portada" src={data.cover} alt={data.coverAlt} width={1200} loading="eager" />
-    <div class="prosa">
-      <Content />
-      {/* El video todavía no se incrusta: la fachada con botón de play llega en el paso 3. */}
-      {data.youtube && <Placeholder label="Video · YouTube" />}
+  <header class="container cabecera">
+    <nav class="ruta" aria-label={t(lang, 'project.breadcrumb')}>
+      <a href={pageUrl(lang, 'projects')}>{t(lang, 'projects.title')}</a>
       {
-        data.repo && (
-          <p>
-            <a href={data.repo}>{t(lang, 'project.repo')}</a>
-          </p>
+        primeraCategoria && (
+          <>
+            <span aria-hidden="true">/</span>
+            <a href={categoryUrl(lang, primeraCategoria)}>{getCategory(primeraCategoria)?.name[lang]}</a>
+          </>
         )
       }
+      <span aria-hidden="true">/</span>
+      <span class="ruta__actual" aria-current="page">FIG. {figLabel(data.fig)}</span>
+    </nav>
+    <div class="cabecera__titulo">
+      <h1>{data.title}</h1>
+      <p>{data.summary}</p>
     </div>
-  </article>
+    <div class="portada rayado">
+      <Image src={data.cover} alt={data.coverAlt} widths={[640, 960, 1280, 1920]} sizes="(min-width: 1280px) 1136px, 100vw" loading="eager" />
+    </div>
+  </header>
+
+  <div class="container cuerpo">
+    <article class="prosa" lang={lang}>
+      <Content />
+      {
+        data.youtube && (
+          <>
+            {/* Fachada del video: por ahora es un link a YouTube. En el paso 4 carga el video acá mismo. */}
+            <a class="video rayado" href={`https://www.youtube.com/watch?v=${data.youtube}`} aria-label={t(lang, 'project.play')}>
+              <span class="video__play">
+                <Icon name="ui-play" />
+              </span>
+            </a>
+            <p class="video__nota">{t(lang, 'project.videoNote')}</p>
+          </>
+        )
+      }
+    </article>
+
+    <aside class="lateral">
+      <dl class="cajetin caja">
+        <div class="cajetin__titulo">{t(lang, 'project.titleBlock')}</div>
+        <div class="cajetin__fila">
+          <dt>{t(lang, 'project.date')}</dt>
+          <dd class="cajetin__mono">{formatDay(data.date)}</dd>
+        </div>
+        <div class="cajetin__fila">
+          <dt>{t(lang, 'project.category')}</dt>
+          <dd>
+            {
+              data.categories.map((id, i) => (
+                <>
+                  {i > 0 && ', '}
+                  <a href={categoryUrl(lang, id)}>{getCategory(id)?.name[lang]}</a>
+                </>
+              ))
+            }
+          </dd>
+        </div>
+        {
+          data.tags.length > 0 && (
+            <div class="cajetin__fila">
+              <dt>{t(lang, 'project.tags')}</dt>
+              <dd class="cajetin__mono cajetin__tags">{data.tags.join(' · ')}</dd>
+            </div>
+          )
+        }
+      </dl>
+
+      {
+        secciones.length > 0 && (
+          <nav class="toc" aria-label={t(lang, 'project.tocLabel')}>
+            <p class="toc__titulo rotulo">{t(lang, 'project.toc')}</p>
+            <ol class="toc__lista">
+              {secciones.map((s, i) => (
+                <li>
+                  {/* La sección visible se marca sola al hacer scroll a partir del paso 4. */}
+                  <a href={`#${s.slug}`}>
+                    <span class="toc__num">{dos(i + 1)}</span>
+                    <span>{s.text}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )
+      }
+
+      {
+        data.repo && (
+          <Button href={data.repo} icon="ui-flecha" block>
+            {t(lang, 'project.repoButton')}
+          </Button>
+        )
+      }
+    </aside>
+  </div>
+
+  <nav class="container otros" aria-label={t(lang, 'project.others')}>
+    <div class="otros__caja caja">
+      {
+        anterior && (
+          <a href={projectUrl(lang, anterior.slug)}>
+            <span class="otros__rotulo">
+              ← FIG. {figLabel(anterior.data.fig)} · {t(lang, 'project.prev')}
+            </span>
+            <span class="otros__titulo">{anterior.data.title}</span>
+          </a>
+        )
+      }
+      {
+        siguiente && (
+          <a href={projectUrl(lang, siguiente.slug)} class:list={[anterior && 'otros--der']}>
+            <span class="otros__rotulo">
+              FIG. {figLabel(siguiente.data.fig)} · {t(lang, 'project.next')} →
+            </span>
+            <span class="otros__titulo">{siguiente.data.title}</span>
+          </a>
+        )
+      }
+      <a href={pageUrl(lang, 'projects')} class="otros--der">
+        <span class="otros__rotulo otros__rotulo--acento">{t(lang, 'project.index')} →</span>
+        <span class="otros__titulo">{t(lang, 'project.indexTitle')}</span>
+      </a>
+    </div>
+  </nav>
 </Base>
 
 <style>
-  .proyecto {
+  /* ---------- Cabecera ---------- */
+  .cabecera {
     display: flex;
     flex-direction: column;
+    gap: 18px;
+    padding-top: var(--s-8);
+  }
+  .ruta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--s-2);
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.04em;
+    color: var(--c-ink-muted);
+  }
+  .ruta a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .ruta__actual { color: var(--c-accent); }
+  .cabecera__titulo {
+    display: grid;
+    grid-template-columns: 1fr;
     gap: var(--s-4);
-    padding-block: var(--s-12) var(--s-18);
   }
   h1 {
-    max-width: 820px;
     font-size: var(--fs-h1-sans);
     line-height: 1.1;
     font-weight: 600;
     letter-spacing: -0.015em;
   }
-  .resumen {
-    max-width: 720px;
+  .cabecera__titulo p {
     font-size: 18px;
     color: var(--c-ink-muted);
   }
   .portada {
-    width: 100%;
-    margin-block: var(--s-6);
+    margin: var(--s-5) 8px 8px;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
     outline: 1px solid var(--c-line);
     outline-offset: 8px;
   }
-  /* Texto largo: columna de 720 px para que las líneas no sean demasiado anchas. */
-  .prosa {
+  .portada :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* ---------- Cuerpo: texto + columna lateral ---------- */
+  .cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-10);
+    padding-block: var(--s-10) var(--s-14);
+  }
+  /* En pantallas chicas el cajetín va arriba del texto. */
+  .lateral {
+    order: -1;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: var(--s-6);
+  }
+  .toc { display: none; }
+
+  /* ---------- Texto largo ---------- */
+  .prosa {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px var(--s-8);
+    align-content: start;
     max-width: 720px;
     font-size: 18px;
     line-height: 1.65;
+    counter-reset: seccion det;
   }
+  /* Subtítulos numerados: «01 EL PROBLEMA». El número lo pone el CSS. */
   .prosa :global(h2) {
     margin-top: var(--s-6);
     font-family: var(--f-mono);
@@ -90,6 +255,291 @@ const alternateUrl = (await projectExists(other, slug)) ? projectUrl(other, slug
     line-height: 1.3;
     letter-spacing: 0.04em;
     text-transform: uppercase;
+    counter-increment: seccion;
+  }
+  .prosa :global(h2:first-child) { margin-top: 0; }
+  .prosa :global(h2)::before {
+    content: counter(seccion, decimal-leading-zero) ' ';
+    color: var(--c-accent);
+  }
+  .prosa :global(h3) {
+    margin-top: var(--s-2);
+    font-size: var(--fs-h3);
+    line-height: 1.3;
+    font-weight: 600;
   }
   .prosa :global(a) { color: var(--c-accent); }
+  /* Listas con «+» en acento en lugar de punto. */
+  .prosa :global(ul) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0;
+    list-style: none;
+  }
+  .prosa :global(ul > li) {
+    position: relative;
+    padding-left: 28px;
+  }
+  .prosa :global(ul > li)::before {
+    content: '+';
+    position: absolute;
+    left: 0;
+    font-family: var(--f-mono);
+    color: var(--c-accent);
+  }
+  .prosa :global(ol) {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 28px;
+  }
+  .prosa :global(ol > li)::marker {
+    font-family: var(--f-mono);
+    color: var(--c-accent);
+  }
+  /* Figuras: un párrafo del Markdown que tiene una imagen. Si debajo de la imagen hay una
+     línea en *cursiva*, es el pie de foto y lleva el rótulo «DET. A», «DET. B»… */
+  .prosa :global(p:has(> img)) {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    margin: var(--s-3) var(--frame-offset) var(--s-2);
+    font-size: var(--fs-small);
+    line-height: 1.5;
+    color: var(--c-ink-muted);
+  }
+  .prosa :global(p:has(> img) br) { display: none; }
+  .prosa :global(p > img) {
+    width: 100%;
+    outline: 1px solid var(--c-line);
+    outline-offset: var(--frame-offset);
+    background: repeating-linear-gradient(45deg, var(--c-hatch-a) 0 10px, var(--c-hatch-b) 10px 11px);
+  }
+  .prosa :global(p:has(> img) > em) {
+    font-style: normal;
+    counter-increment: det;
+  }
+  .prosa :global(p:has(> img) > em)::before {
+    content: 'DET. ' counter(det, upper-alpha);
+    margin-right: var(--s-2);
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    color: var(--c-accent);
+  }
+  /* Tablas: si no entran, hacen scroll horizontal dentro de su caja. */
+  .prosa :global(table) {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    border: 1px solid var(--c-line);
+    background: var(--c-paper);
+    font-size: 16px;
+  }
+  .prosa :global(th) {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--c-line);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--c-ink-muted);
+  }
+  .prosa :global(td) {
+    padding: 9px 14px;
+    border-top: 1px dashed var(--c-line);
+  }
+  .prosa :global(tbody tr:first-child td) { border-top: none; }
+  .prosa :global(th + th),
+  .prosa :global(td + td) { border-left: 1px dashed var(--c-line); }
+  .prosa :global(td + td) { font-family: var(--f-mono); }
+  /* Citas del Markdown (líneas que empiezan con ">") = notas de plano. */
+  .prosa :global(blockquote) {
+    padding: 14px var(--s-4);
+    border: 1px dashed var(--c-accent);
+    background: var(--c-paper);
+    font-size: 16px;
+  }
+  .prosa :global(blockquote)::before {
+    content: 'NOTA';
+    display: block;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: var(--ls-label);
+    color: var(--c-accent);
+  }
+  .prosa:lang(en) :global(blockquote)::before { content: 'NOTE'; }
+  /* Código. */
+  .prosa :global(pre) {
+    margin: 0;
+    padding: 18px var(--s-5);
+    overflow-x: auto;
+    background: var(--c-paper-deep);
+    border: 1px solid var(--c-line);
+    font-family: var(--f-mono);
+    font-size: var(--fs-small);
+    line-height: 1.6;
+  }
+  .prosa :global(code) {
+    font-family: var(--f-mono);
+    font-size: 0.9em;
+  }
+  .prosa :global(pre code) { font-size: inherit; }
+
+  /* Video: fachada con botón de play. */
+  .video {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 6px var(--frame-offset) 0;
+    aspect-ratio: 16 / 9;
+    outline: 1px solid var(--c-line);
+    outline-offset: var(--frame-offset);
+  }
+  .video__play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border: 1px solid var(--c-accent);
+    background: var(--c-paper);
+    color: var(--c-accent);
+  }
+  .video:focus-visible { outline: 2px solid var(--c-accent); }
+  .video__nota {
+    margin-top: var(--s-2);
+    font-size: 15px;
+    color: var(--c-ink-muted);
+  }
+
+  /* ---------- Cajetín ---------- */
+  .cajetin { font-size: 15px; }
+  .cajetin__titulo {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--c-line);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+  }
+  .cajetin__fila {
+    display: flex;
+    gap: var(--s-3);
+    padding: 10px 14px;
+  }
+  .cajetin__fila + .cajetin__fila { border-top: 1px dashed var(--c-line); }
+  .cajetin dt {
+    flex: none;
+    width: 88px;
+    padding-top: 3px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .cajetin dd a { color: var(--c-accent); }
+  .cajetin__mono { font-family: var(--f-mono); }
+  .cajetin__tags { font-size: 13px; }
+
+  /* ---------- Índice de secciones ---------- */
+  .toc {
+    flex-direction: column;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .toc__titulo {
+    padding-bottom: var(--s-2);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .toc__lista a {
+    display: flex;
+    gap: var(--s-3);
+    align-items: center;
+    min-height: 40px;
+    padding-left: var(--s-3);
+    border-left: 1px dashed var(--c-line);
+  }
+  .toc__num { color: var(--c-ink-muted); }
+
+  /* ---------- Otras láminas ---------- */
+  .otros { padding-bottom: var(--s-20); }
+  .otros__caja {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .otros__caja a {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: var(--s-5) var(--s-6);
+  }
+  .otros__caja a + a { border-top: 1px dashed var(--c-line); }
+  .otros__rotulo {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .otros__rotulo--acento { color: var(--c-accent); }
+  .otros__titulo {
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  @media (min-width: 640px) {
+    .cabecera { padding-top: var(--s-12); }
+    .portada { aspect-ratio: 21 / 9; margin-top: var(--s-7); }
+    /* Dos figuras seguidas van lado a lado. */
+    .prosa { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+    .prosa > :global(*) { grid-column: 1 / -1; }
+    .prosa > :global(p:has(> img):has(+ p > img)),
+    .prosa > :global(p:has(> img) + p:has(> img)) {
+      grid-column: auto;
+      margin-inline: var(--frame-offset);
+    }
+    /* Una columna por link, todas del mismo ancho. */
+    .otros__caja {
+      grid-template-columns: none;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+    }
+    .otros__caja a + a {
+      border-top: none;
+      border-left: 1px dashed var(--c-line);
+    }
+    .otros--der {
+      align-items: flex-end;
+      text-align: right;
+    }
+  }
+  @media (min-width: 1024px) {
+    .cabecera__titulo {
+      grid-template-columns: 8fr 4fr;
+      gap: var(--s-16);
+      align-items: end;
+    }
+    .cuerpo {
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: var(--s-20);
+      align-items: start;
+      padding-block: var(--s-16) var(--s-18);
+    }
+    .lateral {
+      order: 0;
+      gap: var(--s-7);
+    }
+    .toc { display: flex; }
+  }
 </style>
