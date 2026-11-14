@@ -21,7 +21,7 @@ export const ui = {
     'projects.title': 'Proyectos',
     'projects.label': 'Índice de láminas',
     'projects.intro':
-      'Todo lo que construí, ordenado del más nuevo al más viejo. Cada lámina cuenta el problema, cómo lo resolví y qué aprendí.',
+      'Los Proyectos que están subidos son algunos de los que desarrollé o participé y me parecieron interesante compartir. Cada lámina cuenta el problema, cómo se resolvió y qué aprendí.',
     'projects.empty': 'Todavía no hay proyectos publicados.',
     'category.label': 'Categoría',
     'project.upcoming': 'En preparación',
@@ -143,7 +143,7 @@ export const ui = {
     'projects.title': 'Projects',
     'projects.label': 'Sheet index',
     'projects.intro':
-      'Everything I have built, newest first. Each sheet covers the problem, how I solved it and what I learned.',
+      'The projects published here are some of the ones I developed or took part in and found worth sharing. Each sheet covers the problem, how it was solved and what I learned.',
     'projects.empty': 'No projects published yet.',
     'category.label': 'Category',
     'project.upcoming': 'In preparation',

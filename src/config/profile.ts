@@ -17,8 +17,8 @@ export const profile = {
 
   home: {
     lead: {
-      es: 'Estudio Ingeniería Industrial Mecánica en Uruguay. Investigo en el Faraday Lab y corro con Fing Hydrogen Racing, el equipo de Formula SAE.',
-      en: 'I study Industrial Mechanical Engineering in Uruguay. I do research at the Faraday Lab and race with Fing Hydrogen Racing, the Formula SAE team.',
+      es: 'Estudio Ingeniería Industrial Mecánica en Uruguay. Soy investigador en el Faraday Lab y participo en Fing Hydrogen Racing, el equipo de Formula SAE.',
+      en: 'I study Industrial Mechanical Engineering in Uruguay. I am a researcher at the Faraday Lab and take part in Fing Hydrogen Racing, the Formula SAE team.',
     },
     sub: {
       es: 'Aprendo mejor cuando hay un proyecto de por medio. Acá queda el registro: qué hicimos, cómo lo resolvimos y qué aprendí.',
