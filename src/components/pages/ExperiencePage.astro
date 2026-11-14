@@ -1,11 +1,12 @@
 ---
-// Experiencias (cronograma). Por ahora es una ruta vacía: el contenido llega en el paso 3.
+// Experiencias. Versión provisoria: muestra los datos en una lista simple.
+// El cronograma del diseño (línea de tiempo con nodos) llega en el paso 3.
 import Base from '../../layouts/Base.astro';
 import PageIntro from '../ui/PageIntro.astro';
-import Placeholder from '../ui/Placeholder.astro';
 import type { Lang } from '../../config/site';
 import { pageUrl, otherLang } from '../../config/routes';
-import { t } from '../../i18n/ui';
+import { t, formatPeriod } from '../../i18n/ui';
+import { getExperiences } from '../../lib/content';
 
 interface Props {
   lang: Lang;
@@ -14,15 +15,62 @@ interface Props {
 const { lang } = Astro.props;
 const title = t(lang, 'experience.title');
 const intro = t(lang, 'experience.intro');
+const experiences = await getExperiences(lang);
 ---
 
 <Base lang={lang} title={title} description={intro} section="experience" alternateUrl={pageUrl(otherLang(lang), 'experience')}>
   <PageIntro label={t(lang, 'experience.label')} title={title} intro={intro} />
   <div class="container cuerpo">
-    <Placeholder variant="punteado" ratio="21 / 9" label={t(lang, 'wip')} />
+    <ol class="lista">
+      {
+        experiences.map((e) => (
+          <li>
+            <p class="rotulo rotulo--acento">{formatPeriod(lang, e.data.start, e.data.end)}</p>
+            <h2>{e.data.title}</h2>
+            {e.data.place && <p class="lugar">{e.data.place}</p>}
+            {e.data.summary && <p>{e.data.summary}</p>}
+            {e.data.link && (
+              <p>
+                <a class="enlace" href={e.data.link}>
+                  {t(lang, 'experience.link')}
+                </a>
+              </p>
+            )}
+            {e.data.tags.length > 0 && <p class="etiquetas">{e.data.tags.join(' · ')}</p>}
+          </li>
+        ))
+      }
+    </ol>
   </div>
 </Base>
 
 <style>
-  .cuerpo { padding-block: var(--s-12) var(--s-18); }
+  .cuerpo { padding-block: var(--s-10) var(--s-18); }
+  .lista {
+    border: 1px solid var(--c-line);
+    background: var(--c-paper);
+  }
+  li {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: var(--s-5) var(--s-6);
+  }
+  li + li { border-top: 1px dashed var(--c-line); }
+  h2 {
+    font-size: var(--fs-h3);
+    line-height: 1.25;
+    font-weight: 600;
+  }
+  .lugar {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--c-ink-muted);
+  }
+  .etiquetas {
+    font-size: var(--fs-small);
+    color: var(--c-ink-muted);
+  }
+  .enlace { color: var(--c-accent); }
 </style>

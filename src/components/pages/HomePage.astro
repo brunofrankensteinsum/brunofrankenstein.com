@@ -6,7 +6,7 @@ import ProjectList from '../ProjectList.astro';
 import { site, type Lang } from '../../config/site';
 import { pageUrl, otherLang } from '../../config/routes';
 import { t } from '../../i18n/ui';
-import { getProjects } from '../../lib/content';
+import { getProjects, getUpcomingProjects } from '../../lib/content';
 
 interface Props {
   lang: Lang;
@@ -14,6 +14,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const projects = (await getProjects(lang)).slice(0, 5);
+const upcoming = await getUpcomingProjects(lang);
 ---
 
 <Base lang={lang} title={site.name} description={site.tagline[lang]} section="home" alternateUrl={pageUrl(otherLang(lang), 'home')}>
@@ -23,7 +24,7 @@ const projects = (await getProjects(lang)).slice(0, 5);
   </div>
   <section class="container ultimos">
     <h2 class="rotulo">{t(lang, 'home.latest')}</h2>
-    <ProjectList lang={lang} projects={projects} />
+    <ProjectList lang={lang} projects={projects} upcoming={upcoming} />
   </section>
 </Base>
 

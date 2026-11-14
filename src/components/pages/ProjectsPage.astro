@@ -7,7 +7,7 @@ import ProjectList from '../ProjectList.astro';
 import type { Lang } from '../../config/site';
 import { pageUrl, otherLang } from '../../config/routes';
 import { t } from '../../i18n/ui';
-import { getProjects } from '../../lib/content';
+import { getProjects, getUpcomingProjects } from '../../lib/content';
 
 interface Props {
   lang: Lang;
@@ -15,6 +15,7 @@ interface Props {
 
 const { lang } = Astro.props;
 const projects = await getProjects(lang);
+const upcoming = await getUpcomingProjects(lang);
 const title = t(lang, 'projects.title');
 const intro = t(lang, 'projects.intro');
 ---
@@ -22,7 +23,7 @@ const intro = t(lang, 'projects.intro');
 <Base lang={lang} title={title} description={intro} section="projects" alternateUrl={pageUrl(otherLang(lang), 'projects')}>
   <PageIntro label={t(lang, 'projects.label')} title={title} intro={intro} />
   <div class="container cuerpo">
-    <ProjectList lang={lang} projects={projects} />
+    <ProjectList lang={lang} projects={projects} upcoming={upcoming} />
   </div>
 </Base>
 

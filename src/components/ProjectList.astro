@@ -1,33 +1,44 @@
 ---
-// Lista de proyectos: título, fecha, categorías y resumen.
+// Lista de proyectos: número de lámina, fecha, título, resumen y categorías.
 // Versión provisoria: en el paso 3 la reemplazan las tarjetas con portada.
 import type { Lang } from '../config/site';
 import { getCategory } from '../config/site';
 import { projectUrl } from '../config/routes';
 import { t, formatDate } from '../i18n/ui';
-import type { Project } from '../lib/content';
+import { figLabel, type Project, type UpcomingProject } from '../lib/content';
 
 interface Props {
   lang: Lang;
   projects: Project[];
+  // Láminas en preparación: se anuncian al final, sin link.
+  upcoming?: UpcomingProject[];
 }
 
-const { lang, projects } = Astro.props;
+const { lang, projects, upcoming = [] } = Astro.props;
 ---
 
 {
-  projects.length === 0 ? (
+  projects.length === 0 && upcoming.length === 0 ? (
     <p class="vacio rotulo">{t(lang, 'projects.empty')}</p>
   ) : (
     <ul class="lista">
       {projects.map((p) => (
         <li>
-          <p class="rotulo rotulo--acento">{formatDate(lang, p.data.date)}</p>
+          <p class="rotulo rotulo--acento">
+            FIG. {figLabel(p.data.fig)} · {formatDate(lang, p.data.date)}
+          </p>
           <h3>
             <a href={projectUrl(lang, p.slug)}>{p.data.title}</a>
           </h3>
           <p>{p.data.summary}</p>
           <p class="categorias">{p.data.categories.map((id) => getCategory(id)?.name[lang]).join(' · ')}</p>
+        </li>
+      ))}
+      {upcoming.map((p) => (
+        <li class="preparacion">
+          <p class="rotulo">
+            FIG. {figLabel(p.data.fig)} · {t(lang, 'project.upcoming')}
+          </p>
         </li>
       ))}
     </ul>

@@ -24,11 +24,15 @@ export const ui = {
       'Todo lo que construí, ordenado del más nuevo al más viejo. Cada lámina cuenta el problema, cómo lo resolví y qué aprendí.',
     'projects.empty': 'Todavía no hay proyectos publicados.',
     'category.label': 'Categoría',
+    'project.upcoming': 'En preparación',
     'project.repo': 'Ver repositorio en GitHub',
     'project.categories': 'Categorías',
     'experience.title': 'Experiencias',
     'experience.label': 'Cronograma',
     'experience.intro': 'Dónde trabajé, investigué y competí. Lo más reciente arriba.',
+    'experience.today': 'Hoy',
+    'experience.yearMissing': '[AÑO]',
+    'experience.link': 'Ver más',
     'about.title': 'Sobre mí',
     'about.label': 'Memoria descriptiva',
     'contact.title': 'Contacto',
@@ -61,11 +65,15 @@ export const ui = {
       'Everything I have built, newest first. Each sheet covers the problem, how I solved it and what I learned.',
     'projects.empty': 'No projects published yet.',
     'category.label': 'Category',
+    'project.upcoming': 'In preparation',
     'project.repo': 'View repository on GitHub',
     'project.categories': 'Categories',
     'experience.title': 'Experience',
     'experience.label': 'Timeline',
     'experience.intro': 'Where I have worked, done research and competed. Most recent first.',
+    'experience.today': 'Today',
+    'experience.yearMissing': '[YEAR]',
+    'experience.link': 'See more',
     'about.title': 'About',
     'about.label': 'General notes',
     'contact.title': 'Contact',
@@ -83,6 +91,14 @@ export type UiKey = keyof (typeof ui)['es'];
 
 export function t(lang: Lang, key: UiKey): string {
   return ui[lang][key];
+}
+
+// Período de una experiencia para el cronograma: "2026", "2024 — Hoy" o "[AÑO] — Hoy".
+// Sin fecha de fin significa que sigue hasta hoy.
+export function formatPeriod(lang: Lang, start?: Date, end?: Date): string {
+  const desde = start ? String(start.getUTCFullYear()) : t(lang, 'experience.yearMissing');
+  const hasta = end ? String(end.getUTCFullYear()) : t(lang, 'experience.today');
+  return desde === hasta ? desde : `${desde} — ${hasta}`;
 }
 
 export function formatDate(lang: Lang, date: Date): string {

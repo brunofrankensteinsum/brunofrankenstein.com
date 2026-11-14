@@ -54,6 +54,7 @@ Es el mismo para ambos idiomas y no se cambia después de publicar.
 
 ```markdown
 ---
+fig: 5
 title: "Título del proyecto"
 summary: "Una oración que diga qué es y qué logró. Máximo 160 caracteres."
 date: 2026-11-13
@@ -74,6 +75,8 @@ draft: false
 
 | Campo | Obligatorio | Regla |
 |---|---|---|
+| `fig` | sí | Número de lámina (el `FIG. 05` del sitio). Es el siguiente al más alto que ya exista en `src/content/proyectos/`. No se repite ni se cambia después de publicar |
+| `status` | no | Solo se escribe `en-preparacion` para anunciar una lámina que todavía no está: en ese caso alcanza con `fig`. Al publicar, se borra la línea |
 | `title` | sí | Concreto: qué es la cosa. Sin adjetivos de venta |
 | `summary` | sí | Máximo 160 caracteres. Es lo que muestra Google bajo el título |
 | `date` | sí | Fecha del proyecto, formato `AAAA-MM-DD` |
@@ -81,6 +84,7 @@ draft: false
 | `categories` | sí, al menos una | Solo los identificadores de la lista de abajo. Puede llevar varias |
 | `cover` | sí | Ruta a la imagen de portada, empezando con `./` |
 | `coverAlt` | sí | Describe la imagen para quien no la ve |
+| `schematic` | no | Ruta a un esquema propio del proyecto (despiece, diagrama), empezando con `./` |
 | `youtube` | no | Solo el identificador del video, no la URL entera |
 | `repo` | no | URL completa del repositorio |
 | `tags` | no | Materiales, herramientas, programas, técnicas |
@@ -136,7 +140,7 @@ Párrafo inicial de dos o tres oraciones: qué es, para qué sirve y cuál fue e
 ### Versión en inglés
 
 `en.md` lleva los mismos campos, con `title`, `summary`, `coverAlt`, `tags` y el cuerpo en inglés.
-Las categorías, la fecha, las rutas de imágenes, `youtube` y `repo` quedan idénticos.
+`fig`, las categorías, la fecha, las rutas de imágenes, `youtube` y `repo` quedan idénticos.
 Traduce el sentido, no palabra por palabra, y usa el vocabulario técnico habitual en inglés.
 
 ## 5. Imágenes
