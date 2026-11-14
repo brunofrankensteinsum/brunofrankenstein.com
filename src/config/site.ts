@@ -10,6 +10,8 @@ export const defaultLang: Lang = 'es';
 
 export const site = {
   name: 'Bruno Frankenstein',
+  // Marca corta que se ve en el header y el footer.
+  brand: 'B.FRANKENSTEIN',
   url: 'https://brunofrankenstein.com',
   tagline: {
     es: 'Ingeniero mecánico. Proyectos y experiencias.',

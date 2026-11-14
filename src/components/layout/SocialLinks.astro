@@ -1,0 +1,47 @@
+---
+// Links a redes. Las direcciones salen de src/config/site.ts.
+// Si una red todavía no tiene dirección, se muestra como [MARCADOR] para no olvidarla.
+import { site, type Lang } from '../../config/site';
+import { t } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const redes = Object.entries(site.social);
+---
+
+<ul class="social" aria-label={t(lang, 'footer.social')}>
+  {
+    redes.map(([nombre, url]) => (
+      <li>
+        {url ? (
+          <a href={url} rel="me noopener">
+            {nombre}
+          </a>
+        ) : (
+          <span class="marcador">[{nombre}]</span>
+        )}
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .social {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--s-7);
+    font-family: var(--f-mono);
+    text-transform: uppercase;
+  }
+  a,
+  span {
+    display: inline-flex;
+    align-items: center;
+  }
+  a { min-height: 44px; }
+  .marcador { font-size: inherit; letter-spacing: inherit; }
+</style>

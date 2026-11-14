@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>C · Sobre mí (escritorio)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid #7FD6FF;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1280px; min-height: 1500px; box-sizing: border-box; background-color: #0C2340; background-image: linear-gradient(rgba(160,205,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(160,205,255,0.08) 1px, transparent 1px); background-size: 24px 24px; color: #EAF3FC; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 18px; line-height: 1.6; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 40px; padding: 0 48px; min-height: 64px; background: #0C2340; border-bottom: 1px solid #4C7199; font-family: 'Fragment Mono', monospace; font-size: 13px; letter-spacing: 0.08em">
+<a href="C-Inicio-d.dc.html">B.FRANKENSTEIN</a>
+<nav aria-label="Principal" style="flex-grow: 1; display: flex; gap: 28px">
+<a href="C-Inicio-d.dc.html">INICIO</a>
+<a href="C-Proyectos-d.dc.html">PROYECTOS</a>
+<a href="C-Experiencias-d.dc.html">EXPERIENCIAS</a>
+<a href="C-SobreMi-d.dc.html" aria-current="page" style="color: {{accent}}">SOBRE MÍ</a>
+<a href="C-Contacto-d.dc.html">CONTACTO</a>
+</nav>
+<div style="display: flex; align-items: center">
+<a href="#" aria-current="true" style="display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 44px; color: {{accent}}">ES</a>
+<a href="#" lang="en" style="display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 44px; color: #A9C3DE">EN</a>
+</div>
+</header>
+
+<section style="padding: 72px 72px 64px; display: grid; grid-template-columns: 4fr 7fr; gap: 88px; align-items: start">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 18px">
+<img src="../assets/retrato.jpg" alt="Retrato de Bruno Frankenstein" style="width: 100%; aspect-ratio: 4 / 5; object-fit: cover; outline: 1px solid #4C7199; outline-offset: 10px">
+<figcaption style="display: flex; justify-content: space-between; padding-top: 6px; font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: #A9C3DE"><span>FIG. 00 · AUTOR</span><span style="color: {{accent}}">34°54′ S · 56°11′ O</span></figcaption>
+</figure>
+
+<div style="display: flex; flex-direction: column; gap: 22px">
+<div style="font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: {{accent}}">MEMORIA DESCRIPTIVA</div>
+<h1 style="margin: 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 44px; line-height: 1.1; letter-spacing: 0.04em; text-transform: uppercase">Sobre mí</h1>
+<p style="margin: 0; font-size: 22px; line-height: 1.45">Soy Bruno. Estudio Ingeniería Industrial Mecánica en Montevideo, investigo baterías en el Faraday Lab y corro con Fing Hydrogen Racing.</p>
+<p style="margin: 0; color: #A9C3DE">Aprendo mejor cuando hay un proyecto de por medio. Me interesa lo que pasa adentro de una batería cuando algo sale mal: cómo se calienta, cómo se propaga y cómo se evita.</p>
+<p style="margin: 0; color: #A9C3DE">[UN PÁRRAFO MÁS: qué te mueve fuera de la facultad, qué estás aprendiendo ahora.]</p>
+
+<div style="margin-top: 12px; padding: 18px 20px; border: 1px dashed {{accent}}; background: #0C2340; display: flex; flex-direction: column; gap: 6px">
+<span style="font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: {{accent}}">AHORA MISMO</span>
+<span>Preparando una estancia de investigación en el CMT de la Universitat Politècnica de València, sobre seguridad térmica de baterías.</span>
+</div>
+
+<div style="display: flex; gap: 12px; margin-top: 8px; font-family: 'Fragment Mono', monospace; font-size: 13px; letter-spacing: 0.06em">
+<a href="#" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; background: {{accent}}; color: #0C2340">DESCARGAR CV</a>
+<a href="C-Contacto-d.dc.html" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; border: 1px solid #4C7199; background: #0C2340">ESCRIBIRME</a>
+</div>
+</div>
+</section>
+
+<section style="padding: 0 72px 88px; display: flex; flex-direction: column; gap: 16px">
+<h2 style="margin: 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 13px; letter-spacing: 0.1em; color: #A9C3DE">LISTA DE MATERIALES</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid #4C7199; background: #0C2340">
+<div style="padding: 20px 22px; border-right: 1px dashed #4C7199; display: flex; flex-direction: column; gap: 10px">
+<div style="font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: {{accent}}">01 · INVESTIGO</div>
+<div style="font-size: 16px">Electroquímica de baterías · Modelado · Seguridad térmica</div>
+</div>
+<div style="padding: 20px 22px; border-right: 1px dashed #4C7199; display: flex; flex-direction: column; gap: 10px">
+<div style="font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: {{accent}}">02 · CONSTRUYO</div>
+<div style="font-size: 16px">Impresión 3D · Home Automation · Vibe Code</div>
+</div>
+<div style="padding: 20px 22px; display: flex; flex-direction: column; gap: 10px">
+<div style="font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: {{accent}}">03 · HERRAMIENTAS</div>
+<div style="font-size: 16px">Fusion 360 · ESPHome · [OTRAS]</div>
+</div>
+</div>
+</section>
+
+<footer style="margin-top: auto; background: #0C2340; border-top: 1px solid #4C7199; padding: 0 48px; min-height: 64px; display: flex; align-items: center; gap: 28px; font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.06em">
+<div style="flex-grow: 1; color: #A9C3DE">B.FRANKENSTEIN · 2026 · ESC 1:1</div>
+<a href="#">LINKEDIN</a>
+<a href="#">GITHUB</a>
+<a href="#">YOUTUBE</a>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#7FD6FF","options":["#FF7A1A","#FF5A4D","#7FD6FF"]},"$preview":{"width":1280,"height":1500}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#7FD6FF' };
+}
+}
+</script>
+</body>
+</html>

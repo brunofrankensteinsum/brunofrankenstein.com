@@ -1,5 +1,6 @@
 ---
-// Página de inicio. Versión mínima de la etapa 1; la completa la pista A.
+// Página de inicio. Versión provisoria sobre el layout nuevo: el inicio del diseño
+// (retrato, proyecto destacado, grilla de categorías) llega en el paso 3.
 import Base from '../../layouts/Base.astro';
 import ProjectList from '../ProjectList.astro';
 import { site, type Lang } from '../../config/site';
@@ -15,9 +16,37 @@ const { lang } = Astro.props;
 const projects = (await getProjects(lang)).slice(0, 5);
 ---
 
-<Base lang={lang} title={site.name} description={site.tagline[lang]} alternateUrl={pageUrl(otherLang(lang), 'home')}>
-  <h1>{site.name}</h1>
-  <p>{site.tagline[lang]}</p>
-  <h2>{t(lang, 'home.latest')}</h2>
-  <ProjectList lang={lang} projects={projects} />
+<Base lang={lang} title={site.name} description={site.tagline[lang]} section="home" alternateUrl={pageUrl(otherLang(lang), 'home')}>
+  <div class="container inicio">
+    <h1 class="titulo-pagina">{site.name}</h1>
+    <p class="inicio__bajada">{site.tagline[lang]}</p>
+  </div>
+  <section class="container ultimos">
+    <h2 class="rotulo">{t(lang, 'home.latest')}</h2>
+    <ProjectList lang={lang} projects={projects} />
+  </section>
 </Base>
+
+<style>
+  .inicio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-5);
+    padding-block: var(--s-12);
+  }
+  .inicio__bajada {
+    max-width: 560px;
+    font-size: var(--fs-lead);
+    line-height: 1.45;
+  }
+  .ultimos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    padding-bottom: var(--s-18);
+  }
+  .ultimos h2 { letter-spacing: 0.1em; }
+  @media (min-width: 640px) {
+    .inicio { padding-block: var(--s-18); }
+  }
+</style>

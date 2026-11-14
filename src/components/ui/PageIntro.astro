@@ -1,0 +1,56 @@
+---
+// Encabezado de página: rótulo chico, título en mono y una línea de presentación.
+// El hueco "aside" es para lo que va a la derecha (contadores, botones).
+interface Props {
+  label: string;
+  title: string;
+  intro?: string;
+}
+
+const { label, title, intro } = Astro.props;
+---
+
+<section class="container intro">
+  <div class="intro__texto">
+    <p class="rotulo rotulo--acento intro__rotulo">{label}</p>
+    <h1 class="titulo-pagina">{title}</h1>
+    {intro && <p class="intro__bajada">{intro}</p>}
+  </div>
+  {
+    Astro.slots.has('aside') && (
+      <div class="intro__aside">
+        <slot name="aside" />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .intro {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-6);
+    padding-top: var(--s-10);
+    padding-bottom: var(--s-8);
+    border-bottom: 1px dashed var(--c-line);
+  }
+  .intro__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .intro__rotulo { letter-spacing: 0.1em; }
+  .intro__bajada {
+    max-width: 640px;
+    color: var(--c-ink-muted);
+  }
+  @media (min-width: 640px) {
+    .intro {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: var(--s-10);
+      padding-top: var(--s-16);
+      padding-bottom: var(--s-10);
+    }
+  }
+</style>

@@ -1,0 +1,276 @@
+---
+// Header del sitio: marca, navegación, selector de idioma y, en pantallas chicas,
+// el botón que abre el menú a pantalla completa.
+import Icon from '../ui/Icon.astro';
+import LangSwitch from './LangSwitch.astro';
+import SocialLinks from './SocialLinks.astro';
+import { site, type Lang } from '../../config/site';
+import { pageUrl, type PageKey } from '../../config/routes';
+import { t } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  // Sección actual, para marcarla en la navegación.
+  section?: PageKey;
+  alternateUrl?: string;
+}
+
+const { lang, section, alternateUrl } = Astro.props;
+
+// Las cinco secciones, en el orden del menú.
+const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
+---
+
+<header class="header" data-header>
+  <div class="header__inner">
+    <a class="header__brand" href={pageUrl(lang, 'home')}>{site.brand}</a>
+
+    <nav class="header__nav" aria-label={t(lang, 'nav.label')}>
+      {
+        items.map((item) => (
+          <a href={pageUrl(lang, item)} aria-current={item === section ? 'page' : undefined}>
+            {t(lang, `nav.${item}`)}
+          </a>
+        ))
+      }
+    </nav>
+
+    <LangSwitch lang={lang} alternateUrl={alternateUrl} />
+
+    <button
+      class="header__menu-btn"
+      type="button"
+      aria-label={t(lang, 'menu.open')}
+      aria-expanded="false"
+      aria-controls="menu"
+      data-menu-open
+    >
+      <Icon name="ui-menu" />
+    </button>
+  </div>
+</header>
+
+<!-- Menú de pantallas chicas. <dialog> ya trae de fábrica: cerrar con Esc,
+     no dejar salir el foco del panel y devolver el foco al botón al cerrar. -->
+<dialog class="menu" id="menu" aria-label={t(lang, 'menu.label')}>
+  <div class="menu__bar">
+    <a class="header__brand" href={pageUrl(lang, 'home')}>{site.brand}</a>
+    <button class="header__menu-btn menu__close" type="button" aria-label={t(lang, 'menu.close')} data-menu-close autofocus>
+      <Icon name="ui-cerrar" />
+    </button>
+  </div>
+
+  <nav class="menu__nav" aria-label={t(lang, 'nav.label')}>
+    <ol class="menu__list">
+      {
+        items.map((item, i) => (
+          <li>
+            <a href={pageUrl(lang, item)} aria-current={item === section ? 'page' : undefined}>
+              <span class="menu__num">{String(i + 1).padStart(2, '0')}</span>
+              {t(lang, `nav.${item}`)}
+            </a>
+          </li>
+        ))
+      }
+    </ol>
+  </nav>
+
+  <div class="menu__foot">
+    <LangSwitch lang={lang} alternateUrl={alternateUrl} />
+    <SocialLinks lang={lang} />
+  </div>
+</dialog>
+
+<script>
+  // 1) Header compacto: al bajar más de 80 px pasa de 64 a 52 px de alto.
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  if (header) {
+    const actualizar = () => header.toggleAttribute('data-compact', window.scrollY > 80);
+    window.addEventListener('scroll', actualizar, { passive: true });
+    actualizar();
+  }
+
+  // 2) Menú de pantallas chicas.
+  const menu = document.querySelector<HTMLDialogElement>('#menu');
+  const abrir = document.querySelector<HTMLButtonElement>('[data-menu-open]');
+  const cerrar = document.querySelector<HTMLButtonElement>('[data-menu-close]');
+  if (menu && abrir && cerrar) {
+    abrir.addEventListener('click', () => {
+      menu.showModal();
+      abrir.setAttribute('aria-expanded', 'true');
+    });
+    cerrar.addEventListener('click', () => menu.close());
+    // "close" se dispara al cerrar con el botón y también con la tecla Esc.
+    menu.addEventListener('close', () => abrir.setAttribute('aria-expanded', 'false'));
+    // Si la ventana se agranda hasta el tamaño de escritorio, el menú se cierra solo.
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
+      if (e.matches && menu.open) menu.close();
+    });
+  }
+</script>
+
+<style>
+  /* ---------- Barra ---------- */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--c-paper);
+    border-bottom: 1px solid var(--c-line);
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+  }
+  .header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--s-4);
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding-inline: var(--bar-pad);
+    min-height: 48px;
+    transition: min-height var(--t-hover) var(--ease-out);
+  }
+  .header__brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-right: auto;
+  }
+
+  /* ---------- Navegación ---------- */
+  /* Sin JavaScript, en pantallas chicas la navegación queda a la vista en una
+     segunda fila. Con JavaScript (clase .js en <html>) se reemplaza por el botón de menú. */
+  .header__nav {
+    order: 3;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: var(--s-5);
+    width: 100%;
+    border-top: 1px dashed var(--c-line);
+  }
+  .header__nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .header__nav a[aria-current='page'],
+  .menu__list a[aria-current='page'] {
+    color: var(--c-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 6px;
+  }
+
+  .header__menu-btn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px; /* alinea el ícono con el margen de la página */
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  :global(.js) .header__nav { display: none; }
+  :global(.js) .header__menu-btn { display: inline-flex; }
+
+  @media (min-width: 640px) {
+    .header__inner { min-height: 64px; }
+    .header[data-compact] .header__inner { min-height: 52px; }
+  }
+
+  /* Escritorio: todo en una fila, sin botón de menú. */
+  @media (min-width: 1024px) {
+    .header__inner {
+      flex-wrap: nowrap;
+      column-gap: var(--s-10);
+    }
+    .header__brand { margin-right: 0; }
+    .header__nav,
+    :global(.js) .header__nav {
+      order: 0;
+      display: flex;
+      flex-wrap: nowrap;
+      flex-grow: 1;
+      column-gap: var(--s-7);
+      width: auto;
+      border-top: none;
+    }
+    :global(.js) .header__menu-btn { display: none; }
+  }
+
+  /* ---------- Menú a pantalla completa ---------- */
+  .menu {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: var(--c-ink);
+    font-family: var(--f-mono);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    background-color: var(--c-paper);
+    background-image:
+      linear-gradient(var(--c-grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--c-grid) 1px, transparent 1px);
+    background-size: var(--grid-size) var(--grid-size);
+  }
+  .menu[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .menu__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 48px;
+    padding-inline: var(--bar-pad);
+    background: var(--c-paper);
+    border-bottom: 1px solid var(--c-line);
+    font-size: 13px;
+  }
+  .menu__close { display: inline-flex; }
+  .menu__nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--s-8) var(--bar-pad);
+  }
+  .menu__list a {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-4);
+    min-height: 60px;
+    padding-block: var(--s-3);
+    border-bottom: 1px dashed var(--c-line);
+    font-size: 24px;
+    letter-spacing: 0.04em;
+  }
+  .menu__num {
+    font-size: var(--fs-label);
+    letter-spacing: var(--ls-label);
+    color: var(--c-ink-muted);
+  }
+  .menu__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-2) var(--s-6);
+    min-height: 64px;
+    padding: var(--s-2) var(--bar-pad);
+    background: var(--c-paper);
+    border-top: 1px solid var(--c-line);
+    font-size: 13px;
+  }
+  @media (min-width: 640px) {
+    .menu__bar { min-height: 64px; }
+  }
+</style>

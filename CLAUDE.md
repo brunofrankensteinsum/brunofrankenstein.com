@@ -19,7 +19,14 @@ El plan completo, las decisiones tomadas y el contrato de contenido están en `P
 - `src/pages/es/` y `src/pages/en/`: un archivo por URL. Son envoltorios de pocas líneas.
 - `src/components/pages/`: el contenido real de cada página, compartido por ambos idiomas.
 - `src/components/seo/`: cabecera SEO (pista C).
+- `src/components/layout/`: header, footer, selector de idioma y menú de celular.
+- `src/components/ui/`: piezas chicas reutilizables (`Icon`, `Placeholder`, `PageIntro`).
+- `src/styles/tokens.css`: colores, tipografía, espaciado y movimiento. `src/styles/base.css`: estilos comunes.
+- `src/icons/`: íconos SVG. Se usan con `<Icon name="ui-flecha" />`.
+- `public/fonts/`: fuentes autoalojadas (Instrument Sans y Fragment Mono, licencia OFL).
 - `src/i18n/ui.ts`: textos de interfaz.
+- `design/`: entrega del diseño C1 «Cianotipo». `design/HANDOFF.md` es la especificación de interfaz e
+  interacciones; manda en lo visual. En contenido, URLs y edición manda `PLAN.md`.
 - `docs/instructivo-publicar-proyecto.md`: cómo convertir la información de un proyecto en una publicación. Seguirlo cuando Bruno pida publicar un proyecto.
 - `docs/prompt-claude-design.md`: prompt para generar el diseño visual en Claude Design.
 

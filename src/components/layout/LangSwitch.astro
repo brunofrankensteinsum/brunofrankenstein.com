@@ -1,0 +1,48 @@
+---
+// Selector de idioma: ES / EN. Son links reales a la misma página en el otro idioma.
+import { languages, type Lang } from '../../config/site';
+import { pageUrl } from '../../config/routes';
+import { t } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  // URL de esta misma página en el otro idioma. Si no existe, va al inicio de ese idioma.
+  alternateUrl?: string;
+}
+
+const { lang, alternateUrl } = Astro.props;
+---
+
+<div class="lang" role="group" aria-label={t(lang, 'lang.label')}>
+  {
+    languages.map((l) =>
+      l === lang ? (
+        <a href={Astro.url.pathname} aria-current="true">
+          {l}
+        </a>
+      ) : (
+        <a href={alternateUrl ?? pageUrl(l, 'home')} lang={l} hreflang={l}>
+          {l}
+        </a>
+      ),
+    )
+  }
+</div>
+
+<style>
+  .lang {
+    display: flex;
+    align-items: center;
+    font-family: var(--f-mono);
+    text-transform: uppercase;
+  }
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 44px;
+    color: var(--c-ink-muted);
+  }
+  a[aria-current] { color: var(--c-accent); }
+</style>

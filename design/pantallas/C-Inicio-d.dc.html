@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>C · Inicio (escritorio)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid #7FD6FF;outline-offset:2px}
+@keyframes aparecer{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</helmet>
+<div style="width: 1280px; min-height: 1700px; box-sizing: border-box; background-color: #0C2340; background-image: linear-gradient(rgba(160,205,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(160,205,255,0.08) 1px, transparent 1px); background-size: 24px 24px; color: #EAF3FC; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 17px; line-height: 1.55; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 40px; padding: 0 48px; min-height: 64px; background: #0C2340; border-bottom: 1px solid #4C7199; font-family: 'Fragment Mono', monospace; font-size: 13px; letter-spacing: 0.08em">
+<a href="C-Inicio-d.dc.html">B.FRANKENSTEIN</a>
+<nav aria-label="Principal" style="flex-grow: 1; display: flex; gap: 28px">
+<a href="C-Inicio-d.dc.html" aria-current="page" style="color: {{accent}}">INICIO</a>
+<a href="C-Proyectos-d.dc.html">PROYECTOS</a>
+<a href="C-Experiencias-d.dc.html">EXPERIENCIAS</a>
+<a href="C-SobreMi-d.dc.html">SOBRE MÍ</a>
+<a href="C-Contacto-d.dc.html">CONTACTO</a>
+</nav>
+<div style="display: flex; align-items: center">
+<a href="#" aria-current="true" style="display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 44px; color: {{accent}}">ES</a>
+<a href="#" lang="en" style="display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 44px; color: #A9C3DE">EN</a>
+</div>
+</header>
+
+<section style="padding: 72px 72px 80px; display: grid; grid-template-columns: 5fr 7fr; gap: 72px; align-items: center; animation: aparecer 0.5s ease-out both">
+<div style="display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; align-items: flex-end; gap: 20px">
+<img src="../assets/retrato.jpg" alt="Retrato de Bruno Frankenstein" style="width: 120px; height: 120px; object-fit: cover; outline: 1px solid #4C7199; outline-offset: 6px">
+<div style="font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: #A9C3DE; line-height: 1.7"><div>AUTOR</div><div>MONTEVIDEO, UY</div><div style="color: {{accent}}">34°54′ S · 56°11′ O</div></div>
+</div>
+<h1 style="margin: 8px 0 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 44px; line-height: 1.15; letter-spacing: 0.04em; text-transform: uppercase">Bruno Frankenstein</h1>
+<p style="margin: 0; font-size: 20px; line-height: 1.45">Estudio Ingeniería Industrial Mecánica en Uruguay. Investigo en el Faraday Lab y corro con Fing Hydrogen Racing, el equipo de Formula SAE.</p>
+<p style="margin: 0; color: #A9C3DE">Aprendo mejor cuando hay un proyecto de por medio. Acá queda el registro: qué hicimos, cómo lo resolvimos y qué aprendí.</p>
+<div style="display: flex; gap: 12px; font-family: 'Fragment Mono', monospace; font-size: 13px; letter-spacing: 0.06em">
+<a href="C-Proyectos-d.dc.html" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; background: {{accent}}; color: #0C2340">VER PROYECTOS</a>
+<a href="C-SobreMi-d.dc.html" style="display: inline-flex; align-items: center; min-height: 48px; padding: 0 20px; border: 1px solid #4C7199; background: #0C2340">SOBRE MÍ</a>
+</div>
+</div>
+
+<article style="display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; justify-content: space-between; font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.08em; color: {{accent}}"><span>FIG. 03 · DESTACADO</span><span>2026-08</span></div>
+<a href="C-Proyecto-d.dc.html" style="display: block">
+<div role="img" aria-label="Marcador: foto de portada del proyecto" style="aspect-ratio: 16 / 9; outline: 1px solid #4C7199; outline-offset: 8px; background: repeating-linear-gradient(45deg, #0F2A4C 0 10px, #17385F 10px 11px); display: flex; align-items: center; justify-content: center; font-family: 'Fragment Mono', monospace; font-size: 13px; color: #A9C3DE">FOTO DE PORTADA · 16:9</div>
+</a>
+<div style="display: grid; grid-template-columns: 3fr 2fr; gap: 28px; padding-top: 8px; align-items: start">
+<h2 style="margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600"><a href="C-Proyecto-d.dc.html">Soporte impreso para sensor de temperatura</a></h2>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<p style="margin: 0; font-size: 16px">Un soporte en PETG que aísla el sensor del calor de la pared y se imprime sin soportes.</p>
+<div style="display: flex; gap: 8px; flex-wrap: wrap; font-family: 'Fragment Mono', monospace; font-size: 12px">
+<a href="#" style="display: inline-flex; align-items: center; min-height: 30px; padding: 0 10px; border: 1px solid #4C7199; background: #0C2340">Impresión 3D</a>
+<a href="#" style="display: inline-flex; align-items: center; min-height: 30px; padding: 0 10px; border: 1px solid #4C7199; background: #0C2340">Home Automation</a>
+</div>
+</div>
+</div>
+</article>
+</section>
+
+<section style="padding: 0 72px 72px; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 13px; letter-spacing: 0.1em; color: #A9C3DE">CATEGORÍAS</h2>
+<nav aria-label="Categorías" style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border: 1px solid #4C7199; background: #0C2340">
+<a href="#" style="display: flex; flex-direction: column; gap: 22px; padding: 16px; border-right: 1px dashed #4C7199"><span style="display: flex; justify-content: space-between; font-family: 'Fragment Mono', monospace; font-size: 12px; color: #A9C3DE"><span>01</span><span style="color: {{accent}}">×2</span></span><span style="font-weight: 500">Impresión 3D</span></a>
+<a href="#" style="display: flex; flex-direction: column; gap: 22px; padding: 16px; border-right: 1px dashed #4C7199"><span style="display: flex; justify-content: space-between; font-family: 'Fragment Mono', monospace; font-size: 12px; color: #A9C3DE"><span>02</span><span style="color: {{accent}}">×2</span></span><span style="font-weight: 500">Home Automation</span></a>
+<a href="#" style="display: flex; flex-direction: column; gap: 22px; padding: 16px; border-right: 1px dashed #4C7199"><span style="display: flex; justify-content: space-between; font-family: 'Fragment Mono', monospace; font-size: 12px; color: #A9C3DE"><span>03</span><span style="color: {{accent}}">×1</span></span><span style="font-weight: 500">Ingeniería Mecánica</span></a>
+<a href="#" style="display: flex; flex-direction: column; gap: 22px; padding: 16px; border-right: 1px dashed #4C7199"><span style="display: flex; justify-content: space-between; font-family: 'Fragment Mono', monospace; font-size: 12px; color: #A9C3DE"><span>04</span><span style="color: {{accent}}">×1</span></span><span style="font-weight: 500">Baterías</span></a>
+<a href="#" style="display: flex; flex-direction: column; gap: 22px; padding: 16px; border-right: 1px dashed #4C7199"><span style="display: flex; justify-content: space-between; font-family: 'Fragment Mono', monospace; font-size: 12px; color: #A9C3DE"><span>05</span><span style="color: {{accent}}">×1</span></span><span style="font-weight: 500">Vibe Code</span></a>
+<a href="#" style="display: flex; flex-direction: column; gap: 22px; padding: 16px; color: #A9C3DE"><span style="display: flex; justify-content: space-between; font-family: 'Fragment Mono', monospace; font-size: 12px"><span>06</span><span>×0</span></span><span style="font-weight: 500">Otros</span></a>
+</nav>
+</section>
+
+<section style="padding: 0 72px 80px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 13px; letter-spacing: 0.1em; color: #A9C3DE">MÁS PROYECTOS</h2>
+<a href="C-Proyectos-d.dc.html" style="font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: {{accent}}">VER TODOS →</a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 56px">
+<article style="display: flex; flex-direction: column; gap: 16px">
+<a href="#" style="display: block"><div role="img" aria-label="Marcador: foto de portada" style="aspect-ratio: 16 / 9; outline: 1px solid #4C7199; outline-offset: 6px; background: repeating-linear-gradient(45deg, #0F2A4C 0 10px, #17385F 10px 11px); display: flex; align-items: center; justify-content: center; font-family: 'Fragment Mono', monospace; font-size: 12px; color: #A9C3DE">FOTO DE PORTADA</div></a>
+<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 4px">
+<div style="display: flex; justify-content: space-between; font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: {{accent}}"><span>FIG. 02</span><span>2026-05</span></div>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.25; font-weight: 600"><a href="#">Banco de pruebas para celdas 18650</a></h3>
+<p style="margin: 0; font-size: 15px">Un banco para cargar y descargar celdas y medir su capacidad real.</p>
+<div style="font-size: 14px; color: #A9C3DE">Baterías · Ingeniería Mecánica</div>
+</div>
+</article>
+<article style="display: flex; flex-direction: column; gap: 16px">
+<a href="#" style="display: block"><div role="img" aria-label="Marcador: foto de portada" style="aspect-ratio: 16 / 9; outline: 1px solid #4C7199; outline-offset: 6px; background: repeating-linear-gradient(45deg, #0F2A4C 0 10px, #17385F 10px 11px); display: flex; align-items: center; justify-content: center; font-family: 'Fragment Mono', monospace; font-size: 12px; color: #A9C3DE">FOTO DE PORTADA</div></a>
+<div style="display: flex; flex-direction: column; gap: 6px; padding-top: 4px">
+<div style="display: flex; justify-content: space-between; font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: {{accent}}"><span>FIG. 01</span><span>2026-02</span></div>
+<h3 style="margin: 0; font-size: 21px; line-height: 1.25; font-weight: 600"><a href="#">Panel de consumo eléctrico de casa</a></h3>
+<p style="margin: 0; font-size: 15px">Un panel que muestra cuánto consume cada circuito de la casa, en vivo.</p>
+<div style="font-size: 14px; color: #A9C3DE">Home Automation · Vibe Code</div>
+</div>
+</article>
+<div style="aspect-ratio: 16 / 9; outline: 1px dashed #4C7199; outline-offset: 6px; display: flex; align-items: center; justify-content: center; font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: #A9C3DE">FIG. 04 · EN PREPARACIÓN</div>
+</div>
+</section>
+
+<footer style="margin-top: auto; background: #0C2340; border-top: 1px solid #4C7199; padding: 0 48px; min-height: 64px; display: flex; align-items: center; gap: 28px; font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.06em">
+<div style="flex-grow: 1; color: #A9C3DE">B.FRANKENSTEIN · 2026 · ESC 1:1</div>
+<a href="#">LINKEDIN</a>
+<a href="#">GITHUB</a>
+<a href="#">YOUTUBE</a>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#7FD6FF","options":["#FF7A1A","#FF5A4D","#7FD6FF"]},"$preview":{"width":1280,"height":1700}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#7FD6FF' };
+}
+}
+</script>
+</body>
+</html>

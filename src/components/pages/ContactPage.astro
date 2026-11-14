@@ -1,0 +1,29 @@
+---
+// Contacto. Por ahora es una ruta vacía: el formulario llega en el paso 3
+// y el envío del correo es la pista D de PLAN.md.
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../ui/PageIntro.astro';
+import Placeholder from '../ui/Placeholder.astro';
+import type { Lang } from '../../config/site';
+import { pageUrl, otherLang } from '../../config/routes';
+import { t } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const title = t(lang, 'contact.title');
+const intro = t(lang, 'contact.intro');
+---
+
+<Base lang={lang} title={title} description={intro} section="contact" alternateUrl={pageUrl(otherLang(lang), 'contact')}>
+  <PageIntro label={t(lang, 'contact.label')} title={title} intro={intro} />
+  <div class="container cuerpo">
+    <Placeholder variant="punteado" ratio="21 / 9" label={t(lang, 'wip')} />
+  </div>
+</Base>
+
+<style>
+  .cuerpo { padding-block: var(--s-12) var(--s-18); }
+</style>

@@ -1,6 +1,8 @@
 ---
-// Listado de todos los proyectos. Versión mínima de la etapa 1; la completa la pista A.
+// Listado de todos los proyectos. Versión provisoria sobre el layout nuevo:
+// las tarjetas llegan en el paso 3 y los filtros en el paso 5.
 import Base from '../../layouts/Base.astro';
+import PageIntro from '../ui/PageIntro.astro';
 import ProjectList from '../ProjectList.astro';
 import type { Lang } from '../../config/site';
 import { pageUrl, otherLang } from '../../config/routes';
@@ -14,9 +16,16 @@ interface Props {
 const { lang } = Astro.props;
 const projects = await getProjects(lang);
 const title = t(lang, 'projects.title');
+const intro = t(lang, 'projects.intro');
 ---
 
-<Base lang={lang} title={title} description={title} alternateUrl={pageUrl(otherLang(lang), 'projects')}>
-  <h1>{title}</h1>
-  <ProjectList lang={lang} projects={projects} />
+<Base lang={lang} title={title} description={intro} section="projects" alternateUrl={pageUrl(otherLang(lang), 'projects')}>
+  <PageIntro label={t(lang, 'projects.label')} title={title} intro={intro} />
+  <div class="container cuerpo">
+    <ProjectList lang={lang} projects={projects} />
+  </div>
 </Base>
+
+<style>
+  .cuerpo { padding-block: var(--s-10) var(--s-18); }
+</style>

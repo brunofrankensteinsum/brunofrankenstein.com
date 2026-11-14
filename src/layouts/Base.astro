@@ -1,20 +1,25 @@
 ---
-// Layout base: la estructura común a todas las páginas (cabecera, menú, pie).
+// Layout base: la estructura común a todas las páginas (header, contenido, footer).
+import '../styles/tokens.css';
+import '../styles/base.css';
 import Head from '../components/seo/Head.astro';
-import { site, type Lang } from '../config/site';
-import { pageUrl, otherLang } from '../config/routes';
+import Header from '../components/layout/Header.astro';
+import Footer from '../components/layout/Footer.astro';
+import type { Lang } from '../config/site';
+import type { PageKey } from '../config/routes';
 import { t } from '../i18n/ui';
 
 interface Props {
   lang: Lang;
   title: string;
   description: string;
+  // Sección a la que pertenece la página, para marcarla en la navegación.
+  section?: PageKey;
   // URL de esta misma página en el otro idioma. Si no existe, se enlaza al inicio.
   alternateUrl?: string;
 }
 
-const { lang, title, description, alternateUrl } = Astro.props;
-const other = otherLang(lang);
+const { lang, title, description, section, alternateUrl } = Astro.props;
 ---
 
 <!doctype html>
@@ -22,64 +27,26 @@ const other = otherLang(lang);
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0C2340" />
     <Head title={title} description={description} />
+    <!-- Baja antes que nada la fuente del texto, para que no «salte» al cargar. -->
+    <link rel="preload" href="/fonts/InstrumentSans-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Marca que hay JavaScript: el CSS lo usa para cambiar la navegación por el botón de menú. -->
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
   </head>
   <body>
-    <header>
-      <a class="brand" href={pageUrl(lang, 'home')}>{site.name}</a>
-      <nav aria-label={lang === 'es' ? 'Principal' : 'Main'}>
-        <a href={pageUrl(lang, 'projects')}>{t(lang, 'nav.projects')}</a>
-        <a href={alternateUrl ?? pageUrl(other, 'home')} lang={other} hreflang={other}>{t(lang, 'lang.switch')}</a>
-      </nav>
-    </header>
-    <main>
+    <a class="skip-link" href="#contenido">{t(lang, 'skip')}</a>
+    <Header lang={lang} section={section} alternateUrl={alternateUrl} />
+    <main id="contenido" tabindex="-1">
       <slot />
     </main>
-    <footer>
-      <p>© {new Date().getFullYear()} {site.name}</p>
-    </footer>
+    <Footer lang={lang} />
   </body>
 </html>
 
-<style is:global>
-  /* Estilo mínimo de la v1. El diseño visual definitivo es la etapa 5. */
-  :root {
-    color-scheme: light dark;
-    --text: light-dark(#1a1a1a, #ececec);
-    --muted: light-dark(#5a5a5a, #a8a8a8);
-    --bg: light-dark(#ffffff, #151515);
-    --line: light-dark(#dddddd, #333333);
-    --link: light-dark(#0b57d0, #8ab4f8);
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0 auto;
-    max-width: 46rem;
-    padding: 0 1rem;
-    font-family: system-ui, sans-serif;
-    line-height: 1.6;
-    color: var(--text);
-    background: var(--bg);
-  }
-  a { color: var(--link); }
-  img { max-width: 100%; height: auto; border-radius: 6px; }
-  header {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem 1rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--line);
-  }
-  header nav { display: flex; gap: 1rem; }
-  .brand { font-weight: 700; text-decoration: none; color: inherit; }
-  footer { margin-top: 3rem; padding: 1rem 0; border-top: 1px solid var(--line); color: var(--muted); }
-  .muted { color: var(--muted); }
-  .project-list { list-style: none; padding: 0; }
-  .project-list li { padding: 1rem 0; border-bottom: 1px solid var(--line); }
-  .project-list h2, .project-list h3 { margin: 0; font-size: 1.15rem; }
-  .project-list p { margin: 0.25rem 0 0; }
-  .video { position: relative; aspect-ratio: 16 / 9; }
-  .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 6px; }
+<style>
+  /* El contenido recibe el foco al usar «Saltar al contenido», pero sin dibujar un marco. */
+  main:focus { outline: none; }
 </style>
