@@ -1,0 +1,149 @@
+/* ==========================================================================
+   Interacciones y movimiento compartidos por todas las páginas.
+   Regla del diseño: preciso y mecánico, como un plotter. Sin rebotes.
+   Con «menos movimiento» activado en el sistema, las duraciones valen cero (ver tokens.css).
+   ========================================================================== */
+
+/* ---------- Entrada al cargar la página (solo la primera vez por sesión) ----------
+   El script del final de Base.astro pone estas clases. Sin JavaScript no se aplican
+   y todo se ve desde el principio. */
+@keyframes entrar {
+  from { opacity: 0; transform: translateY(8px); }
+}
+/* Bloques visibles al abrir: entran de a uno, después de que se dibujan los marcos. */
+.entra {
+  animation: entrar var(--t-enter) var(--ease-out) backwards;
+  animation-delay: calc(var(--t-draw) * 0.4 + var(--i, 0) * var(--stagger));
+}
+/* Bloques que están más abajo: aparecen cuando entran en pantalla, una sola vez. */
+.reveal {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--t-enter) var(--ease-out),
+    transform var(--t-enter) var(--ease-out);
+}
+.reveal.reveal--in {
+  opacity: 1;
+  transform: none;
+}
+/* Marco que se está dibujando: se esconde la línea real mientras se traza la de arriba. */
+.trazo {
+  outline-color: transparent !important;
+  border-color: transparent !important;
+}
+.trazo-svg {
+  position: absolute;
+  z-index: 1;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* ---------- Término de glosario: palabra con subrayado punteado que abre una nota ---------- */
+.glosa {
+  padding: 0;
+  background: none;
+  border: none;
+  border-bottom: 1px dotted var(--c-accent);
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: help;
+}
+
+/* ---------- Nota de plano (tooltip) ----------
+   Caja recta con borde de acento, unida a la palabra por una línea guía con un punto. */
+.nota {
+  position: absolute;
+  z-index: 60;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: 240px;
+  padding: 10px 12px;
+  background: var(--c-paper);
+  border: 1px solid var(--c-accent);
+  color: var(--c-ink);
+  font: 14px / 1.45 var(--f-sans);
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 150ms var(--ease-out),
+    transform 150ms var(--ease-out);
+}
+.nota[hidden] { display: none; }
+.nota--abajo { transform: translateY(-4px); }
+.nota--visible {
+  opacity: 1;
+  transform: none;
+}
+.nota__rotulo {
+  display: block;
+  margin-bottom: 2px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: var(--ls-label);
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+/* Línea guía: va de la caja a la palabra. --guia-x la ubica sobre el centro de la palabra. */
+.nota__guia {
+  position: absolute;
+  left: var(--guia-x, 50%);
+  top: 100%;
+  width: 1px;
+  height: 14px;
+  background: var(--c-accent);
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform 150ms var(--ease-draw);
+}
+.nota__guia::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  bottom: -2px;
+  width: 5px;
+  height: 5px;
+  background: var(--c-accent);
+}
+.nota--abajo .nota__guia {
+  top: auto;
+  bottom: 100%;
+  transform-origin: bottom;
+}
+.nota--abajo .nota__guia::after {
+  bottom: auto;
+  top: -2px;
+}
+.nota--visible .nota__guia { transform: none; }
+/* «Puente» invisible entre la palabra y la caja, para poder entrar con el mouse sin que se cierre. */
+.nota::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: 18px;
+}
+.nota--abajo::before {
+  top: auto;
+  bottom: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nota,
+  .nota__guia { transition: none; }
+}
+
+/* ---------- Avisos para lectores de pantalla («Copiado», «Enviado») ---------- */
+.aviso-vivo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -8,6 +8,7 @@ import { profile } from '../../config/profile';
 import { pageUrl, otherLang } from '../../config/routes';
 import { t, formatPeriod } from '../../i18n/ui';
 import { getExperiences } from '../../lib/content';
+import { definicion } from '../../config/glossary.mjs';
 
 interface Props {
   lang: Lang;
@@ -38,7 +39,7 @@ const experiences = await getExperiences(lang);
   <ol class="container crono">
     {
       experiences.map((e, i) => (
-        <li class:list={['crono__fila', i === 0 && 'crono__fila--reciente']}>
+        <li class:list={['crono__fila', i === 0 && 'crono__fila--reciente']} data-reveal>
           <p class="crono__anio">{formatPeriod(lang, e.data.start, e.data.end)}</p>
           <span class="crono__nodo" aria-hidden="true" />
           <div class="crono__texto">
@@ -55,9 +56,21 @@ const experiences = await getExperiences(lang);
           </div>
           {e.data.tags.length > 0 && (
             <ul class="tags crono__tags">
-              {e.data.tags.map((tag) => (
-                <li class="tag">{tag}</li>
-              ))}
+              {e.data.tags.map((tag) => {
+                // Si la etiqueta está en el glosario, abre su definición.
+                const def = definicion(lang, tag);
+                return (
+                  <li class="tag">
+                    {def ? (
+                      <button type="button" class="glosa" data-nota={def} data-nota-rotulo="Def.">
+                        {tag}
+                      </button>
+                    ) : (
+                      tag
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </li>

@@ -16,29 +16,32 @@ interface Props {
 
 const { href, variant = 'primary', accent = false, icon, disabled = false, block = false, ...rest } = Astro.props;
 const clases = ['btn', `btn--${variant}`, accent && 'btn--acento', block && 'btn--bloque', disabled && 'btn--off'];
+// El ícono de descarga «baja» en hover; los demás (flechas) avanzan a la derecha.
+const claseIcono = icon === 'ui-descargar' ? 'btn__ico btn__ico--baja' : 'btn__ico';
 ---
 
 {
   disabled ? (
     <span class:list={clases} aria-disabled="true" {...rest}>
       <slot />
-      {icon && <Icon name={icon} size={18} />}
+      {icon && <Icon name={icon} size={18} class={claseIcono} />}
     </span>
   ) : href ? (
     <a class:list={clases} href={href} {...rest}>
       <slot />
-      {icon && <Icon name={icon} size={18} />}
+      {icon && <Icon name={icon} size={18} class={claseIcono} />}
     </a>
   ) : (
     <button class:list={clases} type="button" {...rest}>
       <slot />
-      {icon && <Icon name={icon} size={18} />}
+      {icon && <Icon name={icon} size={18} class={claseIcono} />}
     </button>
   )
 }
 
 <style>
   .btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -52,6 +55,10 @@ const clases = ['btn', `btn--${variant}`, accent && 'btn--acento', block && 'btn
     text-transform: uppercase;
     text-decoration: none;
     cursor: pointer;
+    transition:
+      filter var(--t-micro) linear,
+      border-color var(--t-micro) linear,
+      transform var(--t-micro) linear;
   }
   @media (min-width: 640px) {
     .btn { min-height: 48px; }
@@ -74,30 +81,65 @@ const clases = ['btn', `btn--${variant}`, accent && 'btn--acento', block && 'btn
     justify-content: space-between;
     width: 100%;
   }
-  /* Con el mouse encima o con foco. (La flecha que se mueve y las esquinas de mira son del paso 4.) */
+  .btn :global(.btn__ico) { transition: transform var(--t-hover) var(--ease-out); }
+
+  /* Secundario: cuatro esquinas «de mira» 4 px por fuera del botón.
+     Cada esquina son dos rayitas de 7 px dibujadas como fondos de un ::after. */
+  .btn--secondary::after {
+    content: '';
+    position: absolute;
+    inset: -5px;
+    pointer-events: none;
+    --raya: linear-gradient(var(--c-accent), var(--c-accent)) no-repeat;
+    background:
+      var(--raya) left top / 7px 1px,
+      var(--raya) left top / 1px 7px,
+      var(--raya) right top / 7px 1px,
+      var(--raya) right top / 1px 7px,
+      var(--raya) left bottom / 7px 1px,
+      var(--raya) left bottom / 1px 7px,
+      var(--raya) right bottom / 7px 1px,
+      var(--raya) right bottom / 1px 7px;
+    opacity: 0;
+    transition: opacity 120ms linear;
+  }
+
+  /* --- Con foco de teclado (se ve igual que con el mouse encima) --- */
   .btn--primary:focus-visible {
     color: var(--c-on-accent);
-    text-decoration: none;
+    filter: brightness(1.08);
   }
-  .btn--secondary:focus-visible {
-    border-color: var(--c-accent);
-    text-decoration: none;
-  }
+  .btn--secondary:focus-visible { border-color: var(--c-accent); }
+  .btn--secondary:focus-visible::after { opacity: 1; }
+  .btn:focus-visible :global(.btn__ico) { transform: translateX(4px); }
+  .btn:focus-visible :global(.btn__ico--baja) { transform: translateY(2px); }
+
+  /* --- Con el mouse encima --- */
   @media (hover: hover) {
     .btn--primary:hover {
       color: var(--c-on-accent);
-      text-decoration: none;
       filter: brightness(1.08);
     }
-    .btn--secondary:hover {
-      border-color: var(--c-accent);
-      text-decoration: none;
-    }
+    .btn--secondary:hover { border-color: var(--c-accent); }
+    .btn--secondary:hover::after { opacity: 1; }
+    .btn:hover :global(.btn__ico) { transform: translateX(4px); }
+    .btn:hover :global(.btn__ico--baja) { transform: translateY(2px); }
   }
-  .btn--off {
+
+  /* --- Al presionar: baja 1 px --- */
+  .btn:active { transform: translateY(1px); }
+
+  /* --- Deshabilitado: nada de lo anterior --- */
+  .btn--off,
+  .btn--off:active {
     background: none;
     border: 1px dashed var(--c-line);
     color: var(--c-ink-muted);
     cursor: not-allowed;
+    transform: none;
+  }
+  .btn--off::after { display: none; }
+  @media (hover: hover) {
+    .btn--off:hover :global(.btn__ico) { transform: none; }
   }
 </style>

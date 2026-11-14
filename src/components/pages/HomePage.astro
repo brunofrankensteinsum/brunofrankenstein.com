@@ -34,7 +34,7 @@ const counts = categories.map((c) => ({
 
 <Base lang={lang} title={site.name} description={site.tagline[lang]} section="home" alternateUrl={pageUrl(otherLang(lang), 'home')}>
   <section class="container hero">
-    <div class="hero__yo">
+    <div class="hero__yo" data-reveal>
       <div class="hero__autor">
         {/* Falta design/assets/retrato.jpg: por ahora va un marcador rayado. */}
         <div class="hero__retrato marco rayado" role="img" aria-label={t(lang, 'home.portraitAlt')}>
@@ -43,7 +43,9 @@ const counts = categories.map((c) => ({
         <p class="hero__firma rotulo">
           <span>{t(lang, 'home.author')}</span>
           <span>{profile.location[lang]}</span>
-          <span class="rotulo--acento">{profile.coords[lang]}</span>
+          <span class="rotulo--acento">
+            <button type="button" class="glosa" data-nota={t(lang, 'note.coords')}>{profile.coords[lang]}</button>
+          </span>
         </p>
       </div>
       <h1 class="titulo-pagina">{site.name}</h1>
@@ -57,14 +59,14 @@ const counts = categories.map((c) => ({
 
     {
       featured && (
-        <article class="destacado">
+        <article class="destacado" data-reveal>
           <p class="destacado__fig rotulo rotulo--acento">
             <span>
               FIG. {figLabel(featured.data.fig)} · {t(lang, 'home.featured')}
             </span>
             <span>{formatMonth(featured.data.date)}</span>
           </p>
-          <div class="destacado__foto rayado">
+          <div class="destacado__foto rayado" data-marco>
             <Image
               src={featured.data.cover}
               alt=""
@@ -93,7 +95,7 @@ const counts = categories.map((c) => ({
     }
   </section>
 
-  <section class="container bloque">
+  <section class="container bloque" data-reveal>
     <h2 class="rotulo bloque__titulo">{t(lang, 'home.categories')}</h2>
     <nav class="cats caja" aria-label={t(lang, 'home.categories')}>
       {
@@ -111,7 +113,7 @@ const counts = categories.map((c) => ({
   </section>
 
   <section class="container bloque bloque--final">
-    <div class="bloque__cabecera">
+    <div class="bloque__cabecera" data-reveal>
       <h2 class="rotulo bloque__titulo">{t(lang, 'home.more')}</h2>
       <a class="bloque__todos" href={pageUrl(lang, 'projects')}>{t(lang, 'home.all')} →</a>
     </div>
@@ -209,8 +211,27 @@ const counts = categories.map((c) => ({
     position: absolute;
     inset: 0;
   }
+  .destacado h2 a { background-image: none; }
   .destacado h2 a:focus-visible { outline: none; }
-  .destacado:has(h2 a:focus-visible) .destacado__foto { outline: 2px solid var(--c-accent); }
+  /* Igual que en las tarjetas: el marco se despega y pasa a acento, y la foto se acerca un poco. */
+  .destacado__foto {
+    transition:
+      outline-offset var(--t-hover) var(--ease-out),
+      outline-color var(--t-hover) var(--ease-out);
+  }
+  .destacado__foto :global(img) { transition: transform calc(var(--t-hover) * 2) var(--ease-out); }
+  .destacado:has(h2 a:focus-visible) .destacado__foto {
+    outline-offset: 12px;
+    outline-color: var(--c-accent);
+  }
+  .destacado:has(h2 a:focus-visible) .destacado__foto :global(img) { transform: scale(1.03); }
+  @media (hover: hover) {
+    .destacado:has(h2 a:hover) .destacado__foto {
+      outline-offset: 12px;
+      outline-color: var(--c-accent);
+    }
+    .destacado:has(h2 a:hover) .destacado__foto :global(img) { transform: scale(1.03); }
+  }
   .destacado__lado {
     display: flex;
     flex-direction: column;
@@ -259,6 +280,7 @@ const counts = categories.map((c) => ({
     overflow: hidden;
   }
   .cats__celda {
+    background-image: none; /* sin subrayado: la celda entera es el link */
     display: flex;
     flex-direction: column;
     gap: 22px;

@@ -8,6 +8,10 @@ export const profile = {
   coords: { es: '34°54′ S · 56°11′ O', en: '34°54′ S · 56°11′ W' },
   // Correo público de contacto. Vacío = se muestra un marcador.
   email: '',
+  // Dirección a la que el formulario de contacto envía los mensajes (la crea la pista D de PLAN.md).
+  // Vacío = el formulario valida pero avisa que todavía no está conectado.
+  // Recibe un POST con JSON: { nombre, email, motivo, mensaje, idioma }. Responde 2xx si salió bien.
+  formEndpoint: '',
   // Archivo del CV dentro de public/ (por ejemplo '/cv-bruno-frankenstein.pdf'). Vacío = botón deshabilitado.
   cv: '',
 

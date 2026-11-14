@@ -2,6 +2,7 @@
 // Layout base: la estructura común a todas las páginas (header, contenido, footer).
 import '../styles/tokens.css';
 import '../styles/base.css';
+import '../styles/interacciones.css';
 import Head from '../components/seo/Head.astro';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
@@ -43,6 +44,48 @@ const { lang, title, description, section, alternateUrl } = Astro.props;
       <slot />
     </main>
     <Footer lang={lang} />
+    <!-- Prepara el movimiento de entrada antes de que la página se pinte, para que nada «salte».
+         - data-reveal visible al abrir: entra de a uno (solo la primera vez por sesión).
+         - data-reveal más abajo: queda esperando a entrar en pantalla (src/scripts/entrada.ts).
+         - marcos visibles: se van a dibujar como trazo (solo la primera vez por sesión).
+         Con «menos movimiento» activado en el sistema no hace nada. -->
+    <script is:inline>
+      (function () {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
+        var primera = false;
+        try {
+          primera = !sessionStorage.getItem('bf-visto');
+          sessionStorage.setItem('bf-visto', '1');
+        } catch (e) {}
+        var alto = window.innerHeight;
+        var i = 0;
+        document.querySelectorAll('[data-reveal]').forEach(function (el) {
+          if (el.getBoundingClientRect().top < alto) {
+            if (primera) {
+              el.style.setProperty('--i', i++);
+              el.classList.add('entra');
+            }
+          } else {
+            el.classList.add('reveal');
+          }
+        });
+        if (!primera) return;
+        document.querySelectorAll('.marco, .caja, [data-marco]').forEach(function (el) {
+          var r = el.getBoundingClientRect();
+          if (r.top < alto && r.bottom > 0) el.classList.add('trazo');
+        });
+        // Red de seguridad: si algo falla, a los 3 segundos los marcos se ven igual.
+        setTimeout(function () {
+          document.querySelectorAll('.trazo').forEach(function (el) {
+            el.classList.remove('trazo');
+          });
+        }, 3000);
+      })();
+    </script>
+    <script>
+      import '../scripts/nota.ts';
+      import '../scripts/entrada.ts';
+    </script>
   </body>
 </html>
 

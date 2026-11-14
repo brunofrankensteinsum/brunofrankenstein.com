@@ -1,7 +1,8 @@
 ---
 // Contacto: datos de contacto y formulario.
-// Por ahora el formulario es solo la interfaz: la validación llega en el paso 4
-// y el envío del correo es la pista D de PLAN.md.
+// La validación y los estados del formulario están en src/scripts/contacto.ts.
+// El envío del correo es la pista D de PLAN.md: mientras profile.formEndpoint esté vacío,
+// el formulario valida pero avisa que todavía no está conectado.
 import Base from '../../layouts/Base.astro';
 import Icon from '../ui/Icon.astro';
 import { site, type Lang } from '../../config/site';
@@ -27,7 +28,7 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
 
 <Base lang={lang} title={title} description={intro} section="contact" alternateUrl={pageUrl(otherLang(lang), 'contact')}>
   <section class="container contacto">
-    <div class="contacto__info">
+    <div class="contacto__info" data-reveal>
       <p class="rotulo rotulo--acento contacto__rotulo">{t(lang, 'contact.label')}</p>
       <h1 class="titulo-pagina">{title}</h1>
       <p class="contacto__bajada">{intro}</p>
@@ -39,9 +40,22 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
           <dd>
             {
               profile.email ? (
-                <a class="ficha__acento" href={`mailto:${profile.email}`}>
-                  {profile.email}
-                </a>
+                <span class="ficha__email">
+                  {/* Clic en el email: lo copia. El link de al lado abre el programa de correo. */}
+                  <button
+                    type="button"
+                    class="ficha__copiar"
+                    data-copiar-email={profile.email}
+                    data-copiado={t(lang, 'project.copied')}
+                    aria-label={`${t(lang, 'contact.copyEmail')}: ${profile.email}`}
+                  >
+                    {profile.email}
+                    <Icon name="ui-copiar" size={16} />
+                  </button>
+                  <a class="ficha__correo" href={`mailto:${profile.email}`}>
+                    {t(lang, 'contact.openMail')}
+                  </a>
+                </span>
               ) : (
                 <span class="marcador">{t(lang, 'contact.emailMissing')}</span>
               )
@@ -68,25 +82,50 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
         <div>
           <dt>{t(lang, 'contact.location')}</dt>
           <dd class="ficha__mono">
-            {profile.location[lang]} · <span class="ficha__acento">{profile.coords[lang]}</span>
+            {profile.location[lang]} ·{' '}
+            <span class="ficha__acento">
+              <button type="button" class="glosa" data-nota={t(lang, 'note.coords')}>{profile.coords[lang]}</button>
+            </span>
           </dd>
         </div>
       </dl>
     </div>
 
-    <form class="form caja" novalidate>
+    {/* Los textos que usa el script viajan en los atributos data-*. */}
+    <form
+      class="form caja"
+      novalidate
+      data-reveal
+      data-form-contacto
+      data-endpoint={profile.formEndpoint}
+      data-send={t(lang, 'contact.send')}
+      data-sending={t(lang, 'contact.sending')}
+      data-err-required={t(lang, 'contact.err.required')}
+      data-err-email={t(lang, 'contact.err.email')}
+      data-err-short={t(lang, 'contact.err.short')}
+      data-fail={t(lang, 'contact.fail')}
+      data-fail-offline={t(lang, 'contact.failOffline')}
+    >
       <p class="form__cabecera">
         <span>{t(lang, 'contact.form')}</span>
         <span>{t(lang, 'contact.required')}</span>
       </p>
       <div class="form__dos">
         <div class="campo">
-          <label for="c-nombre">{t(lang, 'contact.name')}</label>
-          <input id="c-nombre" name="nombre" type="text" autocomplete="name" required />
+          <div class="campo__rotulo">
+            <label for="c-nombre">{t(lang, 'contact.name')}</label>
+            <span class="campo__activo" aria-hidden="true">{t(lang, 'contact.active')}</span>
+          </div>
+          <input id="c-nombre" name="nombre" type="text" autocomplete="name" required data-validar />
+          <p class="campo__error" id="e-c-nombre" hidden></p>
         </div>
         <div class="campo">
-          <label for="c-email">{t(lang, 'contact.email')}</label>
-          <input id="c-email" name="email" type="email" autocomplete="email" required />
+          <div class="campo__rotulo">
+            <label for="c-email">{t(lang, 'contact.email')}</label>
+            <span class="campo__activo" aria-hidden="true">{t(lang, 'contact.active')}</span>
+          </div>
+          <input id="c-email" name="email" type="email" autocomplete="email" required data-validar />
+          <p class="campo__error" id="e-c-email" hidden></p>
         </div>
       </div>
       <fieldset class="motivo">
@@ -103,20 +142,71 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
         </div>
       </fieldset>
       <div class="campo">
-        <label for="c-mensaje">{t(lang, 'contact.message')}</label>
-        <textarea id="c-mensaje" name="mensaje" rows="7" required></textarea>
+        <div class="campo__rotulo">
+          <label for="c-mensaje">{t(lang, 'contact.message')}</label>
+          <span class="campo__activo" aria-hidden="true">{t(lang, 'contact.active')}</span>
+        </div>
+        <textarea id="c-mensaje" name="mensaje" rows="7" required data-validar></textarea>
+        <p class="campo__error" id="e-c-mensaje" hidden></p>
       </div>
+
+      {/* Campo trampa: las personas no lo ven; los robots de spam lo completan y se delatan. */}
+      <div class="trampa" aria-hidden="true">
+        <label for="c-sitio">{t(lang, 'contact.trap')}</label>
+        <input id="c-sitio" name="sitio" type="text" tabindex="-1" autocomplete="off" />
+      </div>
+
+      {/* Nota de error del envío: aparece solo si algo falla. */}
+      <div class="form__error" role="alert" tabindex="-1" hidden data-form-error>
+        <p data-form-error-texto></p>
+        <div class="form__error-acciones">
+          <button type="button" data-reintentar>{t(lang, 'contact.retry')}</button>
+          {
+            profile.email ? (
+              <button type="button" data-copiar-email={profile.email} data-copiado={t(lang, 'project.copied')}>
+                {t(lang, 'contact.copyEmail')}
+              </button>
+            ) : (
+              site.social.linkedin && (
+                <a href={site.social.linkedin} rel="me noopener">
+                  {t(lang, 'contact.viaLinkedin')}
+                </a>
+              )
+            )
+          }
+        </div>
+      </div>
+
       <div class="form__pie">
         <span class="form__ayuda">{t(lang, 'contact.hint')}</span>
-        {/* type="button": todavía no envía nada. Pasa a "submit" cuando exista el envío (pista D). */}
-        <button class="form__enviar" type="button">
-          {t(lang, 'contact.send')}
-          <Icon name="ui-flecha" size={18} />
+        <button class="form__enviar" type="submit" data-enviar>
+          <span data-enviar-texto>{t(lang, 'contact.send')}</span>
+          <Icon name="ui-flecha" size={18} class="form__flecha" />
+          {/* «Espera»: una cota (línea de medida) que se dibuja en bucle mientras se envía. */}
+          <span class="form__cota" aria-hidden="true"></span>
         </button>
       </div>
     </form>
   </section>
+
+  {/* Lo que reemplaza al formulario cuando el mensaje salió bien. */}
+  <template id="tpl-recibido">
+    <div class="recibido caja" role="status" tabindex="-1">
+      <p class="sello">
+        <span>{t(lang, 'contact.sent')}</span>
+        <span>REV. A</span>
+      </p>
+      <p class="recibido__texto">
+        {t(lang, 'contact.sentText')} <strong data-recibido-email></strong>.
+      </p>
+    </div>
+  </template>
+  <p class="aviso-vivo" aria-live="polite" data-aviso></p>
 </Base>
+
+<script>
+  import '../../scripts/contacto.ts';
+</script>
 
 <style>
   .contacto {
@@ -157,11 +247,34 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
   }
   .ficha dd { min-width: 0; overflow-wrap: anywhere; }
   .ficha__acento { color: var(--c-accent); }
+  .ficha__email {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 var(--s-4);
+  }
+  .ficha__copiar {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 44px;
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--c-accent);
+    cursor: copy;
+    text-align: left;
+  }
+  .ficha__correo {
+    font-size: var(--fs-small);
+    color: var(--c-ink-muted);
+  }
   .ficha__externo {
     display: inline-flex;
     align-items: center;
     gap: var(--s-2);
     min-height: 44px;
+    --ul-y: calc(50% + 0.8em);
   }
   .ficha__mono {
     font-family: var(--f-mono);
@@ -198,6 +311,12 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
     flex-direction: column;
     gap: var(--s-2);
   }
+  .campo__rotulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-3);
+  }
   .campo label,
   .motivo legend {
     font-family: var(--f-mono);
@@ -206,6 +325,17 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
     text-transform: uppercase;
     color: var(--c-ink-muted);
   }
+  /* «CAMPO ACTIVO»: aparece, sutil, mientras se escribe en ese campo. */
+  .campo__activo {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+    opacity: 0;
+    transition: opacity var(--t-micro) linear;
+  }
+  .campo:focus-within .campo__activo { opacity: 1; }
   .campo input,
   .campo textarea {
     width: 100%;
@@ -214,6 +344,7 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
     background: var(--c-paper-deep);
     border: 1px solid var(--c-line);
     color: var(--c-ink);
+    transition: border-color var(--t-micro) linear;
   }
   .campo textarea {
     padding: var(--s-3) 14px;
@@ -224,6 +355,18 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
     outline: none;
     border-color: var(--c-accent);
     box-shadow: 0 0 0 1px var(--c-accent);
+  }
+  /* Campo con error: borde punteado en rojo y el mensaje debajo, en mono. */
+  .campo input[aria-invalid='true'],
+  .campo textarea[aria-invalid='true'] {
+    border-style: dashed;
+    border-color: var(--c-error);
+  }
+  .campo__error {
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.04em;
+    color: var(--c-error);
   }
   .motivo {
     margin: 0;
@@ -245,12 +388,25 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
     padding: 0 14px;
     border: 1px solid var(--c-line);
     cursor: pointer;
+    transition: border-color var(--t-micro) linear;
   }
   /* La opción elegida se marca con borde de acento. */
   .motivo label:has(input:checked) { border-color: var(--c-accent); }
+  .motivo label:has(input:focus-visible) {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+  }
   .motivo input {
     margin: 0;
     accent-color: var(--c-accent);
+  }
+  /* Campo trampa: fuera de la pantalla, para que solo lo completen los robots. */
+  .trampa {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
   .form__pie {
     display: flex;
@@ -277,6 +433,136 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
     font-size: 13px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
+    transition:
+      filter var(--t-micro) linear,
+      transform var(--t-micro) linear;
+  }
+  .form__enviar :global(.form__flecha) { transition: transform var(--t-hover) var(--ease-out); }
+  .form__enviar:focus-visible { filter: brightness(1.08); }
+  .form__enviar:focus-visible :global(.form__flecha) { transform: translateX(4px); }
+  @media (hover: hover) {
+    .form__enviar:hover { filter: brightness(1.08); }
+    .form__enviar:hover :global(.form__flecha) { transform: translateX(4px); }
+  }
+  .form__enviar:active { transform: translateY(1px); }
+  /* Mientras se envía: sin flecha, y en su lugar una cota que se dibuja en bucle. */
+  .form__cota { display: none; }
+  .form__enviar--ocupado {
+    cursor: progress;
+    filter: none;
+  }
+  .form__enviar--ocupado :global(.form__flecha) { display: none; }
+  .form__enviar--ocupado .form__cota {
+    display: block;
+    width: 28px;
+    height: 9px;
+    /* Dos topes verticales en los extremos y la línea de medida en el medio. */
+    --tinta: linear-gradient(var(--c-on-accent), var(--c-on-accent)) no-repeat;
+    background:
+      var(--tinta) left center / 1px 9px,
+      var(--tinta) right center / 1px 9px,
+      var(--tinta) left center / var(--avance, 0%) 1px;
+    animation: cota 900ms var(--ease-draw) infinite;
+  }
+  @property --avance {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+  }
+  @keyframes cota {
+    from { --avance: 0%; }
+    to { --avance: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .form__enviar--ocupado .form__cota {
+      animation: none;
+      --avance: 100%;
+    }
+  }
+
+  /* Nota de error del envío. */
+  .form__error {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    padding: 14px var(--s-4);
+    border: 1px dashed var(--c-error);
+    color: var(--c-error);
+    font-size: 15px;
+  }
+  .form__error[hidden] { display: none; }
+  .form__error-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2) var(--s-5);
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .form__error-acciones button,
+  .form__error-acciones a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--c-ink);
+    letter-spacing: inherit;
+    text-transform: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+    cursor: pointer;
+  }
+  .form__error-acciones a { background-image: none; }
+
+  /* ---------- Sello «RECIBIDO · REV. A» ---------- */
+  .recibido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-6);
+    min-height: 320px;
+    padding: var(--s-8);
+    text-align: center;
+  }
+  .recibido:focus { outline: none; }
+  .sello {
+    display: inline-flex;
+    gap: var(--s-4);
+    padding: var(--s-3) var(--s-5);
+    /* Marco doble: un borde y, 4 px más afuera, otra línea. */
+    border: 1px solid var(--c-ok);
+    outline: 1px solid var(--c-ok);
+    outline-offset: 4px;
+    color: var(--c-ok);
+    font-family: var(--f-mono);
+    font-size: var(--fs-lead);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transform: rotate(-2deg);
+    animation: sellar 200ms var(--ease-out) backwards;
+  }
+  .sello span + span {
+    padding-left: var(--s-4);
+    border-left: 1px solid var(--c-ok);
+  }
+  @keyframes sellar {
+    from {
+      opacity: 0;
+      transform: rotate(-2deg) scale(1.1);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sello { animation: none; }
+  }
+  .recibido__texto { color: var(--c-ink-muted); }
+  .recibido__texto strong {
+    font-weight: 500;
+    color: var(--c-ink);
   }
 
   @media (min-width: 640px) {

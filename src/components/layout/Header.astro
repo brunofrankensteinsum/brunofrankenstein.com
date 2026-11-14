@@ -56,7 +56,12 @@ const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
   <div class="menu__bar">
     <a class="header__brand" href={pageUrl(lang, 'home')}>{site.brand}</a>
     <button class="header__menu-btn menu__close" type="button" aria-label={t(lang, 'menu.close')} data-menu-close autofocus>
-      <Icon name="ui-cerrar" />
+      {/* Tres líneas que giran hasta formar una ×. Va dibujado acá (y no con <Icon>) para poder animar cada línea. */}
+      <svg class="hamb" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="square" aria-hidden="true">
+        <path class="hamb__a" d="M3 6h18"></path>
+        <path class="hamb__b" d="M3 12h18"></path>
+        <path class="hamb__c" d="M3 18h18"></path>
+      </svg>
     </button>
   </div>
 
@@ -95,17 +100,63 @@ const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
   const abrir = document.querySelector<HTMLButtonElement>('[data-menu-open]');
   const cerrar = document.querySelector<HTMLButtonElement>('[data-menu-close]');
   if (menu && abrir && cerrar) {
+    const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // Al cerrar, primero la × vuelve a ser tres líneas (200 ms) y después se cierra el panel.
+    const cerrarMenu = () => {
+      if (!menu.open || menu.hasAttribute('data-cerrando')) return;
+      if (sinMovimiento.matches) {
+        menu.close();
+        return;
+      }
+      menu.setAttribute('data-cerrando', '');
+      window.setTimeout(() => {
+        menu.removeAttribute('data-cerrando');
+        menu.close();
+      }, 200);
+    };
+
     abrir.addEventListener('click', () => {
       menu.showModal();
       abrir.setAttribute('aria-expanded', 'true');
     });
-    cerrar.addEventListener('click', () => menu.close());
-    // "close" se dispara al cerrar con el botón y también con la tecla Esc.
+    cerrar.addEventListener('click', cerrarMenu);
+    // "cancel" es la tecla Esc: se frena el cierre inmediato para animarlo igual que el botón.
+    menu.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      cerrarMenu();
+    });
     menu.addEventListener('close', () => abrir.setAttribute('aria-expanded', 'false'));
     // Si la ventana se agranda hasta el tamaño de escritorio, el menú se cierra solo.
     window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => {
       if (e.matches && menu.open) menu.close();
     });
+  }
+
+  // 3) Cambio de idioma: si se pasa a la misma página en el otro idioma, se conserva
+  //    la altura del scroll (en proporción, porque los textos no miden lo mismo).
+  const CLAVE = 'bf-scroll';
+  const alto = () => document.documentElement.scrollHeight - window.innerHeight;
+  document.querySelectorAll<HTMLAnchorElement>('.lang a[hreflang]').forEach((link) => {
+    link.addEventListener('click', () => {
+      try {
+        const proporcion = alto() > 0 ? window.scrollY / alto() : 0;
+        sessionStorage.setItem(CLAVE, JSON.stringify({ ruta: link.pathname, proporcion }));
+      } catch {
+        // Sin almacenamiento disponible, simplemente no se conserva el scroll.
+      }
+    });
+  });
+  try {
+    const guardado = sessionStorage.getItem(CLAVE);
+    if (guardado) {
+      sessionStorage.removeItem(CLAVE);
+      const { ruta, proporcion } = JSON.parse(guardado);
+      if (ruta === window.location.pathname && proporcion > 0) {
+        window.scrollTo({ top: proporcion * alto(), behavior: 'instant' });
+      }
+    }
+  } catch {
+    // Ídem.
   }
 </script>
 
@@ -138,6 +189,8 @@ const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
     align-items: center;
     min-height: 44px;
     margin-right: auto;
+    /* Altura del subrayado: justo debajo del texto, no al pie de la caja de 44 px. */
+    --ul-y: calc(50% + 0.8em);
   }
 
   /* ---------- Navegación ---------- */
@@ -155,13 +208,7 @@ const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
     display: inline-flex;
     align-items: center;
     min-height: 44px;
-  }
-  .header__nav a[aria-current='page'],
-  .menu__list a[aria-current='page'] {
-    color: var(--c-accent);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 6px;
+    --ul-y: calc(50% + 0.8em);
   }
 
   .header__menu-btn {
@@ -238,6 +285,28 @@ const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
     font-size: 13px;
   }
   .menu__close { display: inline-flex; }
+
+  /* Las tres líneas giran hasta formar una × en 200 ms.
+     @starting-style dice desde dónde arranca la animación cuando el menú recién se abre. */
+  .hamb path {
+    transform-box: view-box;
+    transform-origin: center;
+    transition:
+      transform var(--t-hover) var(--ease-out),
+      opacity var(--t-hover) linear;
+  }
+  .menu[open] .hamb__a { transform: translateY(6px) rotate(45deg); }
+  .menu[open] .hamb__b { opacity: 0; }
+  .menu[open] .hamb__c { transform: translateY(-6px) rotate(-45deg); }
+  @starting-style {
+    .menu[open] .hamb__a,
+    .menu[open] .hamb__c { transform: none; }
+    .menu[open] .hamb__b { opacity: 1; }
+  }
+  .menu[open][data-cerrando] .hamb__a,
+  .menu[open][data-cerrando] .hamb__c { transform: none; }
+  .menu[open][data-cerrando] .hamb__b { opacity: 1; }
+
   .menu__nav {
     flex: 1;
     overflow-y: auto;
@@ -252,6 +321,8 @@ const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
     border-bottom: 1px dashed var(--c-line);
     font-size: 24px;
     letter-spacing: 0.04em;
+    /* Estos renglones ya tienen su línea punteada: no llevan subrayado. */
+    background-image: none;
   }
   .menu__num {
     font-size: var(--fs-label);

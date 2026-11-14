@@ -10,6 +10,7 @@ import { getCategory, type Lang } from '../../config/site';
 import { pageUrl, projectUrl, categoryUrl, otherLang } from '../../config/routes';
 import { t, formatDay } from '../../i18n/ui';
 import { figLabel, getProjects, projectExists, type Project } from '../../lib/content';
+import { definicion, terminosEn } from '../../config/glossary.mjs';
 
 interface Props {
   lang: Lang;
@@ -33,11 +34,13 @@ const anterior = pos > 0 ? porFig[pos - 1] : undefined;
 const siguiente = pos < porFig.length - 1 ? porFig[pos + 1] : undefined;
 
 const dos = (n: number) => String(n).padStart(2, '0');
+// Términos del glosario que aparecen en el texto: el script marca la primera aparición de cada uno.
+const terminos = terminosEn(lang, project.body ?? '');
 const primeraCategoria = data.categories[0];
 ---
 
 <Base lang={lang} title={data.title} description={data.summary} section="projects" alternateUrl={alternateUrl}>
-  <header class="container cabecera">
+  <header class="container cabecera" data-reveal>
     <nav class="ruta" aria-label={t(lang, 'project.breadcrumb')}>
       <a href={pageUrl(lang, 'projects')}>{t(lang, 'projects.title')}</a>
       {
@@ -55,19 +58,26 @@ const primeraCategoria = data.categories[0];
       <h1>{data.title}</h1>
       <p>{data.summary}</p>
     </div>
-    <div class="portada rayado">
+    <div class="portada rayado" data-marco>
       <Image src={data.cover} alt={data.coverAlt} widths={[640, 960, 1280, 1920]} sizes="(min-width: 1280px) 1136px, 100vw" loading="eager" />
     </div>
   </header>
 
   <div class="container cuerpo">
-    <article class="prosa" lang={lang}>
+    <article class="prosa" lang={lang} data-reveal>
       <Content />
       {
         data.youtube && (
           <>
-            {/* Fachada del video: por ahora es un link a YouTube. En el paso 4 carga el video acá mismo. */}
-            <a class="video rayado" href={`https://www.youtube.com/watch?v=${data.youtube}`} aria-label={t(lang, 'project.play')}>
+            {/* Fachada del video: sin JavaScript es un link a YouTube; con JavaScript, el clic
+                carga el reproductor acá mismo (src/scripts/lamina.ts). */}
+            <a
+              class="video rayado"
+              href={`https://www.youtube.com/watch?v=${data.youtube}`}
+              aria-label={t(lang, 'project.play')}
+              data-video={data.youtube}
+              data-titulo={data.title}
+            >
               <span class="video__play">
                 <Icon name="ui-play" />
               </span>
@@ -78,7 +88,7 @@ const primeraCategoria = data.categories[0];
       }
     </article>
 
-    <aside class="lateral">
+    <aside class="lateral" data-reveal>
       <dl class="cajetin caja">
         <div class="cajetin__titulo">{t(lang, 'project.titleBlock')}</div>
         <div class="cajetin__fila">
@@ -102,7 +112,25 @@ const primeraCategoria = data.categories[0];
           data.tags.length > 0 && (
             <div class="cajetin__fila">
               <dt>{t(lang, 'project.tags')}</dt>
-              <dd class="cajetin__mono cajetin__tags">{data.tags.join(' · ')}</dd>
+              <dd class="cajetin__mono cajetin__tags">
+                {
+                  data.tags.map((tag, i) => {
+                    const def = definicion(lang, tag);
+                    return (
+                      <>
+                        {i > 0 && ' · '}
+                        {def ? (
+                          <button type="button" class="glosa" data-nota={def} data-nota-rotulo="Def.">
+                            {tag}
+                          </button>
+                        ) : (
+                          tag
+                        )}
+                      </>
+                    );
+                  })
+                }
+              </dd>
             </div>
           )
         }
@@ -115,7 +143,6 @@ const primeraCategoria = data.categories[0];
             <ol class="toc__lista">
               {secciones.map((s, i) => (
                 <li>
-                  {/* La sección visible se marca sola al hacer scroll a partir del paso 4. */}
                   <a href={`#${s.slug}`}>
                     <span class="toc__num">{dos(i + 1)}</span>
                     <span>{s.text}</span>
@@ -137,7 +164,7 @@ const primeraCategoria = data.categories[0];
     </aside>
   </div>
 
-  <nav class="container otros" aria-label={t(lang, 'project.others')}>
+  <nav class="container otros" aria-label={t(lang, 'project.others')} data-reveal>
     <div class="otros__caja caja">
       {
         anterior && (
@@ -165,7 +192,46 @@ const primeraCategoria = data.categories[0];
       </a>
     </div>
   </nav>
+
+  {/* Visor de imágenes a pantalla completa. Se abre al hacer clic en una imagen del texto. */}
+  <dialog class="visor" id="visor" aria-label={t(lang, 'viewer.label')}>
+    <div class="visor__barra">
+      <p class="visor__rotulo">
+        <span data-visor-det>DET. A</span> · <span data-visor-esc>{t(lang, 'footer.scale')}</span>
+      </p>
+      <div class="visor__botones">
+        <button type="button" data-visor-prev aria-label={t(lang, 'viewer.prev')} data-nota="←" data-nota-rotulo={t(lang, 'shortcut')}>
+          <Icon name="ui-flecha" class="visor__atras" />
+        </button>
+        <button type="button" data-visor-next aria-label={t(lang, 'viewer.next')} data-nota="→" data-nota-rotulo={t(lang, 'shortcut')}>
+          <Icon name="ui-flecha" />
+        </button>
+        <button type="button" data-visor-cerrar aria-label={t(lang, 'viewer.close')} data-nota="Esc" data-nota-rotulo={t(lang, 'shortcut')}>
+          <Icon name="ui-cerrar" />
+        </button>
+      </div>
+    </div>
+    <div class="visor__lienzo" data-visor-lienzo>
+      <img data-visor-img alt="" draggable="false" />
+    </div>
+    <p class="visor__pie" data-visor-pie></p>
+  </dialog>
+
+  {/* Molde del botón «Copiar»: el script lo clona en cada bloque de código. */}
+  <template id="tpl-copiar">
+    <button class="copiar" type="button" data-copiado={t(lang, 'project.copied')}>
+      <span data-copiar-texto>{t(lang, 'project.copy')}</span>
+      <Icon name="ui-copiar" size={16} class="copiar__ico" />
+      <Icon name="ui-check" size={16} class="copiar__ok" />
+    </button>
+  </template>
+  <p class="aviso-vivo" aria-live="polite" data-aviso></p>
+  {terminos.length > 0 && <script type="application/json" id="glosario" set:html={JSON.stringify(terminos)} />}
 </Base>
+
+<script>
+  import '../../scripts/lamina.ts';
+</script>
 
 <style>
   /* ---------- Cabecera ---------- */
@@ -189,6 +255,7 @@ const primeraCategoria = data.categories[0];
     display: inline-flex;
     align-items: center;
     min-height: 44px;
+    --ul-y: calc(50% + 0.8em);
   }
   .ruta__actual { color: var(--c-accent); }
   .cabecera__titulo {
@@ -390,6 +457,53 @@ const primeraCategoria = data.categories[0];
     font-size: 0.9em;
   }
   .prosa :global(pre code) { font-size: inherit; }
+  /* Caja que arma el script alrededor de cada bloque de código, con el botón «Copiar». */
+  .prosa :global(.codigo) {
+    position: relative;
+    min-width: 0;
+  }
+  .copiar {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 36px;
+    padding: 0 var(--s-3);
+    background: var(--c-paper);
+    border: 1px solid var(--c-line);
+    color: var(--c-ink-muted);
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      color var(--t-micro) linear,
+      border-color var(--t-micro) linear;
+  }
+  .copiar:focus-visible,
+  .copiar--ok {
+    border-color: var(--c-accent);
+    color: var(--c-accent);
+  }
+  @media (hover: hover) {
+    .copiar:hover {
+      border-color: var(--c-accent);
+      color: var(--c-accent);
+    }
+  }
+  /* Muestra el ícono de copiar o el de «listo», según el estado. */
+  .copiar :global(.copiar__ok),
+  .copiar--ok :global(.copiar__ico) { display: none; }
+  .copiar--ok :global(.copiar__ok) { display: block; }
+  /* Las imágenes del texto se pueden ampliar. */
+  .prosa :global(img.ampliable) { cursor: zoom-in; }
+  .prosa :global(img.ampliable:focus-visible) {
+    outline: 2px solid var(--c-accent);
+    outline-offset: var(--frame-offset);
+  }
 
   /* Video: fachada con botón de play. */
   .video {
@@ -411,7 +525,29 @@ const primeraCategoria = data.categories[0];
     background: var(--c-paper);
     color: var(--c-accent);
   }
+  /* El link no lleva subrayado: es una imagen. */
+  a.video { background-image: none; }
+  iframe.video {
+    width: calc(100% - var(--frame-offset) * 2);
+    border: 0;
+  }
+  .video__play {
+    transition:
+      background-color var(--t-micro) linear,
+      color var(--t-micro) linear;
+  }
   .video:focus-visible { outline: 2px solid var(--c-accent); }
+  /* Con el mouse encima o con foco, el cuadrado del play se rellena de acento. */
+  .video:focus-visible .video__play {
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+  @media (hover: hover) {
+    .video:hover .video__play {
+      background: var(--c-accent);
+      color: var(--c-on-accent);
+    }
+  }
   .video__nota {
     margin-top: var(--s-2);
     font-size: 15px;
@@ -470,7 +606,20 @@ const primeraCategoria = data.categories[0];
     padding-left: var(--s-3);
     border-left: 1px dashed var(--c-line);
   }
+  .toc__lista a {
+    background-image: none;
+    transition:
+      color var(--t-micro) linear,
+      border-color var(--t-hover) var(--ease-out);
+  }
   .toc__num { color: var(--c-ink-muted); }
+  /* Sección que se está leyendo: acento y borde izquierdo continuo. La marca lamina.ts. */
+  .toc__lista a[aria-current] {
+    border-left-style: solid;
+    border-left-color: var(--c-accent);
+    color: var(--c-accent);
+  }
+  .toc__lista a[aria-current] .toc__num { color: var(--c-accent); }
 
   /* ---------- Otras láminas ---------- */
   .otros { padding-bottom: var(--s-20); }
@@ -484,6 +633,7 @@ const primeraCategoria = data.categories[0];
     gap: 6px;
     padding: var(--s-5) var(--s-6);
   }
+  .otros__caja a { background-image: none; }
   .otros__caja a + a { border-top: 1px dashed var(--c-line); }
   .otros__rotulo {
     font-family: var(--f-mono);
@@ -497,6 +647,90 @@ const primeraCategoria = data.categories[0];
     font-size: 20px;
     font-weight: 600;
   }
+
+  /* ---------- Visor de imágenes ---------- */
+  .visor {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: none;
+    /* Papel al 96 %: se adivina la página de atrás. */
+    background: color-mix(in srgb, var(--c-paper) 96%, transparent);
+    color: var(--c-ink);
+  }
+  .visor::backdrop { background: transparent; }
+  .visor[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .visor__barra {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--s-4);
+    min-height: 56px;
+    padding-inline: var(--bar-pad);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .visor__rotulo {
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    color: var(--c-accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .visor__botones { display: flex; }
+  .visor__botones button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+  .visor__botones button[hidden] { display: none; }
+  .visor__botones button:focus-visible { color: var(--c-accent); }
+  @media (hover: hover) {
+    .visor__botones button:hover { color: var(--c-accent); }
+  }
+  .visor__botones :global(.visor__atras) { transform: scaleX(-1); }
+  .visor__lienzo {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--s-6);
+    overflow: hidden;
+    cursor: zoom-out;
+    touch-action: none; /* el zoom con dos dedos lo maneja el script */
+  }
+  .visor__lienzo--zoom { cursor: grab; }
+  .visor__lienzo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    outline: 1px solid var(--c-line);
+    outline-offset: var(--frame-offset);
+    cursor: zoom-in;
+    user-select: none;
+  }
+  .visor__lienzo--zoom img { cursor: grab; }
+  .visor__pie {
+    min-height: 44px;
+    padding: var(--s-3) var(--bar-pad);
+    border-top: 1px solid var(--c-line);
+    font-size: var(--fs-small);
+    color: var(--c-ink-muted);
+  }
+  .visor__pie:empty { display: none; }
 
   @media (min-width: 640px) {
     .cabecera { padding-top: var(--s-12); }
@@ -541,5 +775,10 @@ const primeraCategoria = data.categories[0];
       gap: var(--s-7);
     }
     .toc { display: flex; }
+    /* La columna lateral (cajetín + índice) queda fija bajo el header mientras se lee. */
+    .lateral {
+      position: sticky;
+      top: 76px;
+    }
   }
 </style>

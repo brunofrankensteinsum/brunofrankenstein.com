@@ -56,7 +56,7 @@ const intro = t(lang, 'projects.intro');
   </PageIntro>
 
   <div class="container indice">
-    <aside class="filtros">
+    <aside class="filtros" data-reveal>
       <nav class="caja" aria-label={t(lang, 'projects.filter.category')}>
         <p class="filtros__titulo rotulo">{t(lang, 'projects.category')}</p>
         <ul class="filtros__lista">
@@ -170,6 +170,7 @@ const intro = t(lang, 'projects.intro');
     letter-spacing: 0.1em;
   }
   .filtros__lista a {
+    background-image: none; /* renglones con línea punteada: sin subrayado */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -221,6 +222,7 @@ const intro = t(lang, 'projects.intro');
     text-align: center;
   }
   .vacio a {
+    --ul-y: calc(50% + 0.8em);
     display: inline-flex;
     align-items: center;
     min-height: 44px;

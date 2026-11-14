@@ -17,10 +17,11 @@ export const site = {
     es: 'Ingeniero mecánico. Proyectos y experiencias.',
     en: 'Mechanical engineer. Projects and experience.',
   },
-  // Completar con las direcciones reales (pista E).
+  // Redes. Una red con la dirección vacía no se muestra en el sitio.
   social: {
-    linkedin: '',
+    linkedin: 'https://www.linkedin.com/in/bruno-frankenstein-5b8144256/',
     github: 'https://github.com/brunofrankensteinsum',
+    // Todavía no hay canal de YouTube: cuando exista, pegar acá la dirección.
     youtube: '',
   },
 };

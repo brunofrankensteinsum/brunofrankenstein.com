@@ -14,7 +14,10 @@ const anio = new Date().getFullYear();
 
 <footer class="footer">
   <div class="footer__inner">
-    <p class="footer__firma">{site.brand} · {anio} · {t(lang, 'footer.scale')}</p>
+    <p class="footer__firma">
+      {site.brand} · {anio} ·{' '}
+      <button type="button" class="glosa" data-nota={t(lang, 'note.scale')} data-nota-rotulo="Def.">{t(lang, 'footer.scale')}</button>
+    </p>
     <SocialLinks lang={lang} />
   </div>
 </footer>

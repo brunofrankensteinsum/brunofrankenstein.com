@@ -13,7 +13,7 @@ interface Props {
 const { lang, project, withText = false } = Astro.props;
 ---
 
-<div class="proxima">
+<div class="proxima" data-reveal>
   <p class="proxima__marco">FIG. {figLabel(project.data.fig)} · {t(lang, 'project.upcoming')}</p>
   {withText && <p class="proxima__texto">{t(lang, 'projects.upcomingText')}</p>}
 </div>
