@@ -1,0 +1,48 @@
+---
+// Footer del sitio: firma (marca · año · escala) y links a redes.
+import SocialLinks from './SocialLinks.astro';
+import { site, type Lang } from '../../config/site';
+import { t } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const anio = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__inner">
+    <p class="footer__firma">
+      {site.brand} · {anio} ·{' '}
+      <button type="button" class="glosa" data-nota={t(lang, 'note.scale')} data-nota-rotulo="Def.">{t(lang, 'footer.scale')}</button>
+    </p>
+    <SocialLinks lang={lang} />
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--c-paper);
+    border-top: 1px solid var(--c-line);
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--s-1) var(--s-7);
+    max-width: var(--page-max);
+    margin-inline: auto;
+    padding: var(--s-2) var(--bar-pad);
+    min-height: 64px;
+  }
+  .footer__firma {
+    flex-grow: 1;
+    color: var(--c-ink-muted);
+  }
+</style>

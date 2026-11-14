@@ -1,0 +1,38 @@
+---
+// Ícono SVG en línea. Uso: <Icon name="ui-flecha" />
+// Los dibujos están en src/icons/. Van en línea (no como <img>) para que tomen el color
+// del texto y para poder animar el trazo más adelante.
+// Sistema: grilla de 24, trazo de 1.25, extremos cuadrados, sin relleno.
+interface Props {
+  name: string;
+  size?: number;
+  [atributo: string]: unknown;
+}
+
+const { name, size = 24, ...rest } = Astro.props;
+
+// Lee todos los SVG de la carpeta como texto, al compilar.
+const archivos = import.meta.glob<string>('../../icons/*.svg', { query: '?raw', import: 'default', eager: true });
+const svg = archivos[`../../icons/${name}.svg`];
+if (!svg) {
+  throw new Error(`Icon: no existe el ícono "${name}" en src/icons/`);
+}
+// Se queda solo con el dibujo de adentro; la etiqueta <svg> la arma este componente.
+const dibujo = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.25"
+  stroke-linecap="square"
+  stroke-linejoin="miter"
+  aria-hidden="true"
+  focusable="false"
+  {...rest}
+  set:html={dibujo}
+/>

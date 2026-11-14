@@ -1,0 +1,183 @@
+---
+// Sobre mí: retrato, presentación, «ahora mismo» y lista de materiales.
+// Los textos están en src/config/profile.ts.
+import Base from '../../layouts/Base.astro';
+import Button from '../ui/Button.astro';
+import type { Lang } from '../../config/site';
+import { profile } from '../../config/profile';
+import { pageUrl, otherLang } from '../../config/routes';
+import { t } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const title = t(lang, 'about.title');
+const about = profile.about;
+---
+
+<Base lang={lang} title={title} description={about.lead[lang]} section="about" alternateUrl={pageUrl(otherLang(lang), 'about')}>
+  <section class="container sobre">
+    <figure class="sobre__figura" data-reveal>
+      {/* Falta design/assets/retrato.jpg: por ahora va un marcador rayado. */}
+      <div class="sobre__retrato rayado" data-marco role="img" aria-label={t(lang, 'home.portraitAlt')}>
+        <span>{t(lang, 'home.portraitMissing')}</span>
+      </div>
+      <figcaption class="rotulo">
+        <span>{t(lang, 'about.portraitLabel')}</span>
+        <span class="rotulo--acento">
+            <button type="button" class="glosa" data-nota={t(lang, 'note.coords')}>{profile.coords[lang]}</button>
+          </span>
+      </figcaption>
+    </figure>
+
+    <div class="sobre__texto" data-reveal>
+      <p class="rotulo rotulo--acento sobre__rotulo">{t(lang, 'about.label')}</p>
+      <h1 class="titulo-pagina">{title}</h1>
+      <p class="sobre__bajada">{about.lead[lang]}</p>
+      {about.paragraphs[lang].map((p) => <p class="muted">{p}</p>)}
+
+      <div class="ahora">
+        <span class="ahora__rotulo">{t(lang, 'about.now')}</span>
+        <span>{about.now[lang]}</span>
+      </div>
+
+      <div class="sobre__botones">
+        <Button href={profile.cv || undefined} disabled={!profile.cv} download={profile.cv ? true : undefined}>
+          {t(lang, 'about.cv')}
+        </Button>
+        <Button href={pageUrl(lang, 'contact')} variant="secondary">{t(lang, 'about.write')}</Button>
+      </div>
+    </div>
+  </section>
+
+  <section class="container materiales" data-reveal>
+    <h2 class="rotulo materiales__titulo">{t(lang, 'about.materials')}</h2>
+    <div class="materiales__grilla caja">
+      {
+        about.materials[lang].map((m, i) => (
+          <div class="materiales__celda">
+            <p class="rotulo rotulo--acento">
+              {String(i + 1).padStart(2, '0')} · {m.label}
+            </p>
+            <p>{m.items}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sobre {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-12);
+    padding-block: var(--s-12) var(--s-14);
+  }
+  .sobre__figura {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    max-width: 360px;
+    padding: 10px 10px 0;
+  }
+  .sobre__retrato {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 4 / 5;
+    outline: 1px solid var(--c-line);
+    outline-offset: 10px;
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .sobre__figura figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--s-1) var(--s-4);
+    padding-top: 6px;
+  }
+  .sobre__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .sobre__rotulo { letter-spacing: 0.1em; }
+  .sobre__bajada {
+    font-size: clamp(20px, 2.4vw, 22px);
+    line-height: 1.45;
+  }
+  .ahora {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: var(--s-3);
+    padding: 18px var(--s-5);
+    border: 1px dashed var(--c-accent);
+    background: var(--c-paper);
+  }
+  .ahora__rotulo {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+  }
+  .sobre__botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-2);
+  }
+
+  .materiales {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+    padding-bottom: var(--s-18);
+  }
+  .materiales__titulo {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+  }
+  .materiales__grilla {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .materiales__celda {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: var(--s-5) 22px;
+    font-size: 16px;
+  }
+  .materiales__celda + .materiales__celda { border-top: 1px dashed var(--c-line); }
+
+  @media (min-width: 640px) {
+    .sobre {
+      grid-template-columns: 240px 1fr;
+      gap: var(--s-12);
+      align-items: start;
+    }
+    .materiales__grilla { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .materiales__celda + .materiales__celda {
+      border-top: none;
+      border-left: 1px dashed var(--c-line);
+    }
+  }
+  @media (min-width: 1024px) {
+    .sobre {
+      grid-template-columns: 4fr 7fr;
+      gap: 88px;
+      padding-block: var(--s-18) var(--s-16);
+    }
+    .sobre__figura { max-width: none; }
+    .materiales { padding-bottom: 88px; }
+  }
+</style>

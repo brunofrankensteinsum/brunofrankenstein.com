@@ -1,23 +1,342 @@
 ---
-// Página de inicio. Versión mínima de la etapa 1; la completa la pista A.
+// Página de inicio: presentación, proyecto destacado, categorías y más proyectos.
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
-import ProjectList from '../ProjectList.astro';
-import { site, type Lang } from '../../config/site';
-import { pageUrl, otherLang } from '../../config/routes';
-import { t } from '../../i18n/ui';
-import { getProjects } from '../../lib/content';
+import Button from '../ui/Button.astro';
+import ProjectCard from '../project/ProjectCard.astro';
+import UpcomingCard from '../project/UpcomingCard.astro';
+import { site, categories, getCategory, type Lang } from '../../config/site';
+import { profile } from '../../config/profile';
+import { pageUrl, projectUrl, categoryUrl, otherLang } from '../../config/routes';
+import { t, formatMonth } from '../../i18n/ui';
+import { getProjects, getUpcomingProjects, figLabel } from '../../lib/content';
 
 interface Props {
   lang: Lang;
 }
 
 const { lang } = Astro.props;
-const projects = (await getProjects(lang)).slice(0, 5);
+const projects = await getProjects(lang);
+const upcoming = await getUpcomingProjects(lang);
+
+// Destacado: el más nuevo marcado con "featured"; si no hay ninguno, el más nuevo.
+const featured = projects.find((p) => p.data.featured) ?? projects[0];
+// «Más proyectos»: los demás, hasta completar tres lugares junto con la lámina en preparación.
+const proxima = upcoming[0];
+const rest = projects.filter((p) => p !== featured).slice(0, proxima ? 2 : 3);
+
+// Cuántos proyectos publicados tiene cada categoría.
+const counts = categories.map((c) => ({
+  ...c,
+  count: projects.filter((p) => p.data.categories.includes(c.id)).length,
+}));
 ---
 
-<Base lang={lang} title={site.name} description={site.tagline[lang]} alternateUrl={pageUrl(otherLang(lang), 'home')}>
-  <h1>{site.name}</h1>
-  <p>{site.tagline[lang]}</p>
-  <h2>{t(lang, 'home.latest')}</h2>
-  <ProjectList lang={lang} projects={projects} />
+<Base lang={lang} title={site.name} description={site.tagline[lang]} section="home" alternateUrl={pageUrl(otherLang(lang), 'home')}>
+  <section class="container hero">
+    <div class="hero__yo" data-reveal>
+      <div class="hero__autor">
+        {/* Falta design/assets/retrato.jpg: por ahora va un marcador rayado. */}
+        <div class="hero__retrato marco rayado" role="img" aria-label={t(lang, 'home.portraitAlt')}>
+          <span>{t(lang, 'home.portraitMissing')}</span>
+        </div>
+        <p class="hero__firma rotulo">
+          <span>{t(lang, 'home.author')}</span>
+          <span>{profile.location[lang]}</span>
+          <span class="rotulo--acento">
+            <button type="button" class="glosa" data-nota={t(lang, 'note.coords')}>{profile.coords[lang]}</button>
+          </span>
+        </p>
+      </div>
+      <h1 class="titulo-pagina">{site.name}</h1>
+      <p class="hero__bajada">{profile.home.lead[lang]}</p>
+      <p class="muted">{profile.home.sub[lang]}</p>
+      <div class="hero__botones">
+        <Button href={pageUrl(lang, 'projects')}>{t(lang, 'home.cta.projects')}</Button>
+        <Button href={pageUrl(lang, 'about')} variant="secondary">{t(lang, 'home.cta.about')}</Button>
+      </div>
+    </div>
+
+    {
+      featured && (
+        <article class="destacado" data-reveal>
+          <p class="destacado__fig rotulo rotulo--acento">
+            <span>
+              FIG. {figLabel(featured.data.fig)} · {t(lang, 'home.featured')}
+            </span>
+            <span>{formatMonth(featured.data.date)}</span>
+          </p>
+          <div class="destacado__foto rayado" data-marco>
+            <Image
+              src={featured.data.cover}
+              alt=""
+              widths={[480, 720, 1200]}
+              sizes="(min-width: 1024px) 660px, 100vw"
+              loading="eager"
+            />
+          </div>
+          <div class="destacado__texto">
+            <h2>
+              <a href={projectUrl(lang, featured.slug)}>{featured.data.title}</a>
+            </h2>
+            <div class="destacado__lado">
+              <p>{featured.data.summary}</p>
+              <div class="tags">
+                {featured.data.categories.map((id) => (
+                  <a class="tag" href={categoryUrl(lang, id)}>
+                    {getCategory(id)?.name[lang]}
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </article>
+      )
+    }
+  </section>
+
+  <section class="container bloque" data-reveal>
+    <h2 class="rotulo bloque__titulo">{t(lang, 'home.categories')}</h2>
+    <nav class="cats caja" aria-label={t(lang, 'home.categories')}>
+      {
+        counts.map((c, i) => (
+          <a href={categoryUrl(lang, c.id)} class:list={['cats__celda', c.count === 0 && 'cats__celda--vacia']}>
+            <span class="cats__num">
+              <span>{String(i + 1).padStart(2, '0')}</span>
+              <span class="cats__cuenta">×{c.count}</span>
+            </span>
+            <span class="cats__nombre">{c.name[lang]}</span>
+          </a>
+        ))
+      }
+    </nav>
+  </section>
+
+  <section class="container bloque bloque--final">
+    <div class="bloque__cabecera" data-reveal>
+      <h2 class="rotulo bloque__titulo">{t(lang, 'home.more')}</h2>
+      <a class="bloque__todos" href={pageUrl(lang, 'projects')}>{t(lang, 'home.all')} →</a>
+    </div>
+    <div class="mas">
+      {rest.map((p) => <ProjectCard lang={lang} project={p} heading="h3" size="chica" />)}
+      {proxima && <UpcomingCard lang={lang} project={proxima} />}
+    </div>
+  </section>
 </Base>
+
+<style>
+  /* ---------- Presentación + destacado ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-14);
+    padding-block: var(--s-10) var(--s-14);
+  }
+  .hero__yo {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .hero__autor {
+    display: flex;
+    align-items: flex-end;
+    gap: var(--s-5);
+    padding: var(--frame-offset) 0 0 var(--frame-offset);
+  }
+  .hero__retrato {
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .hero__firma {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.7;
+  }
+  .hero__yo h1 { margin-top: var(--s-2); }
+  .hero__bajada {
+    font-size: var(--fs-lead);
+    line-height: 1.45;
+  }
+  .hero__botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  .destacado {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .destacado__fig {
+    display: flex;
+    justify-content: space-between;
+  }
+  .destacado__foto {
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    outline: 1px solid var(--c-line);
+    outline-offset: 8px;
+    margin: 8px;
+  }
+  .destacado__foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .destacado__texto {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-4);
+    padding-top: var(--s-2);
+  }
+  .destacado h2 {
+    font-size: var(--fs-h2);
+    line-height: 1.2;
+    font-weight: 600;
+  }
+  /* El link del título cubre la foto y el título; las etiquetas quedan por encima. */
+  .destacado h2 a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .destacado h2 a { background-image: none; }
+  .destacado h2 a:focus-visible { outline: none; }
+  /* Igual que en las tarjetas: el marco se despega y pasa a acento, y la foto se acerca un poco. */
+  .destacado__foto {
+    transition:
+      outline-offset var(--t-hover) var(--ease-out),
+      outline-color var(--t-hover) var(--ease-out);
+  }
+  .destacado__foto :global(img) { transition: transform calc(var(--t-hover) * 2) var(--ease-out); }
+  .destacado:has(h2 a:focus-visible) .destacado__foto {
+    outline-offset: 12px;
+    outline-color: var(--c-accent);
+  }
+  .destacado:has(h2 a:focus-visible) .destacado__foto :global(img) { transform: scale(1.03); }
+  @media (hover: hover) {
+    .destacado:has(h2 a:hover) .destacado__foto {
+      outline-offset: 12px;
+      outline-color: var(--c-accent);
+    }
+    .destacado:has(h2 a:hover) .destacado__foto :global(img) { transform: scale(1.03); }
+  }
+  .destacado__lado {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 16px;
+  }
+  .destacado .tags {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---------- Bloques con rótulo ---------- */
+  .bloque {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-bottom: var(--s-14);
+  }
+  .bloque--final {
+    gap: var(--s-7);
+    padding-bottom: var(--s-20);
+  }
+  .bloque__titulo {
+    font-size: 13px;
+    letter-spacing: 0.1em;
+  }
+  .bloque__cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--s-4);
+  }
+  .bloque__todos {
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+  }
+
+  /* ---------- Grilla de categorías: 2 columnas en celular, 3 en tablet, 6 en escritorio ---------- */
+  .cats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    /* Las líneas punteadas entre celdas se dibujan con el hueco de 1 px sobre un fondo punteado. */
+    overflow: hidden;
+  }
+  .cats__celda {
+    background-image: none; /* sin subrayado: la celda entera es el link */
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: var(--s-4);
+    /* Línea punteada a la derecha y abajo; el contenedor recorta las del borde. */
+    margin: 0 -1px -1px 0;
+    border-right: 1px dashed var(--c-line);
+    border-bottom: 1px dashed var(--c-line);
+  }
+  .cats__num {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    color: var(--c-ink-muted);
+  }
+  .cats__cuenta { color: var(--c-accent); }
+  .cats__nombre { font-weight: 500; }
+  .cats__celda--vacia,
+  .cats__celda--vacia .cats__cuenta { color: var(--c-ink-muted); }
+
+  /* ---------- Más proyectos ---------- */
+  .mas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-12);
+    padding: var(--frame-offset);
+  }
+
+  @media (min-width: 640px) {
+    .hero { padding-block: var(--s-14) var(--s-16); }
+    .destacado__texto {
+      grid-template-columns: 3fr 2fr;
+      gap: var(--s-7);
+      align-items: start;
+    }
+    .cats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .mas {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--s-12) var(--s-10);
+    }
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      grid-template-columns: 5fr 7fr;
+      gap: var(--s-18);
+      align-items: center;
+      padding-block: var(--s-18) var(--s-20);
+    }
+    .bloque { padding-bottom: var(--s-18); }
+    .bloque--final { padding-bottom: var(--s-20); }
+    .cats { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    .mas {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--s-14);
+      padding: 0;
+    }
+  }
+</style>

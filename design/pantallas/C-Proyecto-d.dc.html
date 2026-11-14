@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>C · Proyecto (escritorio)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fragment+Mono&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}a:hover{text-decoration:underline}
+a:focus-visible,button:focus-visible{outline:2px solid #7FD6FF;outline-offset:2px}
+</style>
+</helmet>
+<div style="width: 1280px; min-height: 2700px; box-sizing: border-box; background-color: #0C2340; background-image: linear-gradient(rgba(160,205,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(160,205,255,0.08) 1px, transparent 1px); background-size: 24px 24px; color: #EAF3FC; font-family: 'Instrument Sans', system-ui, sans-serif; font-size: 18px; line-height: 1.65; display: flex; flex-direction: column">
+
+<header style="display: flex; align-items: center; gap: 40px; padding: 0 48px; min-height: 64px; background: #0C2340; border-bottom: 1px solid #4C7199; font-family: 'Fragment Mono', monospace; font-size: 13px; letter-spacing: 0.08em">
+<a href="C-Inicio-d.dc.html">B.FRANKENSTEIN</a>
+<nav aria-label="Principal" style="flex-grow: 1; display: flex; gap: 28px">
+<a href="C-Inicio-d.dc.html">INICIO</a>
+<a href="C-Proyectos-d.dc.html" aria-current="page" style="color: {{accent}}">PROYECTOS</a>
+<a href="C-Experiencias-d.dc.html">EXPERIENCIAS</a>
+<a href="C-SobreMi-d.dc.html">SOBRE MÍ</a>
+<a href="C-Contacto-d.dc.html">CONTACTO</a>
+</nav>
+<div style="display: flex; align-items: center">
+<a href="#" aria-current="true" style="display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 44px; color: {{accent}}">ES</a>
+<a href="#" lang="en" style="display: flex; align-items: center; justify-content: center; min-width: 40px; min-height: 44px; color: #A9C3DE">EN</a>
+</div>
+</header>
+
+<section style="padding: 48px 72px 0; display: flex; flex-direction: column; gap: 18px">
+<nav aria-label="Ruta" style="font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.04em; color: #A9C3DE"><a href="C-Proyectos-d.dc.html">Proyectos</a> / <a href="#">Impresión 3D</a> / <span style="color: {{accent}}">FIG. 03</span></nav>
+<div style="display: grid; grid-template-columns: 8fr 4fr; gap: 64px; align-items: end">
+<h1 style="margin: 0; font-size: 48px; line-height: 1.1; font-weight: 600; letter-spacing: -0.015em">Soporte impreso para sensor de temperatura</h1>
+<p style="margin: 0; font-size: 18px; color: #A9C3DE">Un soporte en PETG que aísla el sensor del calor de la pared y se imprime sin soportes.</p>
+</div>
+<div role="img" aria-label="Marcador: foto de portada del proyecto" style="margin-top: 28px; aspect-ratio: 21 / 9; outline: 1px solid #4C7199; outline-offset: 8px; background: repeating-linear-gradient(45deg, #0F2A4C 0 10px, #17385F 10px 11px); display: flex; align-items: center; justify-content: center; font-family: 'Fragment Mono', monospace; font-size: 13px; color: #A9C3DE">FOTO DE PORTADA · 21:9</div>
+</section>
+
+<div style="padding: 64px 72px 72px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 80px; align-items: start">
+
+<article style="display: flex; flex-direction: column; gap: 18px; max-width: 720px">
+<h2 id="problema" style="margin: 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 21px; line-height: 1.3; letter-spacing: 0.04em; text-transform: uppercase"><span style="color: {{accent}}">01 </span>El problema</h2>
+<p style="margin: 0">El sensor estaba pegado a la pared y medía dos grados de más cada tarde: la pared se calienta con el sol y le pasa ese calor al sensor. Necesitaba separarlo y dejar que el aire circule.</p>
+<p style="margin: 0">También quería que cualquiera pudiera imprimirlo en una impresora común, sin soportes y en menos de una hora.</p>
+
+<h2 id="diseno" style="margin: 24px 0 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 21px; line-height: 1.3; letter-spacing: 0.04em; text-transform: uppercase"><span style="color: {{accent}}">02 </span>Diseño</h2>
+<ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px">
+<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: {{accent}}; font-family: 'Fragment Mono', monospace">+</span><span>Separación de 25 mm respecto de la pared.</span></li>
+<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: {{accent}}; font-family: 'Fragment Mono', monospace">+</span><span>Ranuras arriba y abajo para que el aire pase por convección.</span></li>
+<li style="display: flex; gap: 14px"><span aria-hidden="true" style="color: {{accent}}; font-family: 'Fragment Mono', monospace">+</span><span>Encastre a presión: sin tornillos ni pegamento.</span></li>
+</ul>
+
+<div style="margin: 20px 0 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px">
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 16px">
+<div role="img" aria-label="Marcador: foto del soporte montado" style="aspect-ratio: 4 / 3; outline: 1px solid #4C7199; outline-offset: 6px; background: repeating-linear-gradient(45deg, #0F2A4C 0 10px, #17385F 10px 11px); display: flex; align-items: center; justify-content: center; font-family: 'Fragment Mono', monospace; font-size: 12px; color: #A9C3DE">FOTO · 4:3</div>
+<figcaption style="font-size: 14px; color: #A9C3DE"><span style="font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: {{accent}}; margin-right: 8px">DET. A</span>El soporte montado, con el sensor en su lugar.</figcaption>
+</figure>
+<figure style="margin: 0; display: flex; flex-direction: column; gap: 16px">
+<div role="img" aria-label="Marcador: render del modelo en corte" style="aspect-ratio: 4 / 3; outline: 1px solid #4C7199; outline-offset: 6px; background: repeating-linear-gradient(45deg, #0F2A4C 0 10px, #17385F 10px 11px); display: flex; align-items: center; justify-content: center; font-family: 'Fragment Mono', monospace; font-size: 12px; color: #A9C3DE">RENDER · 4:3</div>
+<figcaption style="font-size: 14px; color: #A9C3DE"><span style="font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.06em; color: {{accent}}; margin-right: 8px">DET. B</span>Corte del modelo: las ranuras de ventilación.</figcaption>
+</figure>
+</div>
+
+<h2 id="impresion" style="margin: 24px 0 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 21px; line-height: 1.3; letter-spacing: 0.04em; text-transform: uppercase"><span style="color: {{accent}}">03 </span>Impresión</h2>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start">
+<table style="width: 100%; border-collapse: collapse; font-size: 16px; border: 1px solid #4C7199; background: #0C2340">
+<thead><tr style="font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #A9C3DE; text-align: left"><th style="padding: 9px 14px; font-weight: 400; border-bottom: 1px solid #4C7199">PARÁMETRO</th><th style="padding: 9px 14px; font-weight: 400; border-bottom: 1px solid #4C7199; border-left: 1px dashed #4C7199">VALOR</th></tr></thead>
+<tbody>
+<tr><td style="padding: 9px 14px; border-bottom: 1px dashed #4C7199">Material</td><td style="padding: 9px 14px; border-bottom: 1px dashed #4C7199; border-left: 1px dashed #4C7199; font-family: 'Fragment Mono', monospace">PETG</td></tr>
+<tr><td style="padding: 9px 14px; border-bottom: 1px dashed #4C7199">Altura de capa</td><td style="padding: 9px 14px; border-bottom: 1px dashed #4C7199; border-left: 1px dashed #4C7199; font-family: 'Fragment Mono', monospace">0,2 mm</td></tr>
+<tr><td style="padding: 9px 14px">Relleno</td><td style="padding: 9px 14px; border-left: 1px dashed #4C7199; font-family: 'Fragment Mono', monospace">20 %</td></tr>
+</tbody>
+</table>
+<blockquote style="margin: 0; padding: 14px 16px; border: 1px dashed {{accent}}; background: #0C2340; font-size: 16px"><span style="display: block; font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: {{accent}}">NOTA</span>Si lo imprimís en PLA, no lo pongas donde le dé el sol directo: se deforma.</blockquote>
+</div>
+
+<h2 id="configuracion" style="margin: 24px 0 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 21px; line-height: 1.3; letter-spacing: 0.04em; text-transform: uppercase"><span style="color: {{accent}}">04 </span>Configuración</h2>
+<pre style="margin: 0; padding: 18px 20px; background: #081A30; border: 1px solid #4C7199; overflow-x: auto; font-family: 'Fragment Mono', monospace; font-size: 14px; line-height: 1.6; color: #EAF3FC"><code>sensor:
+  - platform: dallas_temp
+    name: "Living"
+    update_interval: 60s</code></pre>
+
+<h2 id="video" style="margin: 24px 0 0; font-family: 'Fragment Mono', monospace; font-weight: 400; font-size: 21px; line-height: 1.3; letter-spacing: 0.04em; text-transform: uppercase"><span style="color: {{accent}}">05 </span>Video</h2>
+<button aria-label="Reproducir el video en YouTube" style="margin-top: 6px; display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 16 / 9; outline: 1px solid #4C7199; outline-offset: 6px; background: repeating-linear-gradient(45deg, #0F2A4C 0 10px, #17385F 10px 11px); border: none; cursor: pointer; padding: 0">
+<span style="display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; border: 1px solid {{accent}}; background: #0C2340; color: {{accent}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 4l11 7-11 7z"></path></svg></span>
+</button>
+<div style="margin-top: 8px; font-size: 15px; color: #A9C3DE">El video se carga recién al hacer clic. Dura 3 min: montaje y prueba.</div>
+</article>
+
+<aside style="display: flex; flex-direction: column; gap: 28px">
+<dl style="margin: 0; border: 1px solid #4C7199; background: #0C2340; font-size: 15px">
+<div style="padding: 10px 14px; border-bottom: 1px solid #4C7199; font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.1em; color: {{accent}}">CAJETÍN</div>
+<div style="display: flex; gap: 12px; padding: 10px 14px; border-bottom: 1px dashed #4C7199"><dt style="flex: none; width: 88px; font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #A9C3DE; padding-top: 3px">FECHA</dt><dd style="margin: 0; font-family: 'Fragment Mono', monospace">2026-08-14</dd></div>
+<div style="display: flex; gap: 12px; padding: 10px 14px; border-bottom: 1px dashed #4C7199"><dt style="flex: none; width: 88px; font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #A9C3DE; padding-top: 3px">CATEGORÍA</dt><dd style="margin: 0"><a href="#" style="color: {{accent}}">Impresión 3D</a>, <a href="#" style="color: {{accent}}">Home Automation</a></dd></div>
+<div style="display: flex; gap: 12px; padding: 10px 14px"><dt style="flex: none; width: 88px; font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #A9C3DE; padding-top: 3px">ETIQUETAS</dt><dd style="margin: 0; font-family: 'Fragment Mono', monospace; font-size: 13px">PETG · Fusion 360 · ESPHome · DS18B20</dd></div>
+</dl>
+<nav aria-label="En esta página" style="display: flex; flex-direction: column; font-family: 'Fragment Mono', monospace; font-size: 13px; letter-spacing: 0.04em">
+<div style="padding-bottom: 8px; font-size: 11px; letter-spacing: 0.1em; color: #A9C3DE">EN ESTA LÁMINA</div>
+<a href="#problema" aria-current="true" style="display: flex; gap: 12px; align-items: center; min-height: 40px; padding-left: 12px; border-left: 1px solid {{accent}}; color: {{accent}}"><span>01</span><span>EL PROBLEMA</span></a>
+<a href="#diseno" style="display: flex; gap: 12px; align-items: center; min-height: 40px; padding-left: 12px; border-left: 1px dashed #4C7199"><span style="color: #A9C3DE">02</span><span>DISEÑO</span></a>
+<a href="#impresion" style="display: flex; gap: 12px; align-items: center; min-height: 40px; padding-left: 12px; border-left: 1px dashed #4C7199"><span style="color: #A9C3DE">03</span><span>IMPRESIÓN</span></a>
+<a href="#configuracion" style="display: flex; gap: 12px; align-items: center; min-height: 40px; padding-left: 12px; border-left: 1px dashed #4C7199"><span style="color: #A9C3DE">04</span><span>CONFIGURACIÓN</span></a>
+<a href="#video" style="display: flex; gap: 12px; align-items: center; min-height: 40px; padding-left: 12px; border-left: 1px dashed #4C7199"><span style="color: #A9C3DE">05</span><span>VIDEO</span></a>
+</nav>
+<a href="#" style="display: flex; align-items: center; justify-content: space-between; min-height: 48px; padding: 0 16px; background: {{accent}}; color: #0C2340; font-family: 'Fragment Mono', monospace; font-size: 13px; letter-spacing: 0.06em"><span>REPOSITORIO EN GITHUB</span><span aria-hidden="true">→</span></a>
+</aside>
+
+</div>
+
+<nav aria-label="Otros proyectos" style="margin: 0 72px 80px; display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #4C7199; background: #0C2340">
+<a href="#" style="display: flex; flex-direction: column; gap: 6px; padding: 20px 24px; border-right: 1px dashed #4C7199"><span style="font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: #A9C3DE">← FIG. 02 · ANTERIOR</span><span style="font-size: 20px; font-weight: 600">Banco de pruebas para celdas 18650</span></a>
+<a href="C-Proyectos-d.dc.html" style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px; padding: 20px 24px; text-align: right"><span style="font-family: 'Fragment Mono', monospace; font-size: 11px; letter-spacing: 0.08em; color: {{accent}}">ÍNDICE →</span><span style="font-size: 20px; font-weight: 600">Todos los proyectos</span></a>
+</nav>
+
+<footer style="margin-top: auto; background: #0C2340; border-top: 1px solid #4C7199; padding: 0 48px; min-height: 64px; display: flex; align-items: center; gap: 28px; font-family: 'Fragment Mono', monospace; font-size: 12px; letter-spacing: 0.06em">
+<div style="flex-grow: 1; color: #A9C3DE">B.FRANKENSTEIN · 2026 · ESC 1:1</div>
+<a href="#">LINKEDIN</a>
+<a href="#">GITHUB</a>
+<a href="#">YOUTUBE</a>
+</footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#7FD6FF","options":["#FF7A1A","#FF5A4D","#7FD6FF"]},"$preview":{"width":1280,"height":2700}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#7FD6FF' };
+}
+}
+</script>
+</body>
+</html>

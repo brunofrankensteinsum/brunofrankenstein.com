@@ -1,0 +1,170 @@
+---
+// Experiencias: cronograma con lo más reciente arriba.
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../ui/PageIntro.astro';
+import Button from '../ui/Button.astro';
+import type { Lang } from '../../config/site';
+import { profile } from '../../config/profile';
+import { pageUrl, otherLang } from '../../config/routes';
+import { t, formatPeriod } from '../../i18n/ui';
+import { getExperiences } from '../../lib/content';
+import { definicion } from '../../config/glossary.mjs';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const title = t(lang, 'experience.title');
+const intro = t(lang, 'experience.intro');
+const experiences = await getExperiences(lang);
+---
+
+<Base lang={lang} title={title} description={intro} section="experience" alternateUrl={pageUrl(otherLang(lang), 'experience')}>
+  <PageIntro label={t(lang, 'experience.label')} title={title} intro={intro}>
+    {/* Sin archivo de CV cargado (profile.cv), el botón queda deshabilitado. */}
+    <Button
+      slot="aside"
+      variant="secondary"
+      accent
+      icon="ui-descargar"
+      href={profile.cv || undefined}
+      disabled={!profile.cv}
+      download={profile.cv ? true : undefined}
+    >
+      {t(lang, 'experience.cv')}
+    </Button>
+  </PageIntro>
+
+  <ol class="container crono">
+    {
+      experiences.map((e, i) => (
+        <li class:list={['crono__fila', i === 0 && 'crono__fila--reciente']} data-reveal>
+          <p class="crono__anio">{formatPeriod(lang, e.data.start, e.data.end)}</p>
+          <span class="crono__nodo" aria-hidden="true" />
+          <div class="crono__texto">
+            <h2>{e.data.title}</h2>
+            {e.data.place && <p class="crono__lugar">{e.data.place}</p>}
+            {e.data.summary && <p class="crono__desc">{e.data.summary}</p>}
+            {e.data.link && (
+              <p class="crono__desc">
+                <a class="crono__link" href={e.data.link}>
+                  {t(lang, 'experience.link')} →
+                </a>
+              </p>
+            )}
+          </div>
+          {e.data.tags.length > 0 && (
+            <ul class="tags crono__tags">
+              {e.data.tags.map((tag) => {
+                // Si la etiqueta está en el glosario, abre su definición.
+                const def = definicion(lang, tag);
+                return (
+                  <li class="tag">
+                    {def ? (
+                      <button type="button" class="glosa" data-nota={def} data-nota-rotulo="Def.">
+                        {tag}
+                      </button>
+                    ) : (
+                      tag
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</Base>
+
+<style>
+  .crono {
+    display: flex;
+    flex-direction: column;
+    padding-block: var(--s-2) var(--s-14);
+  }
+  /* Celular: año y nodo en un renglón; debajo el texto y las etiquetas. */
+  .crono__fila {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--s-3) var(--s-3);
+    align-items: center;
+    padding-block: var(--s-7);
+  }
+  .crono__fila + .crono__fila { border-top: 1px dashed var(--c-line); }
+  .crono__anio {
+    order: 2;
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .crono__nodo {
+    order: 1;
+    width: 11px;
+    height: 11px;
+    border: 1px solid var(--c-accent);
+  }
+  /* La experiencia más reciente: año en acento y nodo relleno. */
+  .crono__fila--reciente .crono__anio { color: var(--c-accent); }
+  .crono__fila--reciente .crono__nodo { background: var(--c-accent); }
+  .crono__texto,
+  .crono__tags {
+    order: 3;
+    grid-column: 1 / -1;
+  }
+  .crono__texto {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-2);
+  }
+  h2 {
+    font-size: 24px;
+    line-height: 1.25;
+    font-weight: 600;
+  }
+  .crono__lugar {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--c-ink-muted);
+  }
+  .crono__desc { margin-top: var(--s-1); }
+  .crono__link { color: var(--c-accent); }
+
+  @media (min-width: 640px) {
+    .crono { padding-block: var(--s-6) var(--s-18); }
+    /* Tablet: año · nodo · texto; las etiquetas van debajo del texto. */
+    .crono__fila {
+      grid-template-columns: 132px 32px 1fr;
+      gap: var(--s-3) var(--s-6);
+      align-items: start;
+      padding-block: var(--s-8);
+    }
+    .crono__anio {
+      order: 0;
+      padding-top: 4px;
+    }
+    .crono__nodo {
+      order: 0;
+      justify-self: center;
+      margin-top: 8px;
+    }
+    .crono__texto {
+      order: 0;
+      grid-column: auto;
+    }
+    .crono__tags {
+      order: 0;
+      grid-column: 3;
+    }
+  }
+  @media (min-width: 1024px) {
+    /* Escritorio: cuatro columnas, con las etiquetas a la derecha. */
+    .crono__fila { grid-template-columns: 180px 32px 1fr 300px; gap: 0 var(--s-6); }
+    .crono__tags { grid-column: auto; }
+  }
+</style>

@@ -1,0 +1,14 @@
+---
+// Página de una categoría: el mismo índice de láminas, con esa categoría elegida.
+import ProjectsIndex from '../project/ProjectsIndex.astro';
+import type { CategoryId, Lang } from '../../config/site';
+
+interface Props {
+  lang: Lang;
+  categoryId: CategoryId;
+}
+
+const { lang, categoryId } = Astro.props;
+---
+
+<ProjectsIndex lang={lang} categoryId={categoryId} />

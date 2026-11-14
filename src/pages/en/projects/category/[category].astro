@@ -1,0 +1,13 @@
+---
+// Genera una página por cada categoría, con su nombre en inglés en la URL.
+import CategoryPage from '../../../../components/pages/CategoryPage.astro';
+import { categories } from '../../../../config/site';
+
+export function getStaticPaths() {
+  return categories.map((c) => ({ params: { category: c.slug.en }, props: { categoryId: c.id } }));
+}
+
+const { categoryId } = Astro.props;
+---
+
+<CategoryPage lang="en" categoryId={categoryId} />

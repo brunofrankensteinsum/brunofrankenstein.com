@@ -6,4 +6,8 @@ export default defineConfig({
   site: 'https://brunofrankenstein.com',
   // Todas las URLs terminan en "/" para que cada página tenga una sola dirección.
   trailingSlash: 'always',
+  markdown: {
+    // Los bloques de código van sin colores: una sola tinta, como en un plano.
+    syntaxHighlight: false,
+  },
 });

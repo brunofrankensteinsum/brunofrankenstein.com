@@ -1,0 +1,94 @@
+/* ==========================================================================
+   brunofrankenstein.com: tokens del diseño C1 «Cianotipo»
+   Fuente de verdad para colores, tipografía, espaciado y movimiento.
+   ========================================================================== */
+
+@font-face { /* autoalojar: subset latin + latin-ext, woff2 */
+  font-family: "Instrument Sans";
+  src: url("/fonts/InstrumentSans-Variable.woff2") format("woff2");
+  font-weight: 400 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fragment Mono";
+  src: url("/fonts/FragmentMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
+:root {
+  /* --- Color: papel y tinta (fondo oscuro) --- */
+  --c-paper:        #0C2340; /* fondo, y relleno de cajas sobre la retícula */
+  --c-paper-deep:   #081A30; /* bloques de código, inputs */
+  --c-hatch-a:      #0F2A4C; /* rayado de placeholders/skeleton */
+  --c-hatch-b:      #17385F;
+  --c-ink:          #EAF3FC; /* texto principal  · 14:1 sobre paper */
+  --c-ink-muted:    #A9C3DE; /* texto secundario · 8.7:1 sobre paper */
+  --c-line:         #4C7199; /* bordes, separadores (decorativo, no texto) */
+  --c-grid:         rgba(160, 205, 255, 0.08); /* retícula de 24 px */
+
+  /* --- Acento (una sola variable; el diseño probó 3 opciones) --- */
+  --c-accent:       #7FD6FF; /* cian por defecto · 9.7:1 sobre paper */
+  /* alternativas probadas: #FF7A1A (naranja), #FF5A4D (rojo lápiz) */
+  --c-on-accent:    #0C2340; /* texto sobre botones de acento */
+
+  /* --- Estados (proponer; 9.9:1 y 6.9:1 sobre paper) --- */
+  --c-ok:           #7FE0B0;
+  --c-error:        #FF8A80;
+
+  /* --- Tipografía --- */
+  --f-sans: "Instrument Sans", system-ui, sans-serif;  /* cuerpo y títulos */
+  --f-mono: "Fragment Mono", ui-monospace, monospace;  /* rótulos, nav, datos */
+  --fs-label:   12px;   /* rótulos mono, letter-spacing .08–.1em, MAYÚSCULAS */
+  --fs-small:   14px;
+  --fs-body:    17px;   /* 18px en páginas de lectura (detalle de proyecto) */
+  --fs-lead:    20px;
+  --fs-h3:      21px;
+  --fs-h2:      28px;
+  --fs-h1-mono: 44px;   /* títulos de página en mono mayúscula */
+  --fs-h1-sans: 48px;   /* título de proyecto en sans 600 */
+  --lh-body:    1.55;
+  --ls-label:   0.08em;
+
+  /* --- Espaciado (múltiplos de 4; la retícula visual es 24) --- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 20px;
+  --s-6: 24px; --s-7: 28px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
+  --s-14: 56px; --s-16: 64px; --s-18: 72px; --s-20: 80px;
+  --page-pad: 72px;            /* 22px en celular */
+  --page-max: 1280px;
+  --grid-size: 24px;
+
+  /* --- Forma --- */
+  --radius: 0;                 /* todo es recto: es un plano */
+  --stroke: 1px;
+  --frame-offset: 6px;         /* «marco» de imágenes: outline-offset */
+  --frame-offset-hover: 10px;
+
+  /* --- Movimiento --- */
+  --ease-out:   cubic-bezier(0.2, 0, 0, 1);   /* entradas y hover */
+  --ease-in:    cubic-bezier(0.4, 0, 1, 1);   /* salidas */
+  --ease-draw:  cubic-bezier(0.65, 0, 0.35, 1); /* trazos SVG */
+  --t-micro:    120ms;  /* color, press */
+  --t-hover:    200ms;  /* subrayados, marcos, flechas */
+  --t-enter:    400ms;  /* aparición de bloques */
+  --t-draw:     700ms;  /* «dibujar» líneas e íconos */
+  --stagger:    60ms;
+  --tooltip-delay: 500ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-hover: 0ms; --t-enter: 0ms; --t-draw: 0ms; --stagger: 0ms; }
+}
+
+body {
+  margin: 0;
+  background-color: var(--c-paper);
+  background-image:
+    linear-gradient(var(--c-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-grid) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  color: var(--c-ink);
+  font: var(--fs-body)/var(--lh-body) var(--f-sans);
+}
+
+:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }

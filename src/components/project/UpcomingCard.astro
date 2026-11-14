@@ -1,0 +1,47 @@
+---
+// Lámina en preparación: un marco punteado con «FIG. 04 · EN PREPARACIÓN».
+import type { Lang } from '../../config/site';
+import { t } from '../../i18n/ui';
+import { figLabel, type UpcomingProject } from '../../lib/content';
+
+interface Props {
+  lang: Lang;
+  project: UpcomingProject;
+  withText?: boolean; // agrega la frase «La próxima lámina está en el banco de trabajo.»
+}
+
+const { lang, project, withText = false } = Astro.props;
+---
+
+<div class="proxima" data-reveal>
+  <p class="proxima__marco">FIG. {figLabel(project.data.fig)} · {t(lang, 'project.upcoming')}</p>
+  {withText && <p class="proxima__texto">{t(lang, 'projects.upcomingText')}</p>}
+</div>
+
+<style>
+  .proxima {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-4);
+  }
+  .proxima__marco {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 16 / 9;
+    padding: var(--s-4);
+    text-align: center;
+    outline: 1px dashed var(--c-line);
+    outline-offset: var(--frame-offset);
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+  .proxima__texto {
+    margin-top: 6px;
+    font-size: 15px;
+    color: var(--c-ink-muted);
+  }
+</style>

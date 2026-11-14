@@ -1,0 +1,40 @@
+---
+// Marcador de plano: un rectángulo con un rótulo en el medio.
+// - variante "rayado": ocupa el lugar de una imagen que todavía no está.
+// - variante "punteado": algo que está en preparación.
+interface Props {
+  label: string;
+  ratio?: string; // proporción ancho / alto, por ejemplo "16 / 9"
+  variant?: 'rayado' | 'punteado';
+}
+
+const { label, ratio = '16 / 9', variant = 'rayado' } = Astro.props;
+---
+
+<div class:list={['placeholder', `placeholder--${variant}`]} style={`aspect-ratio: ${ratio}`}>
+  <span>{label}</span>
+</div>
+
+<style>
+  .placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--s-4);
+    text-align: center;
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+    /* El «marco»: una línea separada 6 px del rectángulo. */
+    outline: 1px solid var(--c-line);
+    outline-offset: var(--frame-offset);
+  }
+  .placeholder--rayado {
+    background: repeating-linear-gradient(45deg, var(--c-hatch-a) 0 10px, var(--c-hatch-b) 10px 11px);
+  }
+  .placeholder--punteado {
+    outline-style: dashed;
+  }
+</style>

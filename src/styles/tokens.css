@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Tokens del diseño C1 «Cianotipo».
+   Fuente de verdad para colores, tipografía, espaciado y movimiento.
+   Es la versión de producción de design/tokens.css: si cambia uno, cambiar el otro.
+   ========================================================================== */
+
+/* --- Fuentes autoalojadas (licencia OFL, ver public/fonts/LICENCIA-*.txt) ---
+   Cada fuente viene en dos archivos: «latin» (español e inglés) y «latin-ext»
+   (letras de otros idiomas europeos). El navegador baja solo los que necesita. */
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/InstrumentSans-latin.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/InstrumentSans-latin-ext.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Instrument Sans";
+  src: url("/fonts/InstrumentSans-Italic-latin.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Fragment Mono";
+  src: url("/fonts/FragmentMono-latin.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Fragment Mono";
+  src: url("/fonts/FragmentMono-latin-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F,
+    U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+:root {
+  /* --- Color: papel y tinta (fondo oscuro) --- */
+  --c-paper:        #0C2340; /* fondo, y relleno de cajas sobre la retícula */
+  --c-paper-deep:   #081A30; /* bloques de código, inputs */
+  --c-hatch-a:      #0F2A4C; /* rayado de marcadores de imagen y de carga */
+  --c-hatch-b:      #17385F;
+  --c-ink:          #EAF3FC; /* texto principal  · 14:1 sobre paper */
+  --c-ink-muted:    #A9C3DE; /* texto secundario · 8.7:1 sobre paper */
+  --c-line:         #4C7199; /* bordes y separadores. Solo decorativo: nunca para texto */
+  --c-grid:         rgba(160, 205, 255, 0.08); /* retícula de 24 px */
+
+  /* --- Acento: UNA sola variable. Cambiar acá cambia todo el sitio. ---
+     Alternativas que probó el diseño: #FF7A1A (naranja), #FF5A4D (rojo lápiz). */
+  --c-accent:       #7FD6FF; /* cian · 9.7:1 sobre paper */
+  --c-on-accent:    #0C2340; /* texto sobre botones de acento */
+
+  /* --- Estados --- */
+  --c-ok:           #7FE0B0;
+  --c-error:        #FF8A80;
+
+  /* --- Tipografía --- */
+  --f-sans: "Instrument Sans", system-ui, sans-serif;  /* lectura y títulos */
+  --f-mono: "Fragment Mono", ui-monospace, monospace;  /* rótulos, navegación, datos */
+  --fs-label:   12px;   /* rótulos mono en MAYÚSCULAS */
+  --fs-small:   14px;
+  --fs-body:    17px;   /* 18px en páginas de lectura (detalle de proyecto) */
+  --fs-lead:    20px;
+  --fs-h3:      21px;
+  --fs-h2:      28px;
+  --fs-h1-mono: clamp(30px, 8vw, 44px);   /* títulos de página en mono mayúscula */
+  --fs-h1-sans: clamp(32px, 7vw, 48px);   /* título de proyecto en sans 600 */
+  --lh-body:    1.55;
+  --ls-label:   0.08em;
+
+  /* --- Espaciado (múltiplos de 4; la retícula visual es de 24) --- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 20px;
+  --s-6: 24px; --s-7: 28px; --s-8: 32px; --s-10: 40px; --s-12: 48px;
+  --s-14: 56px; --s-16: 64px; --s-18: 72px; --s-20: 80px;
+  --page-max: 1280px;
+  /* Margen lateral del contenido: 22px en celular, 72px desde 1280px de ancho. */
+  --page-pad: clamp(22px, 5.625vw, 72px);
+  /* Margen lateral del header y el footer: 22px en celular, 48px desde 1280px. */
+  --bar-pad: clamp(22px, 3.75vw, 48px);
+  --grid-size: 24px;
+
+  /* --- Forma --- */
+  --radius: 0;                 /* todo es recto: es un plano */
+  --stroke: 1px;
+  --frame-offset: 6px;         /* «marco» de imágenes: outline-offset */
+  --frame-offset-hover: 10px;
+
+  /* --- Movimiento --- */
+  --ease-out:   cubic-bezier(0.2, 0, 0, 1);     /* entradas y hover */
+  --ease-in:    cubic-bezier(0.4, 0, 1, 1);     /* salidas */
+  --ease-draw:  cubic-bezier(0.65, 0, 0.35, 1); /* trazos SVG */
+  --t-micro:    120ms;  /* color, press */
+  --t-hover:    200ms;  /* subrayados, marcos, flechas */
+  --t-enter:    400ms;  /* aparición de bloques */
+  --t-draw:     700ms;  /* «dibujar» líneas e íconos */
+  --stagger:    60ms;
+  --tooltip-delay: 500ms;
+}
+
+/* Si la persona pidió menos movimiento en su sistema, las animaciones duran cero. */
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-micro: 0ms; --t-hover: 0ms; --t-enter: 0ms; --t-draw: 0ms; --stagger: 0ms; }
+}

@@ -1,0 +1,272 @@
+---
+// Índice de láminas: encabezado, panel de filtros y grilla de tarjetas.
+// Lo usan la página de Proyectos (todas las categorías) y la de cada categoría.
+// Los filtros son links a páginas reales; en el paso 5 pasan a ser instantáneos.
+import Base from '../../layouts/Base.astro';
+import PageIntro from '../ui/PageIntro.astro';
+import ProjectCard from './ProjectCard.astro';
+import UpcomingCard from './UpcomingCard.astro';
+import { categories, getCategory, type CategoryId, type Lang } from '../../config/site';
+import { pageUrl, categoryUrl, otherLang } from '../../config/routes';
+import { t } from '../../i18n/ui';
+import { getProjects, getUpcomingProjects } from '../../lib/content';
+
+interface Props {
+  lang: Lang;
+  // Categoría elegida. Sin ella se muestran todos los proyectos.
+  categoryId?: CategoryId;
+}
+
+const { lang, categoryId } = Astro.props;
+const all = await getProjects(lang);
+const upcoming = await getUpcomingProjects(lang);
+const projects = categoryId ? all.filter((p) => p.data.categories.includes(categoryId)) : all;
+
+const dos = (n: number) => String(n).padStart(2, '0');
+const counts = categories.map((c) => ({ ...c, count: all.filter((p) => p.data.categories.includes(c.id)).length }));
+// Años en los que hay proyectos, del más nuevo al más viejo.
+const years = [...new Set(all.map((p) => p.data.date.getUTCFullYear()))].sort((a, b) => b - a);
+
+const other = otherLang(lang);
+const baseUrl = pageUrl(lang, 'projects');
+const categoryName = categoryId ? getCategory(categoryId)?.name[lang] : undefined;
+const title = t(lang, 'projects.title');
+const intro = t(lang, 'projects.intro');
+---
+
+<Base
+  lang={lang}
+  title={categoryName ? `${categoryName} · ${title}` : title}
+  description={intro}
+  section="projects"
+  alternateUrl={categoryId ? categoryUrl(other, categoryId) : pageUrl(other, 'projects')}
+>
+  <PageIntro label={t(lang, 'projects.label')} title={title} intro={intro}>
+    <div class="resumen" slot="aside">
+      <p class="rotulo">
+        {dos(all.length)} {t(lang, 'projects.count')}
+        {upcoming.length > 0 && ` · ${upcoming.length} ${t(lang, 'projects.upcomingCount')}`}
+      </p>
+      <div class="vista caja" role="group" aria-label={t(lang, 'projects.view')}>
+        <button type="button" aria-pressed="true">{t(lang, 'projects.view.grid')}</button>
+        {/* La vista de lista (tabla «índice de láminas») llega en el paso 5. */}
+        <button type="button" aria-pressed="false" disabled>{t(lang, 'projects.view.list')}</button>
+      </div>
+    </div>
+  </PageIntro>
+
+  <div class="container indice">
+    <aside class="filtros" data-reveal>
+      <nav class="caja" aria-label={t(lang, 'projects.filter.category')}>
+        <p class="filtros__titulo rotulo">{t(lang, 'projects.category')}</p>
+        <ul class="filtros__lista">
+          <li>
+            <a href={baseUrl} aria-current={categoryId ? undefined : 'true'}>
+              <span>{t(lang, 'projects.all')}</span>
+              <span class="filtros__cuenta">{dos(all.length)}</span>
+            </a>
+          </li>
+          {
+            counts.map((c) => (
+              <li>
+                <a
+                  href={categoryUrl(lang, c.id)}
+                  aria-current={c.id === categoryId ? 'true' : undefined}
+                  class:list={[c.count === 0 && 'filtros__vacia']}
+                >
+                  <span>{c.name[lang]}</span>
+                  <span class="filtros__cuenta">{dos(c.count)}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      {
+        years.length > 0 && (
+          <nav class="anios" aria-label={t(lang, 'projects.filter.year')}>
+            <p class="rotulo anios__titulo">{t(lang, 'projects.year')}</p>
+            <ul class="anios__lista">
+              {years.map((y) => (
+                <li>
+                  {/* Por ahora el link no filtra: lo activa el paso 5. */}
+                  <a class="tag" href={`${baseUrl}?anio=${y}`}>
+                    {y}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+    </aside>
+
+    {
+      projects.length === 0 ? (
+        <div class="vacio">
+          <p class="rotulo">{t(lang, 'projects.emptyCategory')}</p>
+          <a href={baseUrl}>{t(lang, 'projects.seeAll')} →</a>
+        </div>
+      ) : (
+        <div class="grilla">
+          {projects.map((p) => <ProjectCard lang={lang} project={p} />)}
+          {!categoryId && upcoming.map((p) => <UpcomingCard lang={lang} project={p} withText />)}
+        </div>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .resumen {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    align-items: flex-start;
+  }
+  .vista {
+    display: flex;
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+  }
+  .vista button {
+    min-height: 40px;
+    padding: 0 var(--s-4);
+    background: none;
+    border: none;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+  }
+  .vista button + button { border-left: 1px solid var(--c-line); }
+  .vista button[aria-pressed='true'] {
+    background: var(--c-accent);
+    color: var(--c-on-accent);
+  }
+  .vista button:disabled {
+    color: var(--c-ink-muted);
+    cursor: not-allowed;
+  }
+
+  .indice {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-10);
+    padding-block: var(--s-8) var(--s-18);
+  }
+
+  /* ---------- Filtros ---------- */
+  .filtros {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-6);
+  }
+  .filtros__titulo {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--c-line);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .filtros__lista a {
+    background-image: none; /* renglones con línea punteada: sin subrayado */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 14px;
+  }
+  .filtros__lista li + li a { border-top: 1px dashed var(--c-line); }
+  .filtros__cuenta {
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    color: var(--c-ink-muted);
+  }
+  .filtros__lista a[aria-current],
+  .filtros__lista a[aria-current] .filtros__cuenta { color: var(--c-accent); }
+  .filtros__vacia { color: var(--c-ink-muted); }
+  .anios {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .anios__titulo {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .anios__lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+  }
+  .anios__lista .tag { min-height: 36px; padding: 0 12px; }
+
+  /* ---------- Grilla ---------- */
+  .grilla {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--s-12);
+    padding: var(--frame-offset);
+    align-content: start;
+  }
+  .vacio {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-3);
+    min-height: 240px;
+    padding: var(--s-8);
+    border: 1px dashed var(--c-line);
+    text-align: center;
+  }
+  .vacio a {
+    --ul-y: calc(50% + 0.8em);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--c-accent);
+  }
+
+  @media (min-width: 640px) {
+    .resumen { align-items: flex-end; }
+    .grilla {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--s-14) var(--s-10);
+    }
+    .filtros {
+      flex-direction: row;
+      align-items: flex-start;
+    }
+    .filtros > nav:first-child { flex: 1; }
+    /* En tablet las categorías van en dos columnas para no ocupar tanto alto. */
+    .filtros__lista {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .filtros__lista li + li a { border-top: none; }
+    .filtros__lista li:nth-child(n + 3) a { border-top: 1px dashed var(--c-line); }
+    .filtros__lista li:nth-child(even) a { border-left: 1px dashed var(--c-line); }
+  }
+  @media (min-width: 1024px) {
+    .indice {
+      grid-template-columns: 232px 1fr;
+      gap: var(--s-14);
+      align-items: start;
+      padding-block: var(--s-10) 88px;
+    }
+    .filtros {
+      flex-direction: column;
+      align-items: stretch;
+      gap: var(--s-8);
+    }
+    .filtros__lista { display: block; }
+    .filtros__lista li:nth-child(even) a { border-left: none; }
+    .filtros__lista li + li a { border-top: 1px dashed var(--c-line); }
+    .grilla {
+      gap: var(--s-14) var(--s-12);
+      padding: 0;
+    }
+  }
+</style>

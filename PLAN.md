@@ -93,25 +93,46 @@ functions/                # pista D (o worker equivalente)
 
 | Campo | Tipo | Obligatorio | Nota |
 |---|---|---|---|
+| `fig` | número entero | sí | Número de lámina (`FIG. 03`). Único: el build falla si se repite |
+| `status` | `publicado` o `en-preparacion` | no | Por defecto `publicado`. Ver nota debajo de la tabla |
 | `title` | texto | sí | |
 | `summary` | texto, 160 caracteres máx. | sí | Se usa como meta descripción |
 | `date` | fecha | sí | Fecha del proyecto |
 | `updated` | fecha | no | |
 | `categories` | lista de slugs | sí, al menos una | Slugs neutros definidos en `site.ts` |
 | `cover` | imagen | sí | Con `coverAlt` obligatorio |
+| `schematic` | imagen | no | Esquema propio del proyecto (despiece, diagrama) |
 | `youtube` | ID de video | no | Se incrusta con carga diferida |
 | `repo` | URL de GitHub | no | |
 | `tags` | lista de texto | no | |
 | `featured` | booleano | no | Destacado en el inicio |
 | `draft` | booleano | no | No se publica ni se indexa |
 
+Un proyecto con `status: en-preparacion` solo necesita `fig`: el sitio lo anuncia como
+«FIG. 04 · EN PREPARACIÓN», sin página propia. Los campos marcados como obligatorios lo son
+para los proyectos publicados. (`fig`, `status` y `schematic` se agregaron con el diseño C1, 2026-11-14.)
+
 El cuerpo es Markdown: texto, imágenes con texto alternativo, GIF o video corto.
 Si hay video de YouTube, el cuerpo debe incluir un resumen escrito de lo que muestra.
 
 ### Campos de una experiencia
 
-`title`, `summary`, `organization` (opcional), `role` (opcional), `start`, `end` (opcional),
-`cover` (opcional), `draft`. Cuerpo en Markdown.
+| Campo | Tipo | Obligatorio | Nota |
+|---|---|---|---|
+| `title` | texto | sí | Lo que se lee como título en el cronograma |
+| `summary` | texto, 160 caracteres máx. | no | Descripción breve |
+| `organization` | texto | no | |
+| `role` | texto | no | |
+| `place` | texto | no | Renglón de contexto: institución, ciudad, evento |
+| `start` | fecha | no | Si falta, el cronograma muestra `[AÑO]` |
+| `end` | fecha | no | Si falta, la experiencia sigue hasta hoy. Hecho puntual: igual a `start` |
+| `tags` | lista de texto | no | |
+| `link` | URL | no | Por ejemplo, a un artículo publicado |
+| `cover` | imagen | no | Con `coverAlt` |
+| `draft` | booleano | no | No se publica |
+
+Cuerpo en Markdown. (`place`, `tags` y `link` se agregaron con el diseño C1, 2026-11-14;
+`summary` y `start` pasaron a ser opcionales.)
 
 ### URLs
 
