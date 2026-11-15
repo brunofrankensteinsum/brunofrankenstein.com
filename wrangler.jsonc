@@ -21,5 +21,15 @@
   "vars": {
     // Dirección del dominio que figura como emisora de los avisos. No es tu correo personal.
     "REMITENTE": "formulario@brunofrankenstein.com"
+  },
+  // Vistas previas de las ramas (no son el sitio real). Cloudflare las despliega con `wrangler preview`,
+  // que exige este bloque: sin él, el build de cualquier rama que no sea main falla en el paso de despliegue.
+  // Las vistas previas no tienen los secretos (DESTINO, TURNSTILE_SECRET), así que el formulario de contacto
+  // no envía nada desde ahí; sirven para mirar el diseño y el contenido antes de unir a main.
+  "previews": {
+    "vars": {
+      "REMITENTE": "vista-previa@brunofrankenstein.com"
+    },
+    "send_email": [{ "name": "CORREO" }]
   }
 }
