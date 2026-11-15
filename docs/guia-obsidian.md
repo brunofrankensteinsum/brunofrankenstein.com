@@ -21,6 +21,21 @@ En **Ajustes → Archivos y vínculos** (Settings → Files & links):
 | Formato de nuevos vínculos | **Ruta relativa al archivo** | Así el enlace empieza con `./` y apunta a la foto que está al lado |
 | Ubicación de nuevos adjuntos | **En la misma carpeta que el archivo actual** | La foto pegada cae junto a `es.md` |
 
+Si no encontrás el nombre exacto de un ajuste (cambia según la versión e idioma), se puede comprobar en el
+archivo `src/content/proyectos/.obsidian/app.json`. Tiene que decir:
+
+```json
+{
+  "useMarkdownLinks": true,
+  "newLinkFormat": "relative",
+  "attachmentFolderPath": "./"
+}
+```
+
+`useMarkdownLinks: true` es «Wikilinks apagado», `newLinkFormat: "relative"` es la ruta relativa y
+`attachmentFolderPath: "./"` es «misma carpeta que el archivo actual». Con Obsidian cerrado se puede
+corregir el archivo a mano.
+
 ## 3. Crear una lámina
 
 Lo más fácil es desde la terminal, en la carpeta del repositorio:
