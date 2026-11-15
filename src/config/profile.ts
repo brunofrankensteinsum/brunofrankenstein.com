@@ -15,7 +15,7 @@ export const profile = {
   // Clave PÚBLICA del widget Turnstile (antispam de Cloudflare). Se crea en el panel de Cloudflare
   // → Turnstile. Vacío = sin Turnstile (el formulario sigue protegido por el campo trampa y el tiempo
   // mínimo, pero el servidor no acepta mensajes sin Turnstile: ver docs/formulario-contacto.md).
-  turnstileSiteKey: '',
+  turnstileSiteKey: '0x4AAAAAAGCPrh2RzIAuQCVs',
   // CV: dirección de la página de CVuy (ANII). El botón «Ver CV» abre esa página en otra pestaña.
   cv: 'https://exportcvuy.anii.org.uy/cv/?847399f61e6686ee67dc433e446e68a4',
 
