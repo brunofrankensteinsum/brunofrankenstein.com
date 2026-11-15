@@ -176,6 +176,9 @@ export async function manejarContacto(request, env, deps = {}) {
   try {
     const crudo = armarCorreo({ de: env.REMITENTE, para: env.DESTINO, datos: revision.valor, id: uuid(), ahora: ahora() });
     await env.CORREO.send(crearMensaje(env.REMITENTE, env.DESTINO, crudo));
+    // Queda en los registros de Cloudflare: si esta línea aparece pero el correo no llega, el problema
+    // está después del Worker (carpeta de spam, destino sin verificar, filtros del correo).
+    console.log('[contacto] Cloudflare aceptó el correo para enviarlo.');
   } catch (e) {
     // El texto del error lo escribe Cloudflare (por ejemplo «destination address is not verified»).
     const detalle = String(e?.message ?? e).slice(0, 200);
