@@ -41,7 +41,7 @@ const counts = categories.map((c) => ({
         {
           retrato ? (
             <div class="hero__retrato marco">
-              <Image src={retrato} alt={t(lang, 'home.portraitAlt')} width={240} height={240} loading="eager" />
+              <Image src={retrato} alt={t(lang, 'home.portraitAlt')} width={240} height={240} position="top" loading="eager" />
             </div>
           ) : (
             <div class="hero__retrato marco rayado" role="img" aria-label={t(lang, 'home.portraitAlt')}>
@@ -170,6 +170,7 @@ const counts = categories.map((c) => ({
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: 50% 8%; /* encuadra la cara, que en el retrato está arriba */
   }
   .hero__firma {
     display: flex;

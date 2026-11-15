@@ -38,6 +38,7 @@ Lo que falta hacer, en orden de prioridad, está en `TAREAS.md`: marcar cada tar
   interacciones; manda en lo visual. En contenido, URLs y edición manda `PLAN.md`.
 - `npm run lamina -- "Título"`: crea una lámina nueva (carpeta, `es.md`, `en.md`, número `fig` siguiente). Plantilla de formato en `docs/plantillas/lamina-ejemplo.md`.
 - `src/assets/retrato.jpg`: foto de perfil de Bruno (Inicio y Sobre mí). Si no existe, se ve un marcador.
+- `docs/guia-obsidian.md`: cómo escribir láminas con Obsidian (ajustes, fotos, cabecera).
 - `docs/instructivo-publicar-proyecto.md`: cómo convertir la información de un proyecto en una publicación. Seguirlo cuando Bruno pida publicar un proyecto.
 - `docs/prompt-claude-design.md`: prompt para generar el diseño visual en Claude Design.
 
