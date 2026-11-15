@@ -129,16 +129,21 @@ const counts = categories.map((c) => ({
     </nav>
   </section>
 
-  <section class="container bloque bloque--final">
-    <div class="bloque__cabecera" data-reveal>
-      <h2 class="rotulo bloque__titulo">{t(lang, 'home.more')}</h2>
-      <a class="bloque__todos" href={pageUrl(lang, 'projects')}>{t(lang, 'home.all')} →</a>
-    </div>
-    <div class="mas">
-      {rest.map((p) => <ProjectCard lang={lang} project={p} heading="h3" size="chica" />)}
-      {proxima && <UpcomingCard lang={lang} project={proxima} />}
-    </div>
-  </section>
+  {/* Si todavía no hay otros proyectos ni una lámina en preparación, la sección no se muestra vacía. */}
+  {
+    (rest.length > 0 || proxima) && (
+      <section class="container bloque bloque--final">
+        <div class="bloque__cabecera" data-reveal>
+          <h2 class="rotulo bloque__titulo">{t(lang, 'home.more')}</h2>
+          <a class="bloque__todos" href={pageUrl(lang, 'projects')}>{t(lang, 'home.all')} →</a>
+        </div>
+        <div class="mas">
+          {rest.map((p) => <ProjectCard lang={lang} project={p} heading="h3" size="chica" />)}
+          {proxima && <UpcomingCard lang={lang} project={proxima} />}
+        </div>
+      </section>
+    )
+  }
 </Base>
 
 <style>

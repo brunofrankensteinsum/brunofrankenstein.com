@@ -21,7 +21,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 
 ## A. Lo que hoy está a la vista del público
 
-- [ ] **A1. Proyectos de ejemplo** `[Bruno]` — Los tres proyectos (FIG. 01 a 03) salieron del diseño, no son reales, y hoy se ven como si lo fueran. Elegir: ocultarlos con `draft: true` hasta tener uno real, o dejarlos con un aviso «ejemplo». *Listo cuando:* ningún visitante puede tomar un ejemplo por un proyecto real.
+- [x] **A1. Proyectos de ejemplo** `[Bruno]` — Los tres proyectos (FIG. 01 a 03) salieron del diseño, no son reales, y hoy se ven como si lo fueran. Elegir: ocultarlos con `draft: true` hasta tener uno real, o dejarlos con un aviso «ejemplo». *Listo cuando:* ningún visitante puede tomar un ejemplo por un proyecto real. **Hecho el 2026-11-15:** se borraron los tres ejemplos y la lámina en preparación (siguen en el historial de Git); queda solo «Gridfinity Autobin» (FIG. 01), destacada en el inicio.
 - [ ] **A2. Completar los marcadores** `[Bruno]` — Cada dato y dónde se carga:
   - ~~Retrato~~ → hecho el 2026-11-15: `src/assets/retrato.jpg` (sin datos de ubicación) se ve en Inicio y Sobre mí. Para cambiarlo, reemplazar el archivo con el mismo nombre.
   - ~~Email público~~ → decidido: no se publica; se contacta por el formulario (H4).

@@ -55,6 +55,37 @@ export const glossary = [
     es: 'Celda cilíndrica de litio de 18 mm de diámetro y 65 mm de largo.',
     en: 'A cylindrical lithium cell, 18 mm in diameter and 65 mm long.',
   },
+  // --- Gridfinity Autobin (definiciones redactadas por Claude: Bruno tiene que revisarlas) ---
+  {
+    id: 'gridfinity',
+    terms: { es: ['Gridfinity'], en: ['Gridfinity'] },
+    es: 'Sistema abierto de almacenamiento modular: cajillas apilables que encajan en una grilla de 42 mm.',
+    en: 'An open modular storage system: stackable bins that snap into a 42 mm grid.',
+  },
+  {
+    id: 'aruco',
+    terms: { es: ['ArUco'], en: ['ArUco'] },
+    es: 'Cuadrado blanco y negro que una cámara reconoce y ubica con precisión. Cuatro de ellos fijan la escala y el plano de la foto.',
+    en: 'A black-and-white square a camera can recognise and locate precisely. Four of them fix the scale and plane of a photo.',
+  },
+  {
+    id: 'paralaje',
+    terms: { es: ['paralaje'], en: ['parallax'] },
+    es: 'Corrimiento aparente de un objeto según desde dónde se lo mire. En una foto, el borde alto de una pieza parece más grande que su base.',
+    en: 'The apparent shift of an object depending on where you look from. In a photo, the top edge of a tall part looks bigger than its base.',
+  },
+  {
+    id: 'homografia',
+    terms: { es: ['homografía'], en: ['homography'] },
+    es: 'Transformación que convierte una foto en perspectiva en una vista desde arriba, con medidas en milímetros.',
+    en: 'A transformation that turns a photo taken at an angle into a top-down view with measurements in millimetres.',
+  },
+  {
+    id: 'stl',
+    terms: { es: ['STL'], en: ['STL'] },
+    es: 'Formato de archivo con la forma 3D de una pieza como una malla de triángulos. Es lo que lee el laminador antes de imprimir.',
+    en: 'A file format that stores the 3D shape of a part as a mesh of triangles. It is what the slicer reads before printing.',
+  },
 ];
 
 const escapar = (texto) => texto.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
