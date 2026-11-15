@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # La misma versión de Node que usa Cloudflare para compilar (archivo .node-version).
           node-version-file: .node-version
