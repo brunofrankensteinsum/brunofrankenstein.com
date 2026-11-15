@@ -1,18 +1,60 @@
 ---
-// Cabecera SEO de cada página. Esta versión es mínima: la completa la pista C
-// (Open Graph, hreflang, datos estructurados). Las páginas solo la invocan desde el layout.
-import { site } from '../../config/site';
+// Cabecera SEO de cada página: lo que leen los buscadores, las redes y los asistentes de IA.
+// Las páginas no la usan directo: la invoca el layout (src/layouts/Base.astro).
+// Pendiente (ver TAREAS.md): datos estructurados JSON-LD (E5) e imagen para compartir (E6).
+import { site, defaultLang, type Lang } from '../../config/site';
+import { otherLang } from '../../config/routes';
 
 interface Props {
+  lang: Lang;
   title: string;
   description: string;
+  // URL de esta misma página en el otro idioma. Sin ella, la página existe en un solo idioma.
+  alternateUrl?: string;
+  // true = pedirle a los buscadores que no guarden esta página (por ejemplo, un listado vacío).
+  noindex?: boolean;
+  // "article" para un proyecto; "website" para el resto.
+  type?: 'website' | 'article';
 }
 
-const { title, description } = Astro.props;
+const { lang, title, description, alternateUrl, noindex = false, type = 'website' } = Astro.props;
 const fullTitle = title === site.name ? title : `${title} | ${site.name}`;
-const canonical = new URL(Astro.url.pathname, site.url).href;
+const absoluta = (ruta: string) => new URL(ruta, site.url).href;
+const canonical = absoluta(Astro.url.pathname);
+
+// Versiones de la página por idioma, para la etiqueta hreflang.
+const other = otherLang(lang);
+const versiones: Partial<Record<Lang, string>> = { [lang]: canonical };
+if (alternateUrl) versiones[other] = absoluta(alternateUrl);
+// x-default: la versión que se ofrece a quien no habla ninguno de los dos idiomas.
+const porDefecto = versiones[defaultLang] ?? canonical;
+
+// site.indexable apaga la indexación de todo el sitio (ver src/config/site.ts).
+const ocultar = noindex || !site.indexable;
+const locale = { es: 'es_UY', en: 'en_US' } as const;
 ---
 
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
+{ocultar && <meta name="robots" content="noindex, follow" />}
+
+{/* Idiomas: le dice a los buscadores cuál es la versión de esta página en cada idioma. */}
+{Object.entries(versiones).map(([codigo, url]) => <link rel="alternate" hreflang={codigo} href={url} />)}
+{alternateUrl && <link rel="alternate" hreflang="x-default" href={porDefecto} />}
+
+{/* Open Graph: cómo se ve el link al compartirlo en LinkedIn, WhatsApp, etc. */}
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={locale[lang]} />
+{alternateUrl && <meta property="og:locale:alternate" content={locale[other]} />}
+<meta name="twitter:card" content="summary" />
+
+{/* Ícono del sitio (se genera con scripts/generar-favicon.mjs). */}
+<link rel="icon" href="/favicon.ico" sizes="32x32" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />

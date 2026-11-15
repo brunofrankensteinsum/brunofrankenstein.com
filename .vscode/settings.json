@@ -1,0 +1,10 @@
+{
+  // Oculta en VS Code las carpetas que se generan solas, para no editarlas por error.
+  // dist/ es el sitio ya compilado: se regenera entero en cada build y lo que se cambie ahí se pierde.
+  // Los textos y las páginas se editan en src/.
+  "files.exclude": {
+    "dist": true,
+    ".astro": true,
+    "node_modules": true
+  }
+}

@@ -10,6 +10,7 @@ import { profile } from '../../config/profile';
 import { pageUrl, projectUrl, categoryUrl, otherLang } from '../../config/routes';
 import { t, formatMonth } from '../../i18n/ui';
 import { getProjects, getUpcomingProjects, figLabel } from '../../lib/content';
+import { retrato } from '../../lib/retrato';
 
 interface Props {
   lang: Lang;
@@ -36,10 +37,18 @@ const counts = categories.map((c) => ({
   <section class="container hero">
     <div class="hero__yo" data-reveal>
       <div class="hero__autor">
-        {/* Falta design/assets/retrato.jpg: por ahora va un marcador rayado. */}
-        <div class="hero__retrato marco rayado" role="img" aria-label={t(lang, 'home.portraitAlt')}>
-          <span>{t(lang, 'home.portraitMissing')}</span>
-        </div>
+        {/* Retrato: sale de src/assets/retrato.jpg. Si todavía no está, va un marcador rayado. */}
+        {
+          retrato ? (
+            <div class="hero__retrato marco">
+              <Image src={retrato} alt={t(lang, 'home.portraitAlt')} width={240} height={240} loading="eager" />
+            </div>
+          ) : (
+            <div class="hero__retrato marco rayado" role="img" aria-label={t(lang, 'home.portraitAlt')}>
+              <span>{t(lang, 'home.portraitMissing')}</span>
+            </div>
+          )
+        }
         <p class="hero__firma rotulo">
           <span>{t(lang, 'home.author')}</span>
           <span>{profile.location[lang]}</span>
@@ -155,6 +164,12 @@ const counts = categories.map((c) => ({
     letter-spacing: 0.06em;
     text-transform: uppercase;
     color: var(--c-ink-muted);
+    overflow: hidden;
+  }
+  .hero__retrato :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .hero__firma {
     display: flex;

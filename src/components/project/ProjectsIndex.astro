@@ -39,6 +39,7 @@ const intro = t(lang, 'projects.intro');
   title={categoryName ? `${categoryName} · ${title}` : title}
   description={intro}
   section="projects"
+  noindex={projects.length === 0}
   alternateUrl={categoryId ? categoryUrl(other, categoryId) : pageUrl(other, 'projects')}
 >
   <PageIntro label={t(lang, 'projects.label')} title={title} intro={intro}>

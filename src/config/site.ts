@@ -13,6 +13,9 @@ export const site = {
   // Marca corta que se ve en el header y el footer.
   brand: 'B.FRANKENSTEIN',
   url: 'https://brunofrankenstein.com',
+  // ¿Pueden los buscadores guardar el sitio? Con false, todas las páginas piden «no indexar»
+  // y quedan fuera del sitemap. Sirve mientras haya contenido de ejemplo (tarea A3 de TAREAS.md).
+  indexable: true,
   tagline: {
     es: 'Ingeniero mecánico. Proyectos y experiencias.',
     en: 'Mechanical engineer. Projects and experience.',

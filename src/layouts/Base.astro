@@ -9,6 +9,7 @@ import Footer from '../components/layout/Footer.astro';
 import type { Lang } from '../config/site';
 import type { PageKey } from '../config/routes';
 import { t } from '../i18n/ui';
+import { marcarJs, prepararEntrada } from '../scripts/en-linea.mjs';
 
 interface Props {
   lang: Lang;
@@ -18,9 +19,13 @@ interface Props {
   section?: PageKey;
   // URL de esta misma página en el otro idioma. Si no existe, se enlaza al inicio.
   alternateUrl?: string;
+  // true = pedirle a los buscadores que no guarden esta página.
+  noindex?: boolean;
+  // "article" para un proyecto; "website" para el resto.
+  type?: 'website' | 'article';
 }
 
-const { lang, title, description, section, alternateUrl } = Astro.props;
+const { lang, title, description, section, alternateUrl, noindex, type } = Astro.props;
 ---
 
 <!doctype html>
@@ -29,13 +34,11 @@ const { lang, title, description, section, alternateUrl } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0C2340" />
-    <Head title={title} description={description} />
+    <Head lang={lang} title={title} description={description} alternateUrl={alternateUrl} noindex={noindex} type={type} />
     <!-- Baja antes que nada la fuente del texto, para que no «salte» al cargar. -->
     <link rel="preload" href="/fonts/InstrumentSans-latin.woff2" as="font" type="font/woff2" crossorigin />
     <!-- Marca que hay JavaScript: el CSS lo usa para cambiar la navegación por el botón de menú. -->
-    <script is:inline>
-      document.documentElement.classList.add('js');
-    </script>
+    <script is:inline set:html={marcarJs} />
   </head>
   <body>
     <a class="skip-link" href="#contenido">{t(lang, 'skip')}</a>
@@ -44,44 +47,9 @@ const { lang, title, description, section, alternateUrl } = Astro.props;
       <slot />
     </main>
     <Footer lang={lang} />
-    <!-- Prepara el movimiento de entrada antes de que la página se pinte, para que nada «salte».
-         - data-reveal visible al abrir: entra de a uno (solo la primera vez por sesión).
-         - data-reveal más abajo: queda esperando a entrar en pantalla (src/scripts/entrada.ts).
-         - marcos visibles: se van a dibujar como trazo (solo la primera vez por sesión).
-         Con «menos movimiento» activado en el sistema no hace nada. -->
-    <script is:inline>
-      (function () {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
-        var primera = false;
-        try {
-          primera = !sessionStorage.getItem('bf-visto');
-          sessionStorage.setItem('bf-visto', '1');
-        } catch (e) {}
-        var alto = window.innerHeight;
-        var i = 0;
-        document.querySelectorAll('[data-reveal]').forEach(function (el) {
-          if (el.getBoundingClientRect().top < alto) {
-            if (primera) {
-              el.style.setProperty('--i', i++);
-              el.classList.add('entra');
-            }
-          } else {
-            el.classList.add('reveal');
-          }
-        });
-        if (!primera) return;
-        document.querySelectorAll('.marco, .caja, [data-marco]').forEach(function (el) {
-          var r = el.getBoundingClientRect();
-          if (r.top < alto && r.bottom > 0) el.classList.add('trazo');
-        });
-        // Red de seguridad: si algo falla, a los 3 segundos los marcos se ven igual.
-        setTimeout(function () {
-          document.querySelectorAll('.trazo').forEach(function (el) {
-            el.classList.remove('trazo');
-          });
-        }, 3000);
-      })();
-    </script>
+    {/* Prepara el movimiento de entrada antes de que la página se pinte. El texto del script
+        está en src/scripts/en-linea.mjs, junto con la explicación. */}
+    <script is:inline set:html={prepararEntrada} />
     <script>
       import '../scripts/nota.ts';
       import '../scripts/entrada.ts';

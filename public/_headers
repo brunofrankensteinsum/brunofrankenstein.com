@@ -1,0 +1,28 @@
+# Cabeceras que Cloudflare agrega a cada respuesta del sitio.
+# Documentación: https://developers.cloudflare.com/workers/static-assets/headers/
+# Este archivo no se publica como página: Cloudflare lo lee y aplica sus reglas.
+# Formato: una línea con la ruta y, debajo y con sangría, las cabeceras.
+
+# --- Seguridad: valen para todo el sitio ---
+# X-Content-Type-Options: el navegador no adivina el tipo de un archivo; usa el que declara el servidor.
+# Referrer-Policy: al salir a otro sitio, se le informa solo el dominio de origen, no la página exacta.
+# X-Frame-Options: nadie puede mostrar este sitio dentro de un marco de otra página (evita engaños con clics).
+# Permissions-Policy: el sitio no usa cámara, micrófono, ubicación ni pagos; se le niegan también a lo que incruste.
+# Content-Security-Policy: la parte de la política de contenido que no se puede declarar dentro del HTML.
+#   El resto (scripts, estilos, imágenes) lo escribe Astro en cada página: ver astro.config.mjs.
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  Content-Security-Policy: frame-ancestors 'none'; upgrade-insecure-requests
+
+# --- Caché: archivos que no cambian ---
+# Los archivos de /_astro/ llevan una huella en el nombre: si cambia el contenido, cambia el
+# nombre. Por eso el navegador puede guardarlos un año sin volver a preguntar.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Las fuentes no llevan huella en el nombre: se guardan 30 días.
+/fonts/*
+  Cache-Control: public, max-age=2592000
