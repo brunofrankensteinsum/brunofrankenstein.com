@@ -10,14 +10,14 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 
 ## Por dónde empezar
 
-1. A1 — decidir qué hacer con los proyectos de ejemplo que hoy están públicos.
+1. A1 y A3 — decidir qué hacer con los proyectos de ejemplo y si el sitio se indexa mientras tanto.
 2. B1 — forzar HTTPS en Cloudflare (5 minutos).
 3. C1 — permiso de escritura en GitHub para esta máquina.
 4. C2 — sacar el repo de OneDrive.
-5. B2 — cabeceras de seguridad.
-6. E1 a E4 — lo básico de SEO: `<head>` completo, sitemap, robots y favicon.
-7. D1 a D3 — que cargar una lámina nueva sea un comando y una plantilla.
-8. A2 — cargar los datos reales y el primer proyecto real.
+5. Publicar la rama `lista-de-tareas` y comprobar en el sitio real las cabeceras (B2) y la caché (E11).
+6. D1 a D3 — que cargar una lámina nueva sea un comando y una plantilla.
+7. A2 — cargar los datos reales y el primer proyecto real.
+8. E5 y E6 — datos estructurados e imagen para compartir.
 
 ---
 
@@ -31,7 +31,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
   - Párrafo pendiente y herramientas de Sobre mí → `profile.ts`.
   - Años de inicio de Faraday Lab, Fing Hydrogen Racing y la carrera; rol en el equipo → `src/content/experiencias/*/es.md` y `en.md`.
   - Título, coautores y enlace del artículo en *Fire* → `src/content/experiencias/publicacion-fire/`.
-- [ ] **A3. No indexar hasta el lanzamiento** `[Ambos]` — Mientras haya ejemplos y marcadores, pedirle a los buscadores que no guarden el sitio (`<meta name="robots" content="noindex">`). Quitarlo el día del lanzamiento. *Listo cuando:* hay una sola constante en `src/config/site.ts` que lo prende y lo apaga.
+- [ ] **A3. No indexar hasta el lanzamiento** `[Bruno]` — El interruptor ya existe: `indexable` en `src/config/site.ts`. Con `false`, todas las páginas piden «no indexar» y el sitemap queda vacío. Hoy está en `true`. Falta decidir si se apaga mientras haya ejemplos y marcadores, y volver a prenderlo el día del lanzamiento.
 - [ ] **A4. Unificar los textos de presentación** `[Bruno]` — Inicio dice «participo en Fing Hydrogen Racing» y Sobre mí todavía dice «corro con». Revisar también la redacción de la bajada de Proyectos.
 - [ ] **A5. Revisar el inglés** `[Bruno]` — Todas las traducciones las hizo la IA: `src/i18n/ui.ts`, `src/config/profile.ts` y los `en.md`.
 - [ ] **A6. Confirmar el glosario** `[Bruno]` — Las siete definiciones de `src/config/glossary.mjs` las redactó la IA.
@@ -39,7 +39,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 ## B. Seguridad
 
 - [ ] **B1. Forzar HTTPS** `[Bruno]` — Hoy `http://brunofrankenstein.com` responde sin redirigir a `https://`. En Cloudflare: SSL/TLS → Edge Certificates → activar «Always Use HTTPS» y HSTS. *Listo cuando:* abrir con `http://` lleva solo a `https://`.
-- [ ] **B2. Cabeceras de seguridad** `[IA]` — Hoy el sitio no envía ninguna. Crear `public/_headers` con `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options` y una `Content-Security-Policy` que solo permita recursos propios y el reproductor de `youtube-nocookie.com`. Antes, confirmar en la documentación de Cloudflare que el despliegue actual lee `_headers`. Los dos scripts en línea de `Base.astro` necesitan su hash en la política o pasar a archivos. *Listo cuando:* securityheaders.com da A o más y el sitio funciona igual.
+- [x] **B2. Cabeceras de seguridad** `[IA]` — Hecho el 2026-11-15. `public/_headers` agrega `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` y `Permissions-Policy`. La política de contenido (CSP) la escribe Astro en cada página (`security.csp` en `astro.config.mjs`): solo corren los scripts propios y el único contenido ajeno permitido es el reproductor de `youtube-nocookie.com`. Probado sobre el sitio compilado: todo funciona y un script o una imagen ajenos quedan bloqueados. *Falta:* al publicarlo, comprobar las cabeceras en el sitio real y pasar securityheaders.com. HSTS queda en B1, del lado de Cloudflare.
 - [ ] **B3. `www` da error** `[Bruno]` — `www.brunofrankenstein.com` responde 404. Crear en Cloudflare una regla que redirija `www` al dominio sin `www`.
 - [ ] **B4. Validar el identificador de YouTube** `[IA]` — El campo `youtube` acepta cualquier texto y con él se arma una dirección. Exigir en `src/content.config.ts` el formato real (11 caracteres entre letras, números, `-` y `_`).
 - [ ] **B5. Proteger la rama `main`** `[Bruno]` — En GitHub: exigir pull request y que el build pase antes de unir. Activar «secret scanning», «push protection» y las alertas de Dependabot.
@@ -56,8 +56,8 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 - [ ] **C2. Sacar el repo de OneDrive** `[Bruno]` — Ya perdió archivos una vez por la sincronización. Moverlo a una carpeta que OneDrive no toque (por ejemplo `C:\dev\`). GitHub ya es la copia de respaldo.
 - [ ] **C3. Vista previa antes de publicar** `[Bruno]` — Activar en Cloudflare los despliegues de prueba por rama, para ver un cambio en una dirección temporal antes de unirlo a `main`.
 - [ ] **C4. Revisión automática** `[IA]` — Una GitHub Action que corra `npm run build` y `npm run check` en cada pull request. Se combina con B5.
-- [ ] **C5. No editar `dist/`** `[IA]` — Esa carpeta se regenera en cada build y lo que se cambie ahí se pierde. La regla ya está en `CLAUDE.md`; falta ocultar la carpeta en VS Code (`.vscode/settings.json`) para no abrirla por error.
-- [ ] **C6. Finales de línea** `[IA]` — Agregar `.gitattributes` para terminar con los avisos «LF will be replaced by CRLF» en cada commit.
+- [x] **C5. No editar `dist/`** `[IA]` — Hecho el 2026-11-15. La regla está en `CLAUDE.md` y `.vscode/settings.json` oculta `dist/`, `.astro/` y `node_modules/` en VS Code.
+- [x] **C6. Finales de línea** `[IA]` — Hecho el 2026-11-15 con `.gitattributes`.
 - [ ] **C7. Misma versión de Node** `[Bruno]` — El proyecto pide Node 22 (`.node-version`) y esta máquina tiene la 25. Instalar la 22 para compilar igual que Cloudflare.
 - [ ] **C8. Capturas con un comando** `[IA]` — Traer `herramientas/capturar.mjs` al repo como `npm run capturas`.
 - [ ] **C9. Poner `PLAN.md` al día** `[IA]` — Marcar lo hecho (la pista A quedó cubierta por el diseño) y anotar las decisiones tomadas en los pasos 1 a 4.
@@ -80,17 +80,17 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 
 Hoy el `<head>` de cada página tiene solo título, descripción y dirección canónica.
 
-- [ ] **E1. `<head>` completo** `[IA]` — En `src/components/seo/Head.astro`: Open Graph y tarjetas para redes, y `hreflang` (`es`, `en` y `x-default`) dentro del `<head>`. Hoy el `hreflang` está solo en los links del selector de idioma.
-- [ ] **E2. Sitemap** `[IA]` — Hoy `/sitemap.xml` da 404. Generarlo con los dos idiomas, sin borradores. Necesita la dependencia `@astrojs/sitemap`: pedir el OK antes de instalarla.
-- [ ] **E3. `robots.txt` propio** `[Ambos]` — Hoy lo sirve Cloudflare y trae solo comentarios: no declara el sitemap ni reglas. Escribir `public/robots.txt` con el sitemap y la política para rastreadores de IA que fija `PLAN.md`. Bruno revisa en Cloudflare que no esté activado el bloqueo de bots de IA, porque el objetivo es que los asistentes citen el sitio.
-- [ ] **E4. Favicon** `[IA]` — Hoy `/favicon.ico` da 404. Monograma «BF» en SVG y PNG de 180 y 512 (§8.4 del diseño).
+- [x] **E1. `<head>` completo** `[IA]` — Hecho el 2026-11-15 en `src/components/seo/Head.astro`: Open Graph, tarjeta para redes y `hreflang` (`es`, `en`, `x-default`). Falta la imagen para compartir (E6).
+- [x] **E2. Sitemap** `[IA]` — Hecho el 2026-11-15 sin sumar dependencias: `src/pages/sitemap.xml.ts` lo arma al compilar con los dos idiomas. No incluye borradores, láminas en preparación ni categorías vacías.
+- [ ] **E3. `robots.txt` propio** `[Bruno]` — El archivo ya está (`src/pages/robots.txt.ts`): declara el sitemap, permite buscadores y rastreadores de IA y bloquea `/admin/`. *Falta:* que Bruno revise en Cloudflare que no esté activado el bloqueo de bots de IA, porque el objetivo es que los asistentes citen el sitio.
+- [x] **E4. Favicon** `[IA]` — Hecho el 2026-11-15. Monograma «BF» en SVG, ICO y PNG de 180, 192 y 512, más el manifiesto. Se regenera con `node scripts/generar-favicon.mjs` (ahí están los colores).
 - [ ] **E5. Datos estructurados** `[IA]` — JSON-LD: `Person` y `ProfilePage` (con `sameAs` a LinkedIn y GitHub), `WebSite`, `CreativeWork` por proyecto, `BreadcrumbList` y `VideoObject`. *Listo cuando:* la prueba de resultados enriquecidos de Google no marca errores.
 - [ ] **E6. Imagen para compartir** `[IA]` — Una imagen Open Graph por defecto y una por proyecto, en cada idioma (§8.4).
 - [ ] **E7. Títulos y descripciones propios** `[IA]` — Las páginas de categoría repiten la descripción de Proyectos. Cada página necesita la suya, de 50 a 160 caracteres.
-- [ ] **E8. Categorías vacías** `[IA]` — Una categoría sin proyectos (hoy «Otros») no debería indexarse hasta tener contenido.
+- [x] **E8. Categorías vacías** `[IA]` — Hecho el 2026-11-15: una categoría sin proyectos pide «no indexar» y queda fuera del sitemap.
 - [ ] **E9. Redirección de la raíz** `[Ambos]` — Hoy `/` lleva a `/es/` con un 302 (temporal). Evaluar pasarla a 301 (permanente) y resolver junto con la detección de idioma del navegador (H5).
 - [ ] **E10. `llms.txt` y RSS** `[IA]` — Resumen del sitio para asistentes de IA y un feed por idioma. Ambos previstos en la pista C.
-- [ ] **E11. Caché de archivos fijos** `[IA]` — Hoy fuentes, estilos y scripts se sirven con `max-age=0`: el navegador los vuelve a pedir en cada visita. En `public/_headers`, darles un año a `/_astro/*` y `/fonts/*`. Se hace junto con B2.
+- [x] **E11. Caché de archivos fijos** `[IA]` — Hecho el 2026-11-15 en `public/_headers`: un año para `/_astro/*` y 30 días para `/fonts/*`. *Falta:* comprobarlo en el sitio real al publicarlo.
 - [ ] **E12. Lighthouse** `[IA]` — Medir Inicio, un proyecto y Proyectos en celular. Meta: 95 o más en las cuatro categorías. Revisar cuánto demora la animación de entrada en mostrar el contenido principal.
 - [ ] **E13. Alta en buscadores** `[Bruno]` — Google Search Console y Bing Webmaster Tools, verificar el dominio y enviar el sitemap. Hacerlo recién al quitar A3.
 - [ ] **E14. Enlaces hacia el sitio** `[Bruno]` — Poner la dirección en LinkedIn, en el perfil de GitHub y, cuando exista, en el canal de YouTube.

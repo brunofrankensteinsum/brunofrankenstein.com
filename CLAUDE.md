@@ -19,7 +19,15 @@ Lo que falta hacer, en orden de prioridad, está en `TAREAS.md`: marcar cada tar
 - `src/content/<colección>/<slug>/es.md` y `en.md`: contenido, con sus imágenes en la misma carpeta.
 - `src/pages/es/` y `src/pages/en/`: un archivo por URL. Son envoltorios de pocas líneas.
 - `src/components/pages/`: el contenido real de cada página, compartido por ambos idiomas.
-- `src/components/seo/`: cabecera SEO (pista C).
+- `src/components/seo/Head.astro`: cabecera SEO de cada página (título, descripción, idiomas, Open Graph, ícono).
+- `src/pages/sitemap.xml.ts` y `src/pages/robots.txt.ts`: se generan solos al compilar.
+- `src/scripts/`: el JavaScript de las interacciones. `en-linea.mjs` tiene los dos scripts que van dentro del HTML.
+- `src/config/glossary.mjs`: términos técnicos que el sitio explica con una nota.
+- `src/config/profile.ts`: textos de presentación, email, CV y dirección de envío del formulario.
+- `public/_headers`: cabeceras de seguridad y de caché que aplica Cloudflare.
+- `astro.config.mjs`: incluye la política de seguridad de contenido (`security.csp`). Si se agrega contenido
+  de otro dominio (un video, un mapa, un servicio de formularios), hay que permitirlo ahí o el navegador lo bloquea.
+- `scripts/generar-favicon.mjs`: regenera el ícono del sitio.
 - `src/components/layout/`: header, footer, selector de idioma y menú de celular.
 - `src/components/ui/`: piezas chicas reutilizables (`Icon`, `Placeholder`, `PageIntro`).
 - `src/styles/tokens.css`: colores, tipografía, espaciado y movimiento. `src/styles/base.css`: estilos comunes.

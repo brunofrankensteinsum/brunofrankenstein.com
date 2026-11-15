@@ -39,7 +39,7 @@ const terminos = terminosEn(lang, project.body ?? '');
 const primeraCategoria = data.categories[0];
 ---
 
-<Base lang={lang} title={data.title} description={data.summary} section="projects" alternateUrl={alternateUrl}>
+<Base lang={lang} title={data.title} description={data.summary} section="projects" alternateUrl={alternateUrl} type="article">
   <header class="container cabecera" data-reveal>
     <nav class="ruta" aria-label={t(lang, 'project.breadcrumb')}>
       <a href={pageUrl(lang, 'projects')}>{t(lang, 'projects.title')}</a>

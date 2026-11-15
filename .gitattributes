@@ -1,0 +1,11 @@
+# Finales de línea: en el repositorio siempre LF, en cualquier sistema.
+# Evita los avisos «LF will be replaced by CRLF» y las diferencias falsas entre Windows y Cloudflare.
+* text=auto eol=lf
+
+# Archivos binarios: git no intenta convertirlos ni compararlos como texto.
+*.jpg binary
+*.png binary
+*.webp binary
+*.ico binary
+*.woff2 binary
+*.pdf binary
