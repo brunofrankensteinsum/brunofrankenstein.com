@@ -1,0 +1,16 @@
+# Dependabot: una vez por semana revisa si las dependencias del proyecto tienen versiones nuevas
+# o arreglos de seguridad, y abre un pull request por cada una. Vos decidís si lo unís.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    # Junta las actualizaciones menores en un solo pull request, para no recibir uno por paquete.
+    groups:
+      menores:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

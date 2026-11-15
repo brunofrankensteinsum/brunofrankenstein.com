@@ -76,6 +76,9 @@ export const ui = {
     "project.index": "Índice",
     "project.indexTitle": "Todos los proyectos",
     "experience.cv": "Ver CV completo",
+    // Descripciones para buscadores (50 a 160 caracteres), distintas del texto visible de la página.
+    'meta.home': 'Portfolio de Bruno Frankenstein, estudiante de Ingeniería Industrial Mecánica en Uruguay: proyectos de baterías, impresión 3D y más.',
+    'meta.projects': 'Proyectos de ingeniería, baterías, impresión 3D y automatización: cada lámina cuenta el problema, la solución y lo aprendido.',
     'experience.filter': 'Filtrar por tipo',
     'experience.kind.todos': 'Todos',
     'experience.kind.formacion': 'Formación',
@@ -199,6 +202,8 @@ export const ui = {
     "project.index": "Index",
     "project.indexTitle": "All projects",
     "experience.cv": "View full CV",
+    'meta.home': 'Portfolio of Bruno Frankenstein, Industrial Mechanical Engineering student in Uruguay: projects on batteries, 3D printing and more.',
+    'meta.projects': 'Engineering, battery, 3D printing and automation projects: each sheet covers the problem, the solution and what I learned.',
     'experience.filter': 'Filter by type',
     'experience.kind.todos': 'All',
     'experience.kind.formacion': 'Education',

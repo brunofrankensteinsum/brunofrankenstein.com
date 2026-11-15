@@ -36,6 +36,10 @@ Lo que falta hacer, en orden de prioridad, está en `TAREAS.md`: marcar cada tar
 - `src/i18n/ui.ts`: textos de interfaz.
 - `design/`: entrega del diseño C1 «Cianotipo». `design/HANDOFF.md` es la especificación de interfaz e
   interacciones; manda en lo visual. En contenido, URLs y edición manda `PLAN.md`.
+- `npm run imagenes -- <carpeta>`: prepara las fotos de una lámina (achica, borra GPS y metadatos, renombra). Siempre antes de subir fotos.
+- `src/lib/seo.ts`: datos estructurados JSON-LD e imagen para compartir. `src/lib/rss.ts` y `src/pages/llms.txt.ts`: feed y resumen para IA.
+- `docs/instructivo-experiencias.md`: cómo cargar una experiencia (campo `kind` obligatorio).
+- `.github/`: revisión automática de cada pull request y Dependabot.
 - `npm test`: pruebas del formulario de contacto (`worker/contacto.test.mjs`).
 - `worker/` y `wrangler.jsonc`: el servidor del formulario (`/api/contacto`). El correo de Bruno es un secreto de
   Cloudflare, nunca va en el repositorio ni se muestra en el sitio. Configuración: `docs/formulario-contacto.md`.

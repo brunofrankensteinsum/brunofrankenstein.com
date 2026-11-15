@@ -6,7 +6,7 @@ import Base from '../../layouts/Base.astro';
 import PageIntro from '../ui/PageIntro.astro';
 import ProjectCard from './ProjectCard.astro';
 import UpcomingCard from './UpcomingCard.astro';
-import { categories, getCategory, type CategoryId, type Lang } from '../../config/site';
+import { categories, categoryDescriptions, getCategory, type CategoryId, type Lang } from '../../config/site';
 import { pageUrl, categoryUrl, otherLang } from '../../config/routes';
 import { t } from '../../i18n/ui';
 import { getProjects, getUpcomingProjects } from '../../lib/content';
@@ -37,7 +37,7 @@ const intro = t(lang, 'projects.intro');
 <Base
   lang={lang}
   title={categoryName ? `${categoryName} · ${title}` : title}
-  description={intro}
+  description={categoryId ? categoryDescriptions[categoryId][lang] : t(lang, 'meta.projects')}
   section="projects"
   noindex={projects.length === 0}
   alternateUrl={categoryId ? categoryUrl(other, categoryId) : pageUrl(other, 'projects')}

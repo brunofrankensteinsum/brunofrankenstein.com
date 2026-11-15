@@ -47,3 +47,32 @@ export const categoryIds = categories.map((c) => c.id) as [CategoryId, ...Catego
 export function getCategory(id: string) {
   return categories.find((c) => c.id === id);
 }
+
+// Descripción de cada categoría: es lo que muestran Google y las redes bajo el título de su página.
+// Entre 50 y 160 caracteres. Redactadas por la IA: Bruno las revisa (tarea A5 de TAREAS.md).
+export const categoryDescriptions: Record<CategoryId, Record<Lang, string>> = {
+  'impresion-3d': {
+    es: 'Piezas diseñadas e impresas en 3D: soportes, carcasas y herramientas, con el material y los parámetros usados.',
+    en: 'Parts designed and 3D printed: mounts, enclosures and tools, with the material and settings used.',
+  },
+  'home-automation': {
+    es: 'Sensores, automatizaciones y paneles para la casa: qué se armó, con qué y cómo quedó configurado.',
+    en: 'Sensors, automations and dashboards for the home: what was built, with what, and how it was set up.',
+  },
+  'ingenieria-mecanica': {
+    es: 'Proyectos de ingeniería mecánica: diseño, cálculo y pruebas de piezas y sistemas, con el problema y la solución.',
+    en: 'Mechanical engineering projects: design, calculation and testing of parts and systems, with the problem and the solution.',
+  },
+  baterias: {
+    es: 'Proyectos sobre baterías: celdas, bancos de prueba, mediciones y seguridad térmica.',
+    en: 'Battery projects: cells, test benches, measurements and thermal safety.',
+  },
+  'vibe-code': {
+    es: 'Programas y herramientas armados junto a una IA: qué se pidió, qué salió bien y qué hubo que corregir.',
+    en: 'Programs and tools built together with an AI: what was asked, what worked and what had to be fixed.',
+  },
+  otros: {
+    es: 'Proyectos que no entran en las otras categorías, con el mismo formato: problema, solución y aprendizaje.',
+    en: 'Projects that do not fit the other categories, in the same format: problem, solution and what I learned.',
+  },
+};

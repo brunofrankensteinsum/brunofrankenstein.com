@@ -9,6 +9,7 @@
     "preview": "astro preview",
     "check": "astro check",
     "lamina": "node scripts/nueva-lamina.mjs",
+    "imagenes": "node scripts/preparar-imagenes.mjs",
     "test": "node --test worker/contacto.test.mjs"
   },
   "dependencies": {

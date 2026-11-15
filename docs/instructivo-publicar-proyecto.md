@@ -149,7 +149,7 @@ Traduce el sentido, no palabra por palabra, y usa el vocabulario técnico habitu
 - **Nombres:** en minúsculas, sin espacios ni tildes, con un número de orden y una descripción:
   `01-pieza-recien-impresa.jpg`. La portada se llama `portada.jpg`.
 - **Portada:** horizontal, de al menos 1200 píxeles de ancho, que muestre el resultado terminado.
-- **Tamaño:** hasta 2400 píxeles de ancho alcanza. El sitio las optimiza solo al publicarse.
+- **Tamaño:** hasta 2400 píxeles de ancho alcanza. `npm run imagenes` las deja así y les borra los metadatos (ubicación GPS, cámara, fecha). El sitio además las optimiza solo al publicarse.
 - **Dónde van:** en la misma carpeta que `es.md`.
 - **Cómo se insertan** en el texto:
 
@@ -181,10 +181,13 @@ Traduce el sentido, no palabra por palabra, y usa el vocabulario técnico habitu
 
 1. Lee `CLAUDE.md` y `src/content.config.ts`, que es la definición vigente de los campos.
    Si difiere de este instructivo, vale el archivo de código.
-2. Crea la carpeta, copia y renombra las imágenes, y escribe `es.md` y `en.md`.
+2. Crea la carpeta con `npm run lamina -- "Título"` (arma `es.md` y `en.md` con la cabecera y el número `fig`).
+   Copia las fotos a esa carpeta y prepáralas con `npm run imagenes -- src/content/proyectos/<carpeta>`: las achica,
+   les borra la ubicación GPS y las renombra. Después escribe `es.md` y `en.md` (plantilla: `docs/plantillas/lamina-ejemplo.md`).
 3. Corre `npm run build`. Si falla, el error dice qué campo está mal.
 4. Muéstrale a Bruno el texto y la lista de imágenes, y dile cómo verlo con `npm run dev`.
-5. Haz commit y push solo cuando él lo apruebe. Al subirlo a `main`, se publica solo en uno o dos minutos.
+5. Haz commit en una rama nueva solo cuando él lo apruebe. Publicar es abrir un pull request y unirlo con `main`:
+   Cloudflare lo despliega solo en uno o dos minutos. No se hace push directo a `main`.
 
 ### Si trabajas en un chat, sin acceso al repositorio
 
@@ -211,3 +214,26 @@ Antes de entregar, comprueba:
 - [ ] `es.md` y `en.md` tienen la misma estructura y las mismas imágenes.
 - [ ] No hay datos privados en el texto ni en las fotos.
 - [ ] El primer párrafo se entiende sin leer el resto.
+
+## 8. Glosario, láminas en preparación y video
+
+### Glosario
+El sitio explica los términos técnicos con una nota que se abre al tocarlos: la primera vez que aparecen en el texto
+(y en las etiquetas, `tags`). La lista está en `src/config/glossary.mjs`. Para sumar un término, copiar un bloque de esa lista y completar id, 	erms (las formas en que puede aparecer escrito, por idioma)
+y la definición en español e inglés, de una o dos oraciones. Las definiciones las
+revisa Bruno. No hace falta marcar nada en el texto: el término se detecta solo.
+
+### Lámina en preparación
+Para anunciar un proyecto antes de tenerlo listo, la carpeta lleva solo `fig` y `status: en-preparacion` (así la crea
+`npm run lamina`). El sitio muestra «FIG. 05 · EN PREPARACIÓN». **Para publicarla:** completar `title`, `summary`, `date`,
+`categories`, `cover` y `coverAlt` en ambos archivos y **borrar la línea `status`**. El build avisa si falta algo.
+
+### Video
+Va en el campo `youtube` (solo el identificador de 11 caracteres; el build rechaza una dirección entera). Se muestra al final del
+texto, y se carga recién al hacer clic. Como los buscadores y las IA no ven el video, el texto de la lámina tiene que contar
+lo que el video muestra (una o dos oraciones, o una sección «Video»).
+
+### Qué revisa el build solo
+Falta `es.md` o `en.md`; `fig`, fecha, categorías, `youtube` o `repo` distintos entre idiomas; una imagen citada que no
+existe, sin texto alternativo, o que no está en los dos idiomas; un `youtube` mal escrito. Si algo falla, el mensaje dice
+qué archivo corregir.

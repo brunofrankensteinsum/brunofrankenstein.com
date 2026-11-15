@@ -26,7 +26,12 @@ const proyectos = defineCollection({
         coverAlt: z.string().optional(),
         // Esquema propio del proyecto (despiece, diagrama), como segunda lámina. Opcional.
         schematic: image().optional(),
-        youtube: z.string().optional(),
+        // Solo el identificador del video: 11 caracteres entre letras, números, «-» y «_».
+        // «VIDEO_ID» se acepta como marcador mientras falta el video real (los proyectos de ejemplo).
+        youtube: z
+          .string()
+          .regex(/^([A-Za-z0-9_-]{11}|VIDEO_ID)$/, 'Va solo el identificador del video (11 caracteres), no la dirección entera.')
+          .optional(),
         repo: z.url().optional(),
         tags: z.array(z.string()).default([]),
         featured: z.boolean().default(false),

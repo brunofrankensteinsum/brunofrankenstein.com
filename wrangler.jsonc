@@ -11,7 +11,9 @@
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*"],
+    // Una dirección que no existe muestra la página 404 del diseño (dist/404.html) en vez de una página en blanco.
+    "not_found_handling": "404-page"
   },
   "send_email": [{ "name": "CORREO" }],
   // Guarda los registros del Worker (errores del formulario) para poder consultarlos en el panel de Cloudflare.

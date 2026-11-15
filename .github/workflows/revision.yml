@@ -1,0 +1,29 @@
+# Revisión automática: en cada pull request, GitHub compila el sitio y corre las pruebas.
+# Si algo falla (un contenido mal escrito, un error de tipos), el pull request muestra una cruz roja
+# y se ve el motivo antes de unirlo con main. No cambia nada del sitio: solo mira.
+name: Revisión
+
+on:
+  pull_request:
+  workflow_dispatch: # también se puede correr a mano desde la pestaña Actions
+
+permissions:
+  contents: read # solo lee el repositorio
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # La misma versión de Node que usa Cloudflare para compilar (archivo .node-version).
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      - name: Pruebas del formulario
+        run: npm test
+      - name: Compilar el sitio
+        run: npm run build
+      - name: Revisar tipos
+        run: npm run check

@@ -11,6 +11,7 @@ import { pageUrl, projectUrl, categoryUrl, otherLang } from '../../config/routes
 import { t, formatMonth } from '../../i18n/ui';
 import { getProjects, getUpcomingProjects, figLabel } from '../../lib/content';
 import { retrato } from '../../lib/retrato';
+import { grafo, persona, sitioWeb } from '../../lib/seo';
 
 interface Props {
   lang: Lang;
@@ -33,7 +34,14 @@ const counts = categories.map((c) => ({
 }));
 ---
 
-<Base lang={lang} title={site.name} description={site.tagline[lang]} section="home" alternateUrl={pageUrl(otherLang(lang), 'home')}>
+<Base
+  lang={lang}
+  title={site.name}
+  description={t(lang, 'meta.home')}
+  section="home"
+  alternateUrl={pageUrl(otherLang(lang), 'home')}
+  jsonld={grafo(sitioWeb(lang), await persona(lang))}
+>
   <section class="container hero">
     <div class="hero__yo" data-reveal>
       <div class="hero__autor">

@@ -7,3 +7,5 @@ dist/
 .wrangler/
 # Configuración local de Obsidian (la crea al abrir una carpeta como bóveda)
 .obsidian/
+# Fotos originales (con ubicación GPS) que deja scripts/preparar-imagenes.mjs: nunca se suben
+_originales/

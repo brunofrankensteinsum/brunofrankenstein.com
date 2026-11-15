@@ -152,6 +152,8 @@ Si un proyecto existe en un solo idioma, se publica solo en ese y no se enlaza c
 
 ## 4. Etapas
 
+> **Estado al 2026-11-15:** las pistas A (diseño C1), C (SEO, salvo la imagen Open Graph por defecto y la validación en Google) y D (formulario) están hechas; la pista B (panel `/admin`) no se hizo. Lo que sigue está en `TAREAS.md`.
+
 ### Etapa 0: cuentas (Bruno, manual)
 
 - [x] Comprar `brunofrankenstein.com` en Cloudflare.
@@ -182,16 +184,16 @@ Cada pista trabaja en su rama y solo toca su zona. Las pistas A a D arrancan al 
 
 Zona: `src/pages`, `src/layouts`, `src/components` (excepto `seo/` y `contact/`), `src/i18n`.
 
-- [ ] Inicio: presentación breve, proyectos destacados, categorías.
-- [ ] Sobre mí.
-- [ ] Listado de proyectos con filtro por categoría, en el orden definido.
-- [ ] Página de categoría: un proyecto con varias categorías aparece en cada una.
-- [ ] Página de proyecto: portada, texto, galería, video de YouTube con carga diferida, enlace al repositorio.
-- [ ] Listado y página de experiencias.
-- [ ] Página de contacto que monta el componente de la pista D.
-- [ ] Página 404 en ambos idiomas.
-- [ ] Imágenes optimizadas con el componente de imágenes de Astro.
-- [ ] Estilo mínimo, adaptable a celular, con contraste accesible.
+- [x] Inicio: presentación breve, proyectos destacados, categorías.
+- [x] Sobre mí.
+- [x] Listado de proyectos con filtro por categoría, en el orden definido.
+- [x] Página de categoría: un proyecto con varias categorías aparece en cada una.
+- [x] Página de proyecto: portada, texto, galería, video de YouTube con carga diferida, enlace al repositorio.
+- [x] Listado y página de experiencias.
+- [x] Página de contacto que monta el componente de la pista D.
+- [x] Página 404 en ambos idiomas.
+- [x] Imágenes optimizadas con el componente de imágenes de Astro.
+- [x] Estilo mínimo, adaptable a celular, con contraste accesible.
 
 **Listo cuando:** todas las URLs del contrato responden en ambos idiomas con el contenido de ejemplo.
 
@@ -215,19 +217,19 @@ Zona: `public/admin`.
 
 Zona: `src/components/seo`, la cabecera del layout base, `public/robots.txt`, configuración de sitemap.
 
-- [ ] Componente de cabecera: título, descripción, URL canónica, Open Graph y tarjetas para redes.
-- [ ] Etiquetas `hreflang` entre versiones de idioma, con `x-default` apuntando al idioma principal.
-- [ ] Datos estructurados JSON-LD:
+- [x] Componente de cabecera: título, descripción, URL canónica, Open Graph y tarjetas para redes.
+- [x] Etiquetas `hreflang` entre versiones de idioma, con `x-default` apuntando al idioma principal.
+- [x] Datos estructurados JSON-LD:
   - `Person` y `ProfilePage` en inicio y sobre mí, con `sameAs` a LinkedIn, GitHub y YouTube.
   - `WebSite` en el inicio.
   - `CreativeWork` o `Article` en cada proyecto, con autor, fechas e imagen.
   - `VideoObject` cuando hay video de YouTube.
   - `BreadcrumbList` en proyectos y categorías.
-- [ ] Sitemap con ambos idiomas, sin borradores.
-- [ ] `robots.txt` que permita buscadores y rastreadores de IA (GPTBot, OAI-SearchBot, ClaudeBot,
+- [x] Sitemap con ambos idiomas, sin borradores.
+- [x] `robots.txt` que permita buscadores y rastreadores de IA (GPTBot, OAI-SearchBot, ClaudeBot,
       PerplexityBot, Google-Extended) y bloquee `/admin`.
-- [ ] `llms.txt` con resumen de quién es Bruno y enlaces a las secciones. Su efecto real es incierto; cuesta poco.
-- [ ] Feed RSS por idioma.
+- [x] `llms.txt` con resumen de quién es Bruno y enlaces a las secciones. Su efecto real es incierto; cuesta poco.
+- [x] Feed RSS por idioma.
 - [ ] Imagen Open Graph por defecto y por proyecto (la portada).
 - [ ] Validar los datos estructurados con la prueba de resultados enriquecidos de Google.
 
@@ -238,21 +240,21 @@ Zona: `src/components/seo`, la cabecera del layout base, `public/robots.txt`, co
 Zona: `functions` (o worker equivalente), `src/components/contact`.
 Requiere el dominio activo y Email Routing configurado.
 
-- [ ] Verificar primero en la documentación de Cloudflare si un Worker puede enviar correo a una dirección
+- [x] Verificar primero en la documentación de Cloudflare si un Worker puede enviar correo a una dirección
       verificada mediante Email Routing. Si no, usar Resend en su plan gratuito.
-- [ ] Formulario accesible: nombre, correo, mensaje, en ambos idiomas.
-- [ ] Protección anti-spam con Cloudflare Turnstile y un campo trampa.
-- [ ] Función que valida los datos y envía el correo, con el remitente del visitante en "responder a".
-- [ ] Mensajes de éxito y de error en ambos idiomas.
-- [ ] Las claves van como secretos de Cloudflare, nunca en el repositorio.
-- [ ] El correo personal de Bruno no aparece en el código ni en el HTML.
+- [x] Formulario accesible: nombre, correo, mensaje, en ambos idiomas.
+- [x] Protección anti-spam con Cloudflare Turnstile y un campo trampa.
+- [x] Función que valida los datos y envía el correo, con el remitente del visitante en "responder a".
+- [x] Mensajes de éxito y de error en ambos idiomas.
+- [x] Las claves van como secretos de Cloudflare, nunca en el repositorio.
+- [x] El correo personal de Bruno no aparece en el código ni en el HTML.
 
 **Listo cuando:** un envío desde el sitio publicado llega a la casilla de Bruno y un envío sin Turnstile se rechaza.
 
 #### Pista E: contenido (Bruno, sin depender del código)
 
 - [ ] Texto de "sobre mí" en español: quién es, qué hace, qué busca. Pegar el texto del perfil de LinkedIn.
-- [ ] Foto de perfil.
+- [x] Foto de perfil.
 - [ ] Enlaces a LinkedIn, GitHub y canal de YouTube.
 - [ ] Primer proyecto: texto, 3 a 6 fotos y, si existe, video y repositorio.
 - [ ] Revisar las traducciones al inglés que redacte la IA.

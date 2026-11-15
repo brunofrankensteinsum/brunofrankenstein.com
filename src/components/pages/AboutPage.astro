@@ -5,6 +5,7 @@ import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Button from '../ui/Button.astro';
 import { retrato } from '../../lib/retrato';
+import { grafo, persona, absoluta } from '../../lib/seo';
 import type { Lang } from '../../config/site';
 import { profile } from '../../config/profile';
 import { pageUrl, otherLang } from '../../config/routes';
@@ -19,7 +20,17 @@ const title = t(lang, 'about.title');
 const about = profile.about;
 ---
 
-<Base lang={lang} title={title} description={about.lead[lang]} section="about" alternateUrl={pageUrl(otherLang(lang), 'about')}>
+<Base
+  lang={lang}
+  title={title}
+  description={about.lead[lang]}
+  section="about"
+  alternateUrl={pageUrl(otherLang(lang), 'about')}
+  jsonld={grafo(
+    { '@type': 'ProfilePage', name: title, url: absoluta(pageUrl(lang, 'about')), inLanguage: lang, mainEntity: { '@id': (await persona(lang))['@id'] } },
+    await persona(lang),
+  )}
+>
   <section class="container sobre">
     <figure class="sobre__figura" data-reveal>
       {/* Retrato: sale de src/assets/retrato.jpg. Si todavía no está, va un marcador rayado. */}

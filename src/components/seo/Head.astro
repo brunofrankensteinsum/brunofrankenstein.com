@@ -1,7 +1,8 @@
 ---
 // Cabecera SEO de cada página: lo que leen los buscadores, las redes y los asistentes de IA.
 // Las páginas no la usan directo: la invoca el layout (src/layouts/Base.astro).
-// Pendiente (ver TAREAS.md): datos estructurados JSON-LD (E5) e imagen para compartir (E6).
+// Incluye los datos estructurados JSON-LD (src/lib/seo.ts) y la imagen para compartir de cada página.
+// Pendiente (ver TAREAS.md): una imagen para compartir por defecto en las páginas que no tienen una (E6).
 import { site, defaultLang, type Lang } from '../../config/site';
 import { otherLang } from '../../config/routes';
 
@@ -15,9 +16,13 @@ interface Props {
   noindex?: boolean;
   // "article" para un proyecto; "website" para el resto.
   type?: 'website' | 'article';
+  // Datos estructurados de la página (resultado de grafo() en src/lib/seo.ts).
+  jsonld?: object;
+  // Dirección absoluta de la imagen para compartir (1200 × 630). Sin ella, la tarjeta no lleva imagen.
+  image?: string;
 }
 
-const { lang, title, description, alternateUrl, noindex = false, type = 'website' } = Astro.props;
+const { lang, title, description, alternateUrl, noindex = false, type = 'website', jsonld, image } = Astro.props;
 const fullTitle = title === site.name ? title : `${title} | ${site.name}`;
 const absoluta = (ruta: string) => new URL(ruta, site.url).href;
 const canonical = absoluta(Astro.url.pathname);
@@ -51,7 +56,13 @@ const locale = { es: 'es_UY', en: 'en_US' } as const;
 <meta property="og:url" content={canonical} />
 <meta property="og:locale" content={locale[lang]} />
 {alternateUrl && <meta property="og:locale:alternate" content={locale[other]} />}
-<meta name="twitter:card" content="summary" />
+{image && <meta property="og:image" content={image} />}
+<meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
+{/* JSON-LD: datos para máquinas, no se ven en la página. Se escapa «<» para que nada cierre el <script>. */}
+{jsonld && <script type="application/ld+json" set:html={JSON.stringify(jsonld).replace(/</g, '\\u003c')} />}
+
+{/* Feed RSS de los proyectos, en el idioma de la página. */}
+<link rel="alternate" type="application/rss+xml" title={`${site.name} · RSS`} href={`/${lang}/rss.xml`} />
 
 {/* Ícono del sitio (se genera con scripts/generar-favicon.mjs). */}
 <link rel="icon" href="/favicon.ico" sizes="32x32" />

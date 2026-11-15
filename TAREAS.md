@@ -11,13 +11,11 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 ## Por dónde empezar
 
 1. A1 y A3 — decidir qué hacer con los proyectos de ejemplo y si el sitio se indexa mientras tanto.
-2. B1 — forzar HTTPS en Cloudflare (5 minutos).
-3. C1 — permiso de escritura en GitHub para esta máquina.
+2. B1 y B3 — forzar HTTPS y redirigir `www` en Cloudflare.
+3. B5 y B6 — proteger `main` (exigir que pase la revisión automática) y activar el doble factor.
 4. C2 — sacar el repo de OneDrive.
-5. Publicar la rama `lista-de-tareas` y comprobar en el sitio real las cabeceras (B2) y la caché (E11).
-6. D3 — avisos al compilar (D1 y D2 ya están).
-7. A2 — cargar los datos reales y el primer proyecto real.
-8. E5 y E6 — datos estructurados e imagen para compartir.
+5. A2 — cargar los datos reales y el primer proyecto real (con `npm run lamina` y `npm run imagenes`).
+6. E13 a E15 — alta en buscadores, enlaces hacia el sitio y estadísticas, al quitar A3.
 
 ---
 
@@ -41,26 +39,26 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 - [ ] **B1. Forzar HTTPS** `[Bruno]` — Hoy `http://brunofrankenstein.com` responde sin redirigir a `https://`. En Cloudflare: SSL/TLS → Edge Certificates → activar «Always Use HTTPS» y HSTS. *Listo cuando:* abrir con `http://` lleva solo a `https://`.
 - [x] **B2. Cabeceras de seguridad** `[IA]` — Hecho el 2026-11-15. `public/_headers` agrega `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options` y `Permissions-Policy`. La política de contenido (CSP) la escribe Astro en cada página (`security.csp` en `astro.config.mjs`): solo corren los scripts propios y el único contenido ajeno permitido es el reproductor de `youtube-nocookie.com`. Probado sobre el sitio compilado: todo funciona y un script o una imagen ajenos quedan bloqueados. *Falta:* al publicarlo, comprobar las cabeceras en el sitio real y pasar securityheaders.com. HSTS queda en B1, del lado de Cloudflare.
 - [ ] **B3. `www` da error** `[Bruno]` — `www.brunofrankenstein.com` responde 404. Crear en Cloudflare una regla que redirija `www` al dominio sin `www`.
-- [ ] **B4. Validar el identificador de YouTube** `[IA]` — El campo `youtube` acepta cualquier texto y con él se arma una dirección. Exigir en `src/content.config.ts` el formato real (11 caracteres entre letras, números, `-` y `_`).
+- [x] **B4. Validar el identificador de YouTube** `[IA]` — Hecho el 2026-11-15 en `src/content.config.ts`: exige 11 caracteres (letras, números, «-» y «_»). Se acepta `VIDEO_ID` como marcador de los ejemplos.
 - [ ] **B5. Proteger la rama `main`** `[Bruno]` — En GitHub: exigir pull request y que el build pase antes de unir. Activar «secret scanning», «push protection» y las alertas de Dependabot.
 - [ ] **B6. Doble factor en las cuentas** `[Bruno]` — Las dos cuentas de GitHub y la de Cloudflare.
-- [ ] **B7. Fotos sin datos privados** `[IA]` — El repo es público. Las fotos de celular guardan la ubicación (GPS) en sus metadatos. Hacer que el script de imágenes (D4) los borre siempre. *Listo cuando:* ninguna imagen del repo tiene datos de ubicación.
+- [x] **B7. Fotos sin datos privados** `[IA]` — Hecho el 2026-11-15: `npm run imagenes -- <carpeta>` borra siempre los metadatos (GPS, cámara, fecha) y deja los originales en `_originales/`, que Git ignora. Probado con una foto que traía GPS. *Falta (hábito de Bruno):* correr el comando antes de subir fotos nuevas.
 - [ ] **B8. Correo del dominio** `[Bruno]` — Crear la dirección pública con Email Routing (por ejemplo `hola@`) para no publicar el correo personal, y cargar los registros SPF y DMARC para que nadie envíe correo haciéndose pasar por el dominio.
 - [x] **B9. Seguridad del formulario (va con la pista D)** `[IA]` — Hecho en el código el 2026-11-15 (`worker/contacto.js`, con pruebas): validación de nuevo en el servidor, límite de tamaño, Turnstile, solo pedidos del propio dominio, sin inyección de cabeceras, y claves como secretos de Cloudflare. *Falta (Bruno):* crear la regla de límite de envíos del paso 5 de `docs/formulario-contacto.md`.
 - [ ] **B10. Seguridad del panel (va con la pista B)** `[IA]` — Si se hace `/admin`: acceso solo para la cuenta de Bruno, permisos mínimos en GitHub y bloqueo a buscadores.
-- [ ] **B11. Dependencias al día** `[IA]` — Hoy `npm audit` da 0 vulnerabilidades. Configurar Dependabot para que avise una vez por semana.
+- [x] **B11. Dependencias al día** `[IA]` — Hecho el 2026-11-15: `.github/dependabot.yml` pide una revisión semanal (npm) y mensual (GitHub Actions), agrupando las actualizaciones menores. Se activa al unir el cambio con `main`.
 
 ## C. Publicación y forma de trabajo
 
 - [ ] **C1. Permiso de escritura en GitHub** `[Bruno]` — Esta máquina usa la cuenta `BrunoFrankenstein`, que solo puede leer el repo de `brunofrankensteinsum`. Invitarla como colaboradora con rol Write, o iniciar sesión acá con la cuenta dueña. *Listo cuando:* `git push` funciona sin pasos a mano en GitHub.
 - [ ] **C2. Sacar el repo de OneDrive** `[Bruno]` — Ya perdió archivos una vez por la sincronización. Moverlo a una carpeta que OneDrive no toque (por ejemplo `C:\dev\`). GitHub ya es la copia de respaldo.
 - [ ] **C3. Vista previa antes de publicar** `[Bruno]` — Activar en Cloudflare los despliegues de prueba por rama, para ver un cambio en una dirección temporal antes de unirlo a `main`.
-- [ ] **C4. Revisión automática** `[IA]` — Una GitHub Action que corra `npm run build` y `npm run check` en cada pull request. Se combina con B5.
+- [x] **C4. Revisión automática** `[IA]` — Hecho el 2026-11-15: `.github/workflows/revision.yml` corre `npm test`, `npm run build` y `npm run check` en cada pull request. *Falta (Bruno):* en B5, exigir que pase antes de unir.
 - [x] **C5. No editar `dist/`** `[IA]` — Hecho el 2026-11-15. La regla está en `CLAUDE.md` y `.vscode/settings.json` oculta `dist/`, `.astro/` y `node_modules/` en VS Code.
 - [x] **C6. Finales de línea** `[IA]` — Hecho el 2026-11-15 con `.gitattributes`.
 - [ ] **C7. Misma versión de Node** `[Bruno]` — El proyecto pide Node 22 (`.node-version`) y esta máquina tiene la 25. Instalar la 22 para compilar igual que Cloudflare.
 - [ ] **C8. Capturas con un comando** `[IA]` — Traer `herramientas/capturar.mjs` al repo como `npm run capturas`.
-- [ ] **C9. Poner `PLAN.md` al día** `[IA]` — Marcar lo hecho (la pista A quedó cubierta por el diseño) y anotar las decisiones tomadas en los pasos 1 a 4.
+- [x] **C9. Poner `PLAN.md` al día** `[IA]` — Hecho el 2026-11-15: marcadas las pistas A, C y D; la B (panel) y las pruebas de aceptación siguen abiertas.
 - [ ] **C10. Borrar la rama `diseno-c1`** `[Bruno]` — Ya está unida a `main`. De acá en más, una rama corta por cada cambio.
 
 ## D. Cargar láminas nuevas con facilidad
@@ -68,10 +66,10 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 - [x] **D1. Comando «lámina nueva»** `[IA]` — Hecho el 2026-11-15. `npm run lamina -- "Título del proyecto"` crea la carpeta con el slug, `es.md` y `en.md` con la cabecera (campos comentados para completar) y el siguiente número de `fig` libre; la lámina nace «en preparación». Probado: el sitio compila con la lámina creada.
 - [x] **D2. Plantilla comentada** `[IA]` — Hecho el 2026-11-15 en `docs/plantillas/lamina-ejemplo.md`: subtítulos numerados, pie de foto en cursiva, dos imágenes lado a lado, nota con `>`, tabla, código y video.
 - [x] **D3. Más avisos al compilar** `[IA]` — Hecho el 2026-11-15 en `src/lib/validar-contenido.mjs`. El build falla con un mensaje claro si: falta es.md o en.md, `fig`, `status`, fecha, categorías, `youtube` o `repo` difieren entre idiomas, una imagen citada no existe, falta su texto alternativo, o los dos idiomas no citan las mismas imágenes. En experiencias: falta un idioma o `kind`, `start` o `end` difieren. Se saltean las carpetas con `draft: true`. Probado con una carpeta sin `en.md`.
-- [ ] **D4. Preparar imágenes con un comando** `[IA]` — `npm run imagenes -- <carpeta>`: achica a 2400 px, borra metadatos (B7) y renombra a `01-descripcion.jpg`.
+- [x] **D4. Preparar imágenes con un comando** `[IA]` — Hecho el 2026-11-15: `npm run imagenes -- src/content/proyectos/<carpeta>` endereza, achica a 2400 px, borra metadatos y renombra a `01-nombre.jpg` (las capturas PNG se quedan en PNG). Se puede volver a correr sin tocar lo ya preparado.
 - [ ] **D5. Comando de Claude para publicar** `[IA]` — Un comando propio (`/nueva-lamina`) que siga `docs/instructivo-publicar-proyecto.md` paso a paso: pregunta lo que falta, escribe los dos idiomas, corre el build y abre el pull request.
-- [ ] **D6. Actualizar el instructivo** `[IA]` — Sumar: el glosario y cómo agregar un término, `status: en-preparacion` y cómo pasar una lámina a publicada, dónde va el resumen del video, y que publicar es abrir un pull request.
-- [ ] **D7. Instructivo y plantilla de experiencias** `[IA]` — Hoy solo existe para proyectos.
+- [x] **D6. Actualizar el instructivo** `[IA]` — Hecho el 2026-11-15: `docs/instructivo-publicar-proyecto.md` suma comandos, glosario, láminas en preparación, video, qué revisa el build y que publicar es un pull request.
+- [x] **D7. Instructivo y plantilla de experiencias** `[IA]` — Hecho el 2026-11-15: `docs/instructivo-experiencias.md`, con el campo `kind` del filtro.
 - [ ] **D8. Prueba con el primer proyecto real** `[Ambos]` — Cargar uno de punta a punta y tomar el tiempo. El criterio de `PLAN.md` es menos de 30 minutos. Anotar acá cada tropiezo.
 - [ ] **D9. Decidir el panel de edición** `[Bruno]` — `PLAN.md` prevé Sveltia CMS en `/admin` (pista B). Con los comandos de D1 a D5 puede no hacer falta. Si se hace, sumarle los campos `fig`, `status` y `schematic`.
 - [ ] **D10. Dos decisiones del contenido** `[Bruno]` — Orden del cronograma (hoy por fecha de inicio; el diseño usa otro) y si una lámina en preparación suma al contador de su categoría.
@@ -84,12 +82,12 @@ Hoy el `<head>` de cada página tiene solo título, descripción y dirección ca
 - [x] **E2. Sitemap** `[IA]` — Hecho el 2026-11-15 sin sumar dependencias: `src/pages/sitemap.xml.ts` lo arma al compilar con los dos idiomas. No incluye borradores, láminas en preparación ni categorías vacías.
 - [ ] **E3. `robots.txt` propio** `[Bruno]` — El archivo ya está (`src/pages/robots.txt.ts`): declara el sitemap, permite buscadores y rastreadores de IA y bloquea `/admin/`. *Falta:* que Bruno revise en Cloudflare que no esté activado el bloqueo de bots de IA, porque el objetivo es que los asistentes citen el sitio.
 - [x] **E4. Favicon** `[IA]` — Hecho el 2026-11-15. Monograma «BF» en SVG, ICO y PNG de 180, 192 y 512, más el manifiesto. Se regenera con `node scripts/generar-favicon.mjs` (ahí están los colores).
-- [ ] **E5. Datos estructurados** `[IA]` — JSON-LD: `Person` y `ProfilePage` (con `sameAs` a LinkedIn y GitHub), `WebSite`, `CreativeWork` por proyecto, `BreadcrumbList` y `VideoObject`. *Listo cuando:* la prueba de resultados enriquecidos de Google no marca errores.
-- [ ] **E6. Imagen para compartir** `[IA]` — Una imagen Open Graph por defecto y una por proyecto, en cada idioma (§8.4).
-- [ ] **E7. Títulos y descripciones propios** `[IA]` — Las páginas de categoría repiten la descripción de Proyectos. Cada página necesita la suya, de 50 a 160 caracteres.
+- [ ] **E5. Datos estructurados** `[IA]` — Hechos el 2026-11-15 (`src/lib/seo.ts`): `WebSite` y `Person` en Inicio, `ProfilePage` en Sobre mí, `CreativeWork` con `VideoObject` (solo con un video real) y `BreadcrumbList` en cada proyecto. JSON válido en todas las páginas. *Falta (Bruno):* pasar la prueba de resultados enriquecidos de Google (search.google.com/test/rich-results) con la dirección de un proyecto, cuando el sitio esté publicado.
+- [ ] **E6. Imagen para compartir** `[IA]` — Cada proyecto ya usa su portada recortada a 1200 × 630 como `og:image` (2026-11-15). *Falta:* una imagen por defecto para Inicio, Sobre mí y el resto (no se hizo: necesita el diseño final con tipografía y retrato, §8.4).
+- [x] **E7. Títulos y descripciones propios** `[IA]` — Hecho el 2026-11-15: cada categoría tiene su descripción (`categoryDescriptions` en `site.ts`), y Inicio y Proyectos tienen una de 50 a 160 caracteres (`meta.*` en `ui.ts`). Comprobado en las 26 páginas. Redactadas por la IA: Bruno las revisa (A5).
 - [x] **E8. Categorías vacías** `[IA]` — Hecho el 2026-11-15: una categoría sin proyectos pide «no indexar» y queda fuera del sitemap.
 - [ ] **E9. Redirección de la raíz** `[Ambos]` — Hoy `/` lleva a `/es/` con un 302 (temporal). Evaluar pasarla a 301 (permanente) y resolver junto con la detección de idioma del navegador (H5).
-- [ ] **E10. `llms.txt` y RSS** `[IA]` — Resumen del sitio para asistentes de IA y un feed por idioma. Ambos previstos en la pista C.
+- [x] **E10. `llms.txt` y RSS** `[IA]` — Hecho el 2026-11-15: `/llms.txt` (resumen del sitio para asistentes de IA) y `/es/rss.xml` y `/en/rss.xml` (un feed por idioma), enlazados desde el `<head>`.
 - [x] **E11. Caché de archivos fijos** `[IA]` — Hecho el 2026-11-15 en `public/_headers`: un año para `/_astro/*` y 30 días para `/fonts/*`. *Falta:* comprobarlo en el sitio real al publicarlo.
 - [ ] **E12. Lighthouse** `[IA]` — Medir Inicio, un proyecto y Proyectos en celular. Meta: 95 o más en las cuatro categorías. Revisar cuánto demora la animación de entrada en mostrar el contenido principal.
 - [ ] **E13. Alta en buscadores** `[Bruno]` — Google Search Console y Bing Webmaster Tools, verificar el dominio y enviar el sitemap. Hacerlo recién al quitar A3.
@@ -135,8 +133,8 @@ Hasta ahora el sitio se probó solo en un navegador basado en Chromium, en esta 
 
 - [ ] **H1. Paso 5 — prioridad media** `[IA]` — Filtros instantáneos por categoría y año con animación, vista de lista, cronograma que se dibuja con la duración de cada experiencia, transición de la portada entre tarjeta y detalle, regla de progreso de lectura, íconos y celdas de categoría animados.
 - [ ] **H2. Paso 6 — gráficos** `[IA]` — Duotono cianotipo de las portadas con la foto a color al pasar el mouse, imágenes para compartir (E6), favicon (E4) y página 404 con su diseño.
-- [ ] **H3. Página 404 en producción** `[IA]` — Hoy una dirección inexistente devuelve una página en blanco. Agregar `"not_found_handling": "404-page"` en `wrangler.jsonc`. Cambia el despliegue: avisar a Bruno antes.
-- [ ] **H4. Envío del formulario (pista D)** `[Bruno]` — El código está hecho el 2026-11-15: `worker/` recibe el mensaje en `/api/contacto`, lo valida de nuevo, comprueba Turnstile y lo manda por correo. El correo de Bruno no figura en el sitio. Sus 8 pruebas automáticas pasan (`npm test`), pero **no se probó con Cloudflare real**. *Falta (solo Bruno):* seguir `docs/formulario-contacto.md` (Email Routing, widget de Turnstile y dos secretos). Hasta entonces el formulario avisa «todavía no está conectado». *Listo cuando:* un mensaje de prueba llega a la bandeja.
+- [ ] **H3. Página 404 en producción** `[IA]` — Agregado `"not_found_handling": "404-page"` en `wrangler.jsonc` el 2026-11-15. *Falta:* al publicarlo, abrir una dirección que no exista (por ejemplo `/es/nada/`) y confirmar que muestra la página 404 del diseño. Si algo sale mal, borrar esa línea.
+- [x] **H4. Envío del formulario (pista D)** `[Bruno]` — Hecho el 2026-11-15: `worker/` recibe el mensaje en `/api/contacto`, lo valida de nuevo, comprueba Turnstile y lo manda por correo; el correo de Bruno no figura en el sitio. Bruno configuró Cloudflare según `docs/formulario-contacto.md` y el envío de prueba llegó (sin confirmar por la IA). Si falla, el formulario muestra un código de error.
 - [ ] **H5. Idioma según el navegador** `[Bruno]` — El diseño pide detectarlo en la primera visita; `PLAN.md` fija que la raíz va siempre a `/es/`. Decidir cuál vale.
 - [ ] **H6. Ilustración del inicio** `[Bruno]` — Celda 18650 en despiece, auto de Formula SAE, o dejar solo el retrato.
 - [ ] **H7. Paso 7 — pulido** `[IA]` — Coordenadas vivas en el footer, contadores tipo odómetro y auditoría final.

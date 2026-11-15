@@ -11,6 +11,7 @@ import { pageUrl, projectUrl, categoryUrl, otherLang } from '../../config/routes
 import { t, formatDay } from '../../i18n/ui';
 import { figLabel, getProjects, projectExists, type Project } from '../../lib/content';
 import { definicion, terminosEn } from '../../config/glossary.mjs';
+import { absoluta, autor, grafo, imagenCompartir, migas } from '../../lib/seo';
 
 interface Props {
   lang: Lang;
@@ -37,9 +38,46 @@ const dos = (n: number) => String(n).padStart(2, '0');
 // Términos del glosario que aparecen en el texto: el script marca la primera aparición de cada uno.
 const terminos = terminosEn(lang, project.body ?? '');
 const primeraCategoria = data.categories[0];
+
+// Datos para buscadores y asistentes de IA: la lámina como obra, su video (si es un video real) y el camino de migas.
+const imagen = await imagenCompartir(data.cover);
+const urlProyecto = absoluta(projectUrl(lang, slug));
+const videoReal = data.youtube && data.youtube !== 'VIDEO_ID' ? data.youtube : undefined;
+const jsonld = grafo(
+  {
+    '@type': 'CreativeWork',
+    name: data.title,
+    headline: data.title,
+    description: data.summary,
+    url: urlProyecto,
+    inLanguage: lang,
+    datePublished: data.date.toISOString().slice(0, 10),
+    dateModified: (data.updated ?? data.date).toISOString().slice(0, 10),
+    image: imagen,
+    author: autor,
+    keywords: data.tags.join(', '),
+    genre: data.categories.map((id) => getCategory(id)?.name[lang]),
+    ...(videoReal && {
+      video: {
+        '@type': 'VideoObject',
+        name: data.title,
+        description: data.summary,
+        thumbnailUrl: `https://i.ytimg.com/vi/${videoReal}/hqdefault.jpg`,
+        uploadDate: data.date.toISOString().slice(0, 10),
+        embedUrl: `https://www.youtube.com/embed/${videoReal}`,
+        contentUrl: `https://www.youtube.com/watch?v=${videoReal}`,
+      },
+    }),
+  },
+  migas([
+    { nombre: t(lang, 'nav.home'), url: pageUrl(lang, 'home') },
+    { nombre: t(lang, 'projects.title'), url: pageUrl(lang, 'projects') },
+    { nombre: data.title, url: projectUrl(lang, slug) },
+  ]),
+);
 ---
 
-<Base lang={lang} title={data.title} description={data.summary} section="projects" alternateUrl={alternateUrl} type="article">
+<Base lang={lang} title={data.title} description={data.summary} section="projects" alternateUrl={alternateUrl} type="article" jsonld={jsonld} image={imagen}>
   <header class="container cabecera" data-reveal>
     <nav class="ruta" aria-label={t(lang, 'project.breadcrumb')}>
       <a href={pageUrl(lang, 'projects')}>{t(lang, 'projects.title')}</a>
