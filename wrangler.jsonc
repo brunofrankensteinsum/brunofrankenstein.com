@@ -1,8 +1,21 @@
-// Configuración de Cloudflare: le dice que el sitio ya compilado está en la carpeta dist.
+// Configuración de Cloudflare.
+// - El sitio ya compilado está en la carpeta dist.
+// - worker/index.js atiende solo las direcciones /api/* (el formulario de contacto).
+// - CORREO es el servicio con el que el formulario envía mensajes a Bruno (Cloudflare Email Routing).
+// Los secretos (DESTINO, TURNSTILE_SECRET) NO van acá: se cargan en el panel de Cloudflare.
+// Guía paso a paso: docs/formulario-contacto.md
 {
   "name": "brunofrankenstein-com",
+  "main": "worker/index.js",
   "compatibility_date": "2026-11-01",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"]
+  },
+  "send_email": [{ "name": "CORREO" }],
+  "vars": {
+    // Dirección del dominio que figura como emisora de los avisos. No es tu correo personal.
+    "REMITENTE": "formulario@brunofrankenstein.com"
   }
 }

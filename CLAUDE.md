@@ -36,6 +36,11 @@ Lo que falta hacer, en orden de prioridad, está en `TAREAS.md`: marcar cada tar
 - `src/i18n/ui.ts`: textos de interfaz.
 - `design/`: entrega del diseño C1 «Cianotipo». `design/HANDOFF.md` es la especificación de interfaz e
   interacciones; manda en lo visual. En contenido, URLs y edición manda `PLAN.md`.
+- `npm test`: pruebas del formulario de contacto (`worker/contacto.test.mjs`).
+- `worker/` y `wrangler.jsonc`: el servidor del formulario (`/api/contacto`). El correo de Bruno es un secreto de
+  Cloudflare, nunca va en el repositorio ni se muestra en el sitio. Configuración: `docs/formulario-contacto.md`.
+- `src/lib/validar-contenido.mjs`: avisos al compilar (es/en completos y coherentes, imágenes con texto alternativo).
+- Experiencias: el campo `kind` (`formacion`, `trabajo` o `publicacion`) alimenta el filtro de la página.
 - `npm run lamina -- "Título"`: crea una lámina nueva (carpeta, `es.md`, `en.md`, número `fig` siguiente). Plantilla de formato en `docs/plantillas/lamina-ejemplo.md`.
 - `src/assets/retrato.jpg`: foto de perfil de Bruno (Inicio y Sobre mí). Si no existe, se ve un marcador.
 - `docs/guia-obsidian.md`: cómo escribir láminas con Obsidian (ajustes, fotos, cabecera).

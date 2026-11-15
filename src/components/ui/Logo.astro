@@ -1,0 +1,35 @@
+---
+// Logo del sitio: el monograma «BF» dentro de un cuadrado tipo cajetín.
+// Es el mismo dibujo del favicon (scripts/generar-favicon.mjs), pero con los colores del tema
+// para que cambie junto con él. No es un enlace: es solo la marca.
+interface Props {
+  size?: number;
+}
+
+const { size = 32 } = Astro.props;
+---
+
+<svg
+  class="logo"
+  width={size}
+  height={size}
+  viewBox="0 0 32 32"
+  role="img"
+  aria-label="B. Frankenstein"
+  fill="none"
+  stroke="currentColor"
+  stroke-linecap="square"
+  stroke-linejoin="miter"
+>
+  <rect x="2.5" y="2.5" width="27" height="27" stroke-width="1.5"></rect>
+  <path stroke-width="2" d="M8 9v14h5l2-2v-3l-2-2 2-2v-3l-2-2H8M8 16h5"></path>
+  <path stroke-width="2" d="M19 23V9h6M19 16h4"></path>
+</svg>
+
+<style>
+  .logo {
+    display: block;
+    flex: none;
+    color: var(--c-accent);
+  }
+</style>

@@ -54,7 +54,13 @@ const about = profile.about;
       </div>
 
       <div class="sobre__botones">
-        <Button href={profile.cv || undefined} disabled={!profile.cv} download={profile.cv ? true : undefined}>
+        {/* El CV está en CVuy (ANII): se abre en otra pestaña. */}
+        <Button
+          href={profile.cv || undefined}
+          disabled={!profile.cv}
+          target={profile.cv ? '_blank' : undefined}
+          rel={profile.cv ? 'noopener' : undefined}
+        >
           {t(lang, 'about.cv')}
         </Button>
         <Button href={pageUrl(lang, 'contact')} variant="secondary">{t(lang, 'about.write')}</Button>

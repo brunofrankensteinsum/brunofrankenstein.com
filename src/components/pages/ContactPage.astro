@@ -1,8 +1,9 @@
 ---
 // Contacto: datos de contacto y formulario.
 // La validación y los estados del formulario están en src/scripts/contacto.ts.
-// El envío del correo es la pista D de PLAN.md: mientras profile.formEndpoint esté vacío,
-// el formulario valida pero avisa que todavía no está conectado.
+// El correo de Bruno no se muestra en ningún lado: la única vía es este formulario.
+// Lo recibe worker/index.js (ver docs/formulario-contacto.md). Antispam: campo trampa, tiempo
+// mínimo, Turnstile de Cloudflare y validación de nuevo en el servidor.
 import Base from '../../layouts/Base.astro';
 import Icon from '../ui/Icon.astro';
 import { site, type Lang } from '../../config/site';
@@ -35,33 +36,6 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
       <p class="muted">{t(lang, 'contact.reply')}</p>
 
       <dl class="ficha caja">
-        <div>
-          <dt>{t(lang, 'contact.email')}</dt>
-          <dd>
-            {
-              profile.email ? (
-                <span class="ficha__email">
-                  {/* Clic en el email: lo copia. El link de al lado abre el programa de correo. */}
-                  <button
-                    type="button"
-                    class="ficha__copiar"
-                    data-copiar-email={profile.email}
-                    data-copiado={t(lang, 'project.copied')}
-                    aria-label={`${t(lang, 'contact.copyEmail')}: ${profile.email}`}
-                  >
-                    {profile.email}
-                    <Icon name="ui-copiar" size={16} />
-                  </button>
-                  <a class="ficha__correo" href={`mailto:${profile.email}`}>
-                    {t(lang, 'contact.openMail')}
-                  </a>
-                </span>
-              ) : (
-                <span class="marcador">{t(lang, 'contact.emailMissing')}</span>
-              )
-            }
-          </dd>
-        </div>
         {
           redes.map(({ red, url, usuario }) => (
             <div>
@@ -98,6 +72,7 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
       data-reveal
       data-form-contacto
       data-endpoint={profile.formEndpoint}
+      data-turnstile-clave={profile.turnstileSiteKey}
       data-send={t(lang, 'contact.send')}
       data-sending={t(lang, 'contact.sending')}
       data-err-required={t(lang, 'contact.err.required')}
@@ -156,22 +131,20 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
         <input id="c-sitio" name="sitio" type="text" tabindex="-1" autocomplete="off" />
       </div>
 
+      {/* Antispam Turnstile: casi siempre invisible; solo se muestra si Cloudflare duda. El script lo coloca acá. */}
+      <div data-turnstile></div>
+
       {/* Nota de error del envío: aparece solo si algo falla. */}
       <div class="form__error" role="alert" tabindex="-1" hidden data-form-error>
         <p data-form-error-texto></p>
         <div class="form__error-acciones">
           <button type="button" data-reintentar>{t(lang, 'contact.retry')}</button>
+          {/* Sin correo publicado: la alternativa es escribir por LinkedIn. */}
           {
-            profile.email ? (
-              <button type="button" data-copiar-email={profile.email} data-copiado={t(lang, 'project.copied')}>
-                {t(lang, 'contact.copyEmail')}
-              </button>
-            ) : (
-              site.social.linkedin && (
-                <a href={site.social.linkedin} rel="me noopener">
-                  {t(lang, 'contact.viaLinkedin')}
-                </a>
-              )
+            site.social.linkedin && (
+              <a href={site.social.linkedin} rel="me noopener">
+                {t(lang, 'contact.viaLinkedin')}
+              </a>
             )
           }
         </div>
@@ -247,28 +220,6 @@ const motivos: UiKey[] = ['contact.reason.project', 'contact.reason.research', '
   }
   .ficha dd { min-width: 0; overflow-wrap: anywhere; }
   .ficha__acento { color: var(--c-accent); }
-  .ficha__email {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0 var(--s-4);
-  }
-  .ficha__copiar {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--s-2);
-    min-height: 44px;
-    padding: 0;
-    background: none;
-    border: none;
-    color: var(--c-accent);
-    cursor: copy;
-    text-align: left;
-  }
-  .ficha__correo {
-    font-size: var(--fs-small);
-    color: var(--c-ink-muted);
-  }
   .ficha__externo {
     display: inline-flex;
     align-items: center;

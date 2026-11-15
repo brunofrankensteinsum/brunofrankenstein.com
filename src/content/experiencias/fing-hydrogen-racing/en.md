@@ -1,6 +1,7 @@
 ---
 # EJEMPLO tomado de las pantallas del diseño. Revisar los datos antes del lanzamiento.
 title: "Electrical + Electronics · Fing Hydrogen Racing"
+kind: trabajo
 summary: "[WHAT YOU DO ON THE TEAM: subsystem, responsibility, one concrete result.]"
 role: "Electrical + Electronics"
 organization: "Fing Hydrogen Racing"

@@ -1,5 +1,5 @@
 ---
-// Experiencias: cronograma con lo más reciente arriba.
+// Experiencias: cronograma con lo más reciente arriba, filtrable por tipo (formación, trabajos, publicaciones).
 import Base from '../../layouts/Base.astro';
 import PageIntro from '../ui/PageIntro.astro';
 import Button from '../ui/Button.astro';
@@ -18,28 +18,46 @@ const { lang } = Astro.props;
 const title = t(lang, 'experience.title');
 const intro = t(lang, 'experience.intro');
 const experiences = await getExperiences(lang);
+
+// Tipos para el filtro, en el orden en que se muestran. "todos" no filtra.
+const tipos = ['todos', 'formacion', 'trabajo', 'publicacion'] as const;
+const cuenta = (tipo: string) => (tipo === 'todos' ? experiences.length : experiences.filter((e) => e.data.kind === tipo).length);
+const dos = (n: number) => String(n).padStart(2, '0');
 ---
 
 <Base lang={lang} title={title} description={intro} section="experience" alternateUrl={pageUrl(otherLang(lang), 'experience')}>
   <PageIntro label={t(lang, 'experience.label')} title={title} intro={intro}>
-    {/* Sin archivo de CV cargado (profile.cv), el botón queda deshabilitado. */}
+    {/* El CV completo está en CVuy (ANII): se abre en otra pestaña. Sin dirección (profile.cv), el botón queda deshabilitado. */}
     <Button
       slot="aside"
       variant="secondary"
       accent
-      icon="ui-descargar"
+      icon="ui-externo"
       href={profile.cv || undefined}
       disabled={!profile.cv}
-      download={profile.cv ? true : undefined}
+      target={profile.cv ? '_blank' : undefined}
+      rel={profile.cv ? 'noopener' : undefined}
     >
       {t(lang, 'experience.cv')}
     </Button>
   </PageIntro>
 
+  {/* Filtro por tipo: solo aparece con JavaScript; sin él se ve todo el cronograma. */}
+  <div class="container filtro" role="group" aria-label={t(lang, 'experience.filter')} data-filtro-tipo>
+    {
+      tipos.map((tipo) => (
+        <button type="button" class="filtro__op" data-tipo={tipo} aria-pressed={tipo === 'todos' ? 'true' : 'false'}>
+          <span>{t(lang, `experience.kind.${tipo}` as const)}</span>
+          <span class="filtro__cuenta">{dos(cuenta(tipo))}</span>
+        </button>
+      ))
+    }
+  </div>
+
   <ol class="container crono">
     {
       experiences.map((e, i) => (
-        <li class:list={['crono__fila', i === 0 && 'crono__fila--reciente']} data-reveal>
+        <li class:list={['crono__fila', i === 0 && 'crono__fila--reciente']} data-tipo={e.data.kind} data-reveal>
           <p class="crono__anio">{formatPeriod(lang, e.data.start, e.data.end)}</p>
           <span class="crono__nodo" aria-hidden="true" />
           <div class="crono__texto">
@@ -79,7 +97,67 @@ const experiences = await getExperiences(lang);
   </ol>
 </Base>
 
+<script>
+  // Filtro por tipo: muestra solo las filas del tipo elegido.
+  // La fila visible más reciente (la primera) lleva el nodo relleno y no lleva línea arriba.
+  const filtro = document.querySelector<HTMLElement>('[data-filtro-tipo]');
+  const filas = [...document.querySelectorAll<HTMLElement>('.crono__fila')];
+  if (filtro) {
+    const botones = [...filtro.querySelectorAll<HTMLButtonElement>('[data-tipo]')];
+    const aplicar = (tipo: string) => {
+      let primera = true;
+      for (const fila of filas) {
+        const visible = tipo === 'todos' || fila.dataset.tipo === tipo;
+        fila.hidden = !visible;
+        fila.classList.toggle('crono__fila--reciente', visible && primera);
+        fila.toggleAttribute('data-primera', visible && primera);
+        if (visible) primera = false;
+      }
+      botones.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tipo === tipo)));
+    };
+    botones.forEach((b) => b.addEventListener('click', () => aplicar(b.dataset.tipo ?? 'todos')));
+  }
+</script>
+
 <style>
+  /* ---------- Filtro por tipo ---------- */
+  .filtro {
+    display: none; /* sin JavaScript no hace falta */
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    padding-block: var(--s-4) var(--s-2);
+  }
+  :global(.js) .filtro { display: flex; }
+  .filtro__op {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+    min-height: 44px;
+    padding: 0 14px;
+    background: none;
+    border: 1px solid var(--c-line);
+    color: var(--c-ink);
+    font-family: var(--f-mono);
+    font-size: var(--fs-label);
+    letter-spacing: var(--ls-label);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: border-color var(--t-micro) linear;
+  }
+  .filtro__cuenta { color: var(--c-ink-muted); }
+  .filtro__op[aria-pressed='true'] {
+    border-color: var(--c-accent);
+    color: var(--c-accent);
+  }
+  .filtro__op[aria-pressed='true'] .filtro__cuenta { color: var(--c-accent); }
+  .filtro__op:focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+  }
+  @media (hover: hover) {
+    .filtro__op:hover { border-color: var(--c-accent); }
+  }
+
   .crono {
     display: flex;
     flex-direction: column;
@@ -94,6 +172,9 @@ const experiences = await getExperiences(lang);
     padding-block: var(--s-7);
   }
   .crono__fila + .crono__fila { border-top: 1px dashed var(--c-line); }
+  /* Filtradas: las ocultas desaparecen y la primera visible no lleva línea arriba. */
+  .crono__fila[hidden] { display: none; }
+  .crono__fila[data-primera] { border-top: none; }
   .crono__anio {
     order: 2;
     font-family: var(--f-mono);

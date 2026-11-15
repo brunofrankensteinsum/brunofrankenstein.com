@@ -2,11 +2,32 @@
 //   - Valida cada campo cuando se sale de él (no mientras se escribe).
 //   - Al enviar: el botón pasa a «Enviando…»; si sale bien, el formulario se reemplaza
 //     por el sello «RECIBIDO · REV. A»; si sale mal, aparece una nota para reintentar.
-//   - Anti-spam sin captcha: un campo trampa invisible y un tiempo mínimo de llenado.
-//   - Clic en el email: lo copia al portapapeles.
+//   - Antispam: un campo trampa invisible, un tiempo mínimo de llenado y Turnstile (Cloudflare).
+//     Después el servidor vuelve a revisar todo (worker/contacto.js).
 // Los textos vienen del HTML (atributos data-*), así este archivo no sabe de idiomas.
-import { abrirNota, cerrarNota } from './nota.ts';
-import { copiar } from './portapapeles.ts';
+
+export {}; // marca este archivo como módulo (hace falta para declarar Window abajo)
+
+// Lo mínimo que se usa de la API de Turnstile.
+interface Turnstile {
+  render(
+    contenedor: HTMLElement,
+    opciones: {
+      sitekey: string;
+      appearance: 'interaction-only';
+      language: string;
+      callback: (token: string) => void;
+      'expired-callback': () => void;
+      'error-callback': () => void;
+    },
+  ): string;
+  reset(id?: string): void;
+}
+declare global {
+  interface Window {
+    turnstile?: Turnstile;
+  }
+}
 
 const form = document.querySelector<HTMLFormElement>('[data-form-contacto]');
 if (form) {
@@ -19,6 +40,61 @@ if (form) {
   // Momento en que se abrió la página: un envío en menos de 3 segundos es un robot.
   const inicio = Date.now();
 
+  // ---------- Turnstile ----------
+  // El script de Cloudflare se descarga recién cuando alguien toca el formulario, para no
+  // cargar nada ajeno a quien solo mira la página. El widget es invisible casi siempre.
+  const clave = textos.turnstileClave ?? '';
+  const contenedor = form.querySelector<HTMLElement>('[data-turnstile]');
+  let token = '';
+  let widget: string | undefined;
+  let esperandoToken: ((t: string) => void)[] = [];
+  let preparado: Promise<void> | undefined;
+
+  const prepararTurnstile = () => {
+    if (!clave || !contenedor || import.meta.env.DEV) return Promise.resolve();
+    preparado ??= new Promise<void>((listo) => {
+      const script = document.createElement('script');
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      script.async = true;
+      script.onload = () => {
+        widget = window.turnstile?.render(contenedor, {
+          sitekey: clave,
+          appearance: 'interaction-only',
+          language: document.documentElement.lang,
+          callback: (t) => {
+            token = t;
+            esperandoToken.forEach((avisar) => avisar(t));
+            esperandoToken = [];
+          },
+          'expired-callback': () => (token = ''),
+          'error-callback': () => (token = ''),
+        });
+        listo();
+      };
+      script.onerror = () => listo();
+      document.head.append(script);
+    });
+    return preparado;
+  };
+  form.addEventListener('focusin', () => void prepararTurnstile(), { once: true });
+
+  // Devuelve el token de Turnstile; si no llega en 15 segundos, devuelve ''.
+  const conseguirToken = async (): Promise<string> => {
+    if (!clave || import.meta.env.DEV) return '';
+    await prepararTurnstile();
+    if (token) return token;
+    return new Promise<string>((resolver) => {
+      esperandoToken.push(resolver);
+      window.setTimeout(() => resolver(token), 15000);
+    });
+  };
+  // El token sirve una sola vez: después de cada envío se pide uno nuevo.
+  const renovarToken = () => {
+    token = '';
+    if (widget !== undefined) window.turnstile?.reset(widget);
+  };
+
+  // ---------- Validación de campos ----------
   // Devuelve el mensaje de error de un campo, o '' si está bien.
   const revisar = (campo: HTMLInputElement | HTMLTextAreaElement): string => {
     const valor = campo.value.trim();
@@ -73,23 +149,23 @@ if (form) {
 
   async function enviar(datos: Record<string, string>): Promise<'ok' | 'fallo' | 'sin-conexion'> {
     const destino = textos.endpoint;
-    if (!destino) {
-      // Todavía no existe el servicio de envío (pista D). En el servidor local se simula
-      // un envío correcto para poder ver el sello; en el sitio publicado se avisa.
-      if (import.meta.env.DEV) {
-        console.info('[contacto] Envío simulado (solo en desarrollo):', datos);
-        await new Promise((r) => setTimeout(r, 1200));
-        return 'ok';
-      }
-      return 'sin-conexion';
+    // En el servidor local (npm run dev) no existe el Worker: se simula un envío correcto
+    // para poder ver el sello. El envío real solo funciona en el sitio publicado.
+    if (import.meta.env.DEV) {
+      console.info('[contacto] Envío simulado (solo en desarrollo):', datos);
+      await new Promise((r) => setTimeout(r, 1200));
+      return 'ok';
     }
+    if (!destino) return 'sin-conexion';
     try {
       const respuesta = await fetch(destino, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos),
       });
-      return respuesta.ok ? 'ok' : 'fallo';
+      if (respuesta.ok) return 'ok';
+      // 503: el servidor todavía no está configurado (faltan secretos en Cloudflare).
+      return respuesta.status === 503 ? 'sin-conexion' : 'fallo';
     } catch {
       return 'fallo';
     }
@@ -120,7 +196,15 @@ if (form) {
     }
 
     ocupado(true);
+    // Turnstile: sin la verificación de Cloudflare el servidor no acepta el mensaje.
+    datos.turnstile = await conseguirToken();
+    if (clave && !import.meta.env.DEV && !datos.turnstile) {
+      ocupado(false);
+      mostrarError(textos.fail ?? '');
+      return;
+    }
     const resultado = await enviar(datos);
+    renovarToken();
     ocupado(false);
     if (resultado === 'ok') mostrarRecibido(datos.email);
     else mostrarError((resultado === 'sin-conexion' ? textos.failOffline : textos.fail) ?? '');
@@ -129,19 +213,3 @@ if (form) {
   // «Reintentar» vuelve a enviar el formulario.
   notaError.querySelector('[data-reintentar]')?.addEventListener('click', () => form.requestSubmit());
 }
-
-// ---------- Copiar el email ----------
-document.querySelectorAll<HTMLButtonElement>('[data-copiar-email]').forEach((boton) => {
-  boton.addEventListener('click', async () => {
-    if (!(await copiar(boton.dataset.copiarEmail ?? ''))) return;
-    const aviso = document.querySelector<HTMLElement>('[data-aviso]');
-    const hecho = boton.dataset.copiado ?? '';
-    if (aviso) aviso.textContent = hecho;
-    // Muestra una nota «COPIADO» sobre el botón durante un segundo y medio.
-    abrirNota(boton, boton.dataset.copiarEmail ?? '', hecho);
-    window.setTimeout(() => {
-      cerrarNota();
-      if (aviso) aviso.textContent = '';
-    }, 1500);
-  });
-});

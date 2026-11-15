@@ -1,5 +1,6 @@
 // Funciones para leer el contenido ya filtrado por idioma.
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { revisarContenido } from './validar-contenido.mjs';
 import type { Lang } from '../config/site';
 
 // El id de cada entrada es "<carpeta>/<idioma>", por ejemplo "mi-proyecto/es".
@@ -19,8 +20,22 @@ export type Project = Omit<ProjectEntry, 'data'> & { data: PublishedData; slug: 
 export type UpcomingProject = ProjectEntry & { slug: string };
 export type Experience = CollectionEntry<'experiencias'> & { slug: string };
 
+// ---------- Avisos al compilar (tarea D3) ----------
+// Revisa que es.md y en.md de cada carpeta estén completos y coincidan (reglas en validar-contenido.mjs).
+// Si algo no cuadra, el build (y `npm run dev`) se detiene con un mensaje que dice qué archivo y qué corregir.
+// Se corre una sola vez por proceso.
+let validacion: Promise<void> | undefined;
+
+function validarContenido(): Promise<void> {
+  validacion ??= (async () => {
+    const errores = revisarContenido(await getCollection('proyectos'), await getCollection('experiencias'));
+    if (errores.length > 0) throw new Error(`El contenido tiene ${errores.length} problema(s):\n - ${errores.join('\n - ')}`);
+  })();
+  return validacion;
+}
 // Todas las entradas de proyectos de un idioma, sin borradores.
 async function getProjectEntries(lang: Lang) {
+  await validarContenido();
   const entries = await getCollection('proyectos', (e) => parseId(e.id).lang === lang && !e.data.draft);
   // Dos proyectos no pueden compartir el número de lámina.
   const vistos = new Map<number, string>();
@@ -49,6 +64,7 @@ export async function getUpcomingProjects(lang: Lang): Promise<UpcomingProject[]
 // Experiencias de un idioma, de la más reciente a la más vieja según su fecha de inicio.
 // Las que todavía no tienen fecha de inicio van al final.
 export async function getExperiences(lang: Lang): Promise<Experience[]> {
+  await validarContenido();
   const entries = await getCollection('experiencias', (e) => parseId(e.id).lang === lang && !e.data.draft);
   return entries
     .map((e) => ({ ...e, slug: parseId(e.id).slug }))
