@@ -108,7 +108,10 @@ test('sin configurar avisa 503, y un fallo del correo avisa 502', async () => {
   const sinSecreto = entorno({ TURNSTILE_SECRET: undefined });
   assert.equal((await manejarContacto(pedido(valido), sinSecreto.env, deps(sinSecreto.enviados))).status, 503);
   const roto = entorno({ CORREO: { send: async () => { throw new Error('no se pudo'); } } });
-  assert.equal((await manejarContacto(pedido(valido), roto.env, deps(roto.enviados))).status, 502);
+  const fallo = await manejarContacto(pedido(valido), roto.env, deps(roto.enviados));
+  assert.equal(fallo.status, 502);
+  // La respuesta dice qué falló, para poder encontrar el problema.
+  assert.deepEqual(await fallo.json(), { ok: false, error: 'envio', detalle: 'no se pudo' });
 });
 
 test('el límite por IP corta con 429', async () => {

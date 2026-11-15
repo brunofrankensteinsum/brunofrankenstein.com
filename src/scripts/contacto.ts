@@ -18,7 +18,7 @@ interface Turnstile {
       language: string;
       callback: (token: string) => void;
       'expired-callback': () => void;
-      'error-callback': () => void;
+      'error-callback': (codigo: string) => void;
     },
   ): string;
   reset(id?: string): void;
@@ -46,6 +46,8 @@ if (form) {
   const clave = textos.turnstileClave ?? '';
   const contenedor = form.querySelector<HTMLElement>('[data-turnstile]');
   let token = '';
+  // Último error de Turnstile (por ejemplo 110200 = dominio no permitido): se muestra si falla el envío.
+  let errorTurnstile = '';
   let widget: string | undefined;
   let esperandoToken: ((t: string) => void)[] = [];
   let preparado: Promise<void> | undefined;
@@ -67,11 +69,18 @@ if (form) {
             esperandoToken = [];
           },
           'expired-callback': () => (token = ''),
-          'error-callback': () => (token = ''),
+          'error-callback': (codigo) => {
+            token = '';
+            errorTurnstile = codigo;
+            console.warn('[contacto] Turnstile falló con el código', codigo);
+          },
         });
         listo();
       };
-      script.onerror = () => listo();
+      script.onerror = () => {
+        errorTurnstile = 'script-bloqueado';
+        listo();
+      };
       document.head.append(script);
     });
     return preparado;
@@ -141,33 +150,43 @@ if (form) {
     recibido.focus();
   };
 
-  const mostrarError = (mensaje: string) => {
-    textoError.textContent = mensaje;
+  // El código (entre paréntesis) dice qué falló: sirve para avisarle a Bruno o a la IA qué arreglar.
+  const mostrarError = (mensaje: string, codigo?: string) => {
+    textoError.textContent = codigo ? `${mensaje} (${codigo})` : mensaje;
     notaError.hidden = false;
     notaError.focus();
   };
 
-  async function enviar(datos: Record<string, string>): Promise<'ok' | 'fallo' | 'sin-conexion'> {
+  type Resultado = { estado: 'ok' | 'fallo' | 'sin-conexion'; codigo?: string };
+  async function enviar(datos: Record<string, string>): Promise<Resultado> {
     const destino = textos.endpoint;
     // En el servidor local (npm run dev) no existe el Worker: se simula un envío correcto
     // para poder ver el sello. El envío real solo funciona en el sitio publicado.
     if (import.meta.env.DEV) {
       console.info('[contacto] Envío simulado (solo en desarrollo):', datos);
       await new Promise((r) => setTimeout(r, 1200));
-      return 'ok';
+      return { estado: 'ok' };
     }
-    if (!destino) return 'sin-conexion';
+    if (!destino) return { estado: 'sin-conexion' };
     try {
       const respuesta = await fetch(destino, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos),
       });
-      if (respuesta.ok) return 'ok';
+      if (respuesta.ok) return { estado: 'ok' };
+      // El servidor explica qué pasó con un código (ver worker/contacto.js).
+      let codigo = String(respuesta.status);
+      try {
+        const cuerpo = await respuesta.json();
+        codigo = [cuerpo.error, cuerpo.detalle].filter(Boolean).join(': ') || codigo;
+      } catch {
+        // La respuesta no era JSON: queda el número de estado.
+      }
       // 503: el servidor todavía no está configurado (faltan secretos en Cloudflare).
-      return respuesta.status === 503 ? 'sin-conexion' : 'fallo';
+      return { estado: respuesta.status === 503 ? 'sin-conexion' : 'fallo', codigo };
     } catch {
-      return 'fallo';
+      return { estado: 'fallo', codigo: 'sin-red' };
     }
   }
 
@@ -200,14 +219,14 @@ if (form) {
     datos.turnstile = await conseguirToken();
     if (clave && !import.meta.env.DEV && !datos.turnstile) {
       ocupado(false);
-      mostrarError(textos.fail ?? '');
+      mostrarError(textos.fail ?? '', `turnstile: ${errorTurnstile || 'sin-respuesta'}`);
       return;
     }
     const resultado = await enviar(datos);
     renovarToken();
     ocupado(false);
-    if (resultado === 'ok') mostrarRecibido(datos.email);
-    else mostrarError((resultado === 'sin-conexion' ? textos.failOffline : textos.fail) ?? '');
+    if (resultado.estado === 'ok') mostrarRecibido(datos.email);
+    else mostrarError((resultado.estado === 'sin-conexion' ? textos.failOffline : textos.fail) ?? '', resultado.codigo);
   });
 
   // «Reintentar» vuelve a enviar el formulario.

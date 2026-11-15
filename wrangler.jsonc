@@ -14,6 +14,8 @@
     "run_worker_first": ["/api/*"]
   },
   "send_email": [{ "name": "CORREO" }],
+  // Guarda los registros del Worker (errores del formulario) para poder consultarlos en el panel de Cloudflare.
+  "observability": { "enabled": true },
   "vars": {
     // Dirección del dominio que figura como emisora de los avisos. No es tu correo personal.
     "REMITENTE": "formulario@brunofrankenstein.com"

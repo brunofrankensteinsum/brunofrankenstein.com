@@ -61,17 +61,20 @@ export function validar(datos) {
   };
 }
 
-// Pregunta a Cloudflare si el token de Turnstile es de una persona. Devuelve true o false.
+// Pregunta a Cloudflare si el token de Turnstile es de una persona.
+// Devuelve { ok: true } o { ok: false, motivo } (el motivo ayuda a encontrar el problema).
 export async function verificarTurnstile(token, secreto, ip, host, pedir = fetch) {
   const cuerpo = new URLSearchParams({ secret: secreto, response: token });
   if (ip) cuerpo.set('remoteip', ip);
   try {
     const respuesta = await pedir('https://challenges.cloudflare.com/turnstile/v0/siteverify', { method: 'POST', body: cuerpo });
     const datos = await respuesta.json();
+    if (datos.success !== true) return { ok: false, motivo: (datos['error-codes'] ?? ['sin-codigo']).join(',') };
     // El token tiene que haber sido emitido para este mismo sitio.
-    return datos.success === true && (!host || !datos.hostname || datos.hostname === host);
-  } catch {
-    return false;
+    if (host && datos.hostname && datos.hostname !== host) return { ok: false, motivo: `dominio-distinto:${datos.hostname}` };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, motivo: `no-responde:${String(e?.message ?? e).slice(0, 80)}` };
   }
 }
 
@@ -162,16 +165,22 @@ export async function manejarContacto(request, env, deps = {}) {
   }
 
   // (3) Turnstile.
-  if (!(await verificarTurnstile(revision.valor.turnstile, env.TURNSTILE_SECRET, ip, url.hostname, pedir))) {
-    return responder(403, { ok: false, error: 'antispam' });
+  const humano = await verificarTurnstile(revision.valor.turnstile, env.TURNSTILE_SECRET, ip, url.hostname, pedir);
+  if (!humano.ok) {
+    // Los motivos quedan en los registros de Cloudflare y se devuelven (son códigos, sin datos privados).
+    console.warn('[contacto] Turnstile rechazó el mensaje:', humano.motivo);
+    return responder(403, { ok: false, error: 'antispam', detalle: humano.motivo });
   }
 
   // (4) Correo a Bruno.
   try {
     const crudo = armarCorreo({ de: env.REMITENTE, para: env.DESTINO, datos: revision.valor, id: uuid(), ahora: ahora() });
     await env.CORREO.send(crearMensaje(env.REMITENTE, env.DESTINO, crudo));
-  } catch {
-    return responder(502, { ok: false, error: 'envio' });
+  } catch (e) {
+    // El texto del error lo escribe Cloudflare (por ejemplo «destination address is not verified»).
+    const detalle = String(e?.message ?? e).slice(0, 200);
+    console.error('[contacto] No se pudo enviar el correo:', detalle);
+    return responder(502, { ok: false, error: 'envio', detalle });
   }
   return responder(200, { ok: true });
 }
