@@ -55,6 +55,15 @@ Cloudflare → **Security** → **WAF** → **Rate limiting rules** → crear un
 `URI Path equals /api/contacto`, 5 pedidos por minuto por IP, acción *Block*. Es gratis y frena
 a quien intente mandar muchos mensajes seguidos.
 
+## Si los mensajes caen en spam
+El correo sale de `formulario@brunofrankenstein.com`, una dirección que tu correo no conoce todavía. La primera vez es normal que caiga en spam. Arreglo (Gmail):
+1. Abrí un mensaje del formulario en spam y tocá **«No es spam»**.
+2. Creá un filtro: en un mensaje, ⋮ → *Filtrar mensajes como este* → marcá **«Nunca enviar a Spam»** (y, si querés, «Marcar como importante» o ponerle una etiqueta «Formulario»).
+
+Es el mismo `DESTINO` de siempre: el filtro solo le dice a tu correo que confíe en esa dirección.
+
+Opcional (mejora la reputación del dominio): en Cloudflare → DNS, agregar un registro **TXT** con nombre `_dmarc` y valor `v=DMARC1; p=none;`. Hoy el dominio ya tiene SPF y DKIM.
+
 ## Si hay que cambiar algo
 - **Otro correo de destino:** cambiar el secreto `DESTINO` en Cloudflare (y verificarlo en Email Routing).
 - **Si te llega spam igual:** pasar el widget de Turnstile al modo *Managed* con mayor sensibilidad,

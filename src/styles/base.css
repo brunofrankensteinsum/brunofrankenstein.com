@@ -169,6 +169,10 @@ a.tag:focus-visible { border-color: var(--c-accent); }
 @media (hover: hover) {
   a.tag:hover { border-color: var(--c-accent); }
 }
+/* En pantallas táctiles, las etiquetas que son links llegan a los 44 px de zona táctil. */
+@media (pointer: coarse) {
+  a.tag { min-height: 44px; }
+}
 .tags {
   display: flex;
   flex-wrap: wrap;

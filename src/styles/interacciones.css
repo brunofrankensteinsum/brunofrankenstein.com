@@ -51,6 +51,15 @@
   text-transform: inherit;
   cursor: help;
 }
+/* En pantallas táctiles, el término tiene una zona de toque más grande que el texto (sin mover nada). */
+@media (pointer: coarse) {
+  .glosa { position: relative; }
+  .glosa::after {
+    content: '';
+    position: absolute;
+    inset: -12px -6px;
+  }
+}
 
 /* ---------- Nota de plano (tooltip) ----------
    Caja recta con borde de acento, unida a la palabra por una línea guía con un punto. */

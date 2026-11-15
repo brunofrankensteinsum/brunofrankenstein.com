@@ -57,7 +57,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 - [x] **C5. No editar `dist/`** `[IA]` — Hecho el 2026-11-15. La regla está en `CLAUDE.md` y `.vscode/settings.json` oculta `dist/`, `.astro/` y `node_modules/` en VS Code.
 - [x] **C6. Finales de línea** `[IA]` — Hecho el 2026-11-15 con `.gitattributes`.
 - [ ] **C7. Misma versión de Node** `[Bruno]` — El proyecto pide Node 22 (`.node-version`) y esta máquina tiene la 25. Instalar la 22 para compilar igual que Cloudflare.
-- [ ] **C8. Capturas con un comando** `[IA]` — Traer `herramientas/capturar.mjs` al repo como `npm run capturas`.
+- [x] **C8. Capturas con un comando** `[IA]` — Hecho el 2026-11-15: `npm run capturas` (con `npm run dev` andando) saca las 5 páginas en 375, 768, 1280 y 1440 px a la carpeta `capturas/`. Con argumentos elige otras páginas. Usa Edge o Chrome ya instalado.
 - [x] **C9. Poner `PLAN.md` al día** `[IA]` — Hecho el 2026-11-15: marcadas las pistas A, C y D; la B (panel) y las pruebas de aceptación siguen abiertas.
 - [ ] **C10. Borrar la rama `diseno-c1`** `[Bruno]` — Ya está unida a `main`. De acá en más, una rama corta por cada cambio.
 
@@ -126,7 +126,7 @@ Hasta ahora el sitio se probó solo en un navegador basado en Chromium, en esta 
 - [ ] **G1. Auditoría automática** `[IA]` — Pasar axe o Lighthouse por las seis pantallas y corregir lo que marque.
 - [ ] **G2. Solo con teclado** `[Ambos]` — Recorrer el sitio con Tab: orden lógico, foco siempre visible, se puede abrir y cerrar todo.
 - [ ] **G3. Lector de pantalla** `[Ambos]` — Probar con NVDA en Windows y VoiceOver en iPhone: menú, visor, notas del glosario, errores del formulario y aviso «Copiado».
-- [ ] **G4. Tamaño de las zonas táctiles** `[IA]` — Los términos de glosario dentro del texto y los links del índice lateral (40 px) quedan por debajo de los 44 px que pide el diseño.
+- [x] **G4. Tamaño de las zonas táctiles** `[IA]` — Hecho el 2026-11-15: el índice lateral, «Copiar», las etiquetas que son links y los años del filtro llegan a 44 px; los términos del glosario ganan una zona de toque invisible en pantallas táctiles. *Falta:* probarlo en un celular real (F1).
 - [ ] **G5. Textos alternativos reales** `[Bruno]` — Al reemplazar las imágenes marcador, describir lo que se ve en cada foto.
 
 ## H. Funcionalidad pendiente del diseño

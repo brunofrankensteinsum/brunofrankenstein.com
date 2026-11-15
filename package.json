@@ -10,6 +10,7 @@
     "check": "astro check",
     "lamina": "node scripts/nueva-lamina.mjs",
     "imagenes": "node scripts/preparar-imagenes.mjs",
+    "capturas": "node scripts/capturar.mjs",
     "test": "node --test worker/contacto.test.mjs"
   },
   "dependencies": {
