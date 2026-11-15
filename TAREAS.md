@@ -26,8 +26,8 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 - [ ] **A1. Proyectos de ejemplo** `[Bruno]` — Los tres proyectos (FIG. 01 a 03) salieron del diseño, no son reales, y hoy se ven como si lo fueran. Elegir: ocultarlos con `draft: true` hasta tener uno real, o dejarlos con un aviso «ejemplo». *Listo cuando:* ningún visitante puede tomar un ejemplo por un proyecto real.
 - [ ] **A2. Completar los marcadores** `[Bruno]` — Cada dato y dónde se carga:
   - ~~Retrato~~ → hecho el 2026-11-15: `src/assets/retrato.jpg` (sin datos de ubicación) se ve en Inicio y Sobre mí. Para cambiarlo, reemplazar el archivo con el mismo nombre.
-  - Email público → `src/config/profile.ts`, campo `email`.
-  - CV en PDF → carpeta `public/` y campo `cv` de `profile.ts`.
+  - ~~Email público~~ → decidido: no se publica; se contacta por el formulario (H4).
+  - ~~CV~~ → hecho: el botón «Ver CV» abre la página de CVuy (campo `cv` de `profile.ts`).
   - Párrafo pendiente y herramientas de Sobre mí → `profile.ts`.
   - Años de inicio de Faraday Lab, Fing Hydrogen Racing y la carrera; rol en el equipo → `src/content/experiencias/*/es.md` y `en.md`.
   - Título, coautores y enlace del artículo en *Fire* → `src/content/experiencias/publicacion-fire/`.
@@ -46,7 +46,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 - [ ] **B6. Doble factor en las cuentas** `[Bruno]` — Las dos cuentas de GitHub y la de Cloudflare.
 - [ ] **B7. Fotos sin datos privados** `[IA]` — El repo es público. Las fotos de celular guardan la ubicación (GPS) en sus metadatos. Hacer que el script de imágenes (D4) los borre siempre. *Listo cuando:* ninguna imagen del repo tiene datos de ubicación.
 - [ ] **B8. Correo del dominio** `[Bruno]` — Crear la dirección pública con Email Routing (por ejemplo `hola@`) para no publicar el correo personal, y cargar los registros SPF y DMARC para que nadie envíe correo haciéndose pasar por el dominio.
-- [ ] **B9. Seguridad del formulario (va con la pista D)** `[IA]` — Al construir el envío: validar todo de nuevo en el servidor, limitar tamaño y cantidad de envíos, Turnstile en modo invisible, aceptar pedidos solo desde el propio dominio, impedir que un campo inyecte cabeceras en el correo, y guardar las claves como secretos de Cloudflare.
+- [x] **B9. Seguridad del formulario (va con la pista D)** `[IA]` — Hecho en el código el 2026-11-15 (`worker/contacto.js`, con pruebas): validación de nuevo en el servidor, límite de tamaño, Turnstile, solo pedidos del propio dominio, sin inyección de cabeceras, y claves como secretos de Cloudflare. *Falta (Bruno):* crear la regla de límite de envíos del paso 5 de `docs/formulario-contacto.md`.
 - [ ] **B10. Seguridad del panel (va con la pista B)** `[IA]` — Si se hace `/admin`: acceso solo para la cuenta de Bruno, permisos mínimos en GitHub y bloqueo a buscadores.
 - [ ] **B11. Dependencias al día** `[IA]` — Hoy `npm audit` da 0 vulnerabilidades. Configurar Dependabot para que avise una vez por semana.
 
@@ -67,7 +67,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 
 - [x] **D1. Comando «lámina nueva»** `[IA]` — Hecho el 2026-11-15. `npm run lamina -- "Título del proyecto"` crea la carpeta con el slug, `es.md` y `en.md` con la cabecera (campos comentados para completar) y el siguiente número de `fig` libre; la lámina nace «en preparación». Probado: el sitio compila con la lámina creada.
 - [x] **D2. Plantilla comentada** `[IA]` — Hecho el 2026-11-15 en `docs/plantillas/lamina-ejemplo.md`: subtítulos numerados, pie de foto en cursiva, dos imágenes lado a lado, nota con `>`, tabla, código y video.
-- [ ] **D3. Más avisos al compilar** `[IA]` — Que el build falle con un mensaje claro si: `fig` difiere entre `es.md` y `en.md`, falta uno de los dos idiomas, una imagen citada no existe, falta el texto alternativo, o la fecha y las categorías no coinciden entre idiomas.
+- [x] **D3. Más avisos al compilar** `[IA]` — Hecho el 2026-11-15 en `src/lib/validar-contenido.mjs`. El build falla con un mensaje claro si: falta es.md o en.md, `fig`, `status`, fecha, categorías, `youtube` o `repo` difieren entre idiomas, una imagen citada no existe, falta su texto alternativo, o los dos idiomas no citan las mismas imágenes. En experiencias: falta un idioma o `kind`, `start` o `end` difieren. Se saltean las carpetas con `draft: true`. Probado con una carpeta sin `en.md`.
 - [ ] **D4. Preparar imágenes con un comando** `[IA]` — `npm run imagenes -- <carpeta>`: achica a 2400 px, borra metadatos (B7) y renombra a `01-descripcion.jpg`.
 - [ ] **D5. Comando de Claude para publicar** `[IA]` — Un comando propio (`/nueva-lamina`) que siga `docs/instructivo-publicar-proyecto.md` paso a paso: pregunta lo que falta, escribe los dos idiomas, corre el build y abre el pull request.
 - [ ] **D6. Actualizar el instructivo** `[IA]` — Sumar: el glosario y cómo agregar un término, `status: en-preparacion` y cómo pasar una lámina a publicada, dónde va el resumen del video, y que publicar es abrir un pull request.
@@ -136,7 +136,7 @@ Hasta ahora el sitio se probó solo en un navegador basado en Chromium, en esta 
 - [ ] **H1. Paso 5 — prioridad media** `[IA]` — Filtros instantáneos por categoría y año con animación, vista de lista, cronograma que se dibuja con la duración de cada experiencia, transición de la portada entre tarjeta y detalle, regla de progreso de lectura, íconos y celdas de categoría animados.
 - [ ] **H2. Paso 6 — gráficos** `[IA]` — Duotono cianotipo de las portadas con la foto a color al pasar el mouse, imágenes para compartir (E6), favicon (E4) y página 404 con su diseño.
 - [ ] **H3. Página 404 en producción** `[IA]` — Hoy una dirección inexistente devuelve una página en blanco. Agregar `"not_found_handling": "404-page"` en `wrangler.jsonc`. Cambia el despliegue: avisar a Bruno antes.
-- [ ] **H4. Envío del formulario (pista D)** `[Ambos]` — Hoy valida y avisa que no está conectado. Falta el servicio que manda el correo; su dirección va en `formEndpoint` de `profile.ts`. Requiere B8 y sigue B9.
+- [ ] **H4. Envío del formulario (pista D)** `[Bruno]` — El código está hecho el 2026-11-15: `worker/` recibe el mensaje en `/api/contacto`, lo valida de nuevo, comprueba Turnstile y lo manda por correo. El correo de Bruno no figura en el sitio. Sus 8 pruebas automáticas pasan (`npm test`), pero **no se probó con Cloudflare real**. *Falta (solo Bruno):* seguir `docs/formulario-contacto.md` (Email Routing, widget de Turnstile y dos secretos). Hasta entonces el formulario avisa «todavía no está conectado». *Listo cuando:* un mensaje de prueba llega a la bandeja.
 - [ ] **H5. Idioma según el navegador** `[Bruno]` — El diseño pide detectarlo en la primera visita; `PLAN.md` fija que la raíz va siempre a `/es/`. Decidir cuál vale.
 - [ ] **H6. Ilustración del inicio** `[Bruno]` — Celda 18650 en despiece, auto de Formula SAE, o dejar solo el retrato.
 - [ ] **H7. Paso 7 — pulido** `[IA]` — Coordenadas vivas en el footer, contadores tipo odómetro y auditoría final.

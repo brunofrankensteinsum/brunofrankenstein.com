@@ -27,16 +27,18 @@ export default defineConfig({
         "default-src 'self'",
         "img-src 'self' data:",
         "font-src 'self'",
-        // Pedidos desde scripts (el formulario de contacto). Si el envío se aloja en otro
-        // dominio (pista D de PLAN.md), agregar acá su dirección.
-        "connect-src 'self'",
-        // Único contenido ajeno que se incrusta: el reproductor de YouTube sin cookies.
-        "frame-src https://www.youtube-nocookie.com",
+        // Pedidos desde scripts: el formulario de contacto (que va al propio sitio, /api/contacto)
+        // y Turnstile, el antispam de Cloudflare.
+        "connect-src 'self' https://challenges.cloudflare.com",
+        // Contenido ajeno que se incrusta: el reproductor de YouTube sin cookies y el widget de Turnstile.
+        "frame-src https://www.youtube-nocookie.com https://challenges.cloudflare.com",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'",
       ],
       scriptDirective: {
+        // Además de los scripts propios, se permite el de Turnstile (solo se carga en Contacto).
+        resources: ["'self'", 'https://challenges.cloudflare.com'],
         // Los dos scripts escritos dentro del HTML (src/scripts/en-linea.mjs).
         hashes: [huella(marcarJs), huella(prepararEntrada)],
       },

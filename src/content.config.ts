@@ -52,6 +52,9 @@ const experiencias = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
+      // Tipo de experiencia: es lo que usa el filtro de la página de Experiencias.
+      // "formacion" (estudios, estancias), "trabajo" (cargos, equipos) o "publicacion" (artículos).
+      kind: z.enum(['formacion', 'trabajo', 'publicacion']),
       // Descripción breve que se muestra en el cronograma. Opcional.
       summary: z.string().max(160).optional(),
       organization: z.string().optional(),

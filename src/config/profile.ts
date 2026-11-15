@@ -6,14 +6,18 @@ export const profile = {
   // Dónde está Bruno, como firma de plano.
   location: { es: 'Montevideo, UY', en: 'Montevideo, UY' },
   coords: { es: '34°54′ S · 56°11′ O', en: '34°54′ S · 56°11′ W' },
-  // Correo público de contacto. Vacío = se muestra un marcador.
-  email: '',
-  // Dirección a la que el formulario de contacto envía los mensajes (la crea la pista D de PLAN.md).
-  // Vacío = el formulario valida pero avisa que todavía no está conectado.
-  // Recibe un POST con JSON: { nombre, email, motivo, mensaje, idioma }. Responde 2xx si salió bien.
-  formEndpoint: '',
-  // Archivo del CV dentro de public/ (por ejemplo '/cv-bruno-frankenstein.pdf'). Vacío = botón deshabilitado.
-  cv: '',
+  // El correo NO se publica: se contacta por el formulario. El correo que recibe los mensajes
+  // es un secreto de Cloudflare (DESTINO), no está en el repositorio. Ver docs/formulario-contacto.md.
+  // Dirección a la que el formulario envía los mensajes: la atiende worker/index.js.
+  // Recibe un POST con JSON: { nombre, email, motivo, mensaje, idioma, turnstile }.
+  // Responde 2xx si salió bien. Vacío = el formulario valida pero avisa que no está conectado.
+  formEndpoint: '/api/contacto',
+  // Clave PÚBLICA del widget Turnstile (antispam de Cloudflare). Se crea en el panel de Cloudflare
+  // → Turnstile. Vacío = sin Turnstile (el formulario sigue protegido por el campo trampa y el tiempo
+  // mínimo, pero el servidor no acepta mensajes sin Turnstile: ver docs/formulario-contacto.md).
+  turnstileSiteKey: '',
+  // CV: dirección de la página de CVuy (ANII). El botón «Ver CV» abre esa página en otra pestaña.
+  cv: 'https://exportcvuy.anii.org.uy/cv/?847399f61e6686ee67dc433e446e68a4',
 
   home: {
     lead: {

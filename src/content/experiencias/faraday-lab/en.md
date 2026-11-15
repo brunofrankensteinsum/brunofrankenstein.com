@@ -1,6 +1,7 @@
 ---
 # EJEMPLO tomado de las pantallas del diseño. Revisar los datos antes del lanzamiento.
 title: "Grade 1 Researcher · Faraday Lab"
+kind: trabajo
 summary: "Battery electrochemistry, modelling and thermal safety. I am also a teaching assistant for the department's courses."
 role: "Grade 1 Researcher"
 organization: "Faraday Lab"

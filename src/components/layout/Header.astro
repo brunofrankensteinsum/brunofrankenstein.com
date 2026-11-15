@@ -2,9 +2,10 @@
 // Header del sitio: marca, navegación, selector de idioma y, en pantallas chicas,
 // el botón que abre el menú a pantalla completa.
 import Icon from '../ui/Icon.astro';
+import Logo from '../ui/Logo.astro';
 import LangSwitch from './LangSwitch.astro';
 import SocialLinks from './SocialLinks.astro';
-import { site, type Lang } from '../../config/site';
+import type { Lang } from '../../config/site';
 import { pageUrl, type PageKey } from '../../config/routes';
 import { t } from '../../i18n/ui';
 
@@ -23,7 +24,8 @@ const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
 
 <header class="header" data-header>
   <div class="header__inner">
-    <a class="header__brand" href={pageUrl(lang, 'home')}>{site.brand}</a>
+    {/* La marca no es un enlace: «Inicio» ya lleva a la portada. */}
+    <span class="header__brand"><Logo size={30} /></span>
 
     <nav class="header__nav" aria-label={t(lang, 'nav.label')}>
       {
@@ -54,7 +56,7 @@ const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
      no dejar salir el foco del panel y devolver el foco al botón al cerrar. -->
 <dialog class="menu" id="menu" aria-label={t(lang, 'menu.label')}>
   <div class="menu__bar">
-    <a class="header__brand" href={pageUrl(lang, 'home')}>{site.brand}</a>
+    <span class="header__brand"><Logo size={30} /></span>
     <button class="header__menu-btn menu__close" type="button" aria-label={t(lang, 'menu.close')} data-menu-close autofocus>
       {/* Tres líneas que giran hasta formar una ×. Va dibujado acá (y no con <Icon>) para poder animar cada línea. */}
       <svg class="hamb" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="square" aria-hidden="true">
@@ -189,8 +191,6 @@ const items: PageKey[] = ['home', 'projects', 'experience', 'about', 'contact'];
     align-items: center;
     min-height: 44px;
     margin-right: auto;
-    /* Altura del subrayado: justo debajo del texto, no al pie de la caja de 44 px. */
-    --ul-y: calc(50% + 0.8em);
   }
 
   /* ---------- Navegación ---------- */
