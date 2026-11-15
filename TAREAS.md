@@ -25,7 +25,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 
 - [ ] **A1. Proyectos de ejemplo** `[Bruno]` — Los tres proyectos (FIG. 01 a 03) salieron del diseño, no son reales, y hoy se ven como si lo fueran. Elegir: ocultarlos con `draft: true` hasta tener uno real, o dejarlos con un aviso «ejemplo». *Listo cuando:* ningún visitante puede tomar un ejemplo por un proyecto real.
 - [ ] **A2. Completar los marcadores** `[Bruno]` — Cada dato y dónde se carga:
-  - Retrato → guardar la foto como `src/assets/retrato.jpg` (también sirve `.png` o `.webp`). Ya está conectado: aparece solo en Inicio y Sobre mí. Mejor cuadrada o vertical (4:5), de 800 px o más y sin datos de ubicación.
+  - ~~Retrato~~ → hecho el 2026-11-15: `src/assets/retrato.jpg` (sin datos de ubicación) se ve en Inicio y Sobre mí. Para cambiarlo, reemplazar el archivo con el mismo nombre.
   - Email público → `src/config/profile.ts`, campo `email`.
   - CV en PDF → carpeta `public/` y campo `cv` de `profile.ts`.
   - Párrafo pendiente y herramientas de Sobre mí → `profile.ts`.

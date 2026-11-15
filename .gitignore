@@ -5,3 +5,5 @@ dist/
 .env.*
 .DS_Store
 .wrangler/
+# Configuración local de Obsidian (la crea al abrir una carpeta como bóveda)
+.obsidian/
