@@ -36,6 +36,8 @@ Lo que falta hacer, en orden de prioridad, está en `TAREAS.md`: marcar cada tar
 - `src/i18n/ui.ts`: textos de interfaz.
 - `design/`: entrega del diseño C1 «Cianotipo». `design/HANDOFF.md` es la especificación de interfaz e
   interacciones; manda en lo visual. En contenido, URLs y edición manda `PLAN.md`.
+- `npm run lamina -- "Título"`: crea una lámina nueva (carpeta, `es.md`, `en.md`, número `fig` siguiente). Plantilla de formato en `docs/plantillas/lamina-ejemplo.md`.
+- `src/assets/retrato.jpg`: foto de perfil de Bruno (Inicio y Sobre mí). Si no existe, se ve un marcador.
 - `docs/instructivo-publicar-proyecto.md`: cómo convertir la información de un proyecto en una publicación. Seguirlo cuando Bruno pida publicar un proyecto.
 - `docs/prompt-claude-design.md`: prompt para generar el diseño visual en Claude Design.
 

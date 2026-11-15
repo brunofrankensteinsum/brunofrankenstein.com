@@ -15,7 +15,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 3. C1 — permiso de escritura en GitHub para esta máquina.
 4. C2 — sacar el repo de OneDrive.
 5. Publicar la rama `lista-de-tareas` y comprobar en el sitio real las cabeceras (B2) y la caché (E11).
-6. D1 a D3 — que cargar una lámina nueva sea un comando y una plantilla.
+6. D3 — avisos al compilar (D1 y D2 ya están).
 7. A2 — cargar los datos reales y el primer proyecto real.
 8. E5 y E6 — datos estructurados e imagen para compartir.
 
@@ -25,7 +25,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 
 - [ ] **A1. Proyectos de ejemplo** `[Bruno]` — Los tres proyectos (FIG. 01 a 03) salieron del diseño, no son reales, y hoy se ven como si lo fueran. Elegir: ocultarlos con `draft: true` hasta tener uno real, o dejarlos con un aviso «ejemplo». *Listo cuando:* ningún visitante puede tomar un ejemplo por un proyecto real.
 - [ ] **A2. Completar los marcadores** `[Bruno]` — Cada dato y dónde se carga:
-  - Retrato → `design/assets/retrato.jpg` (después la IA lo conecta en Inicio y Sobre mí).
+  - Retrato → guardar la foto como `src/assets/retrato.jpg` (también sirve `.png` o `.webp`). Ya está conectado: aparece solo en Inicio y Sobre mí. Mejor cuadrada o vertical (4:5), de 800 px o más y sin datos de ubicación.
   - Email público → `src/config/profile.ts`, campo `email`.
   - CV en PDF → carpeta `public/` y campo `cv` de `profile.ts`.
   - Párrafo pendiente y herramientas de Sobre mí → `profile.ts`.
@@ -65,8 +65,8 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
 
 ## D. Cargar láminas nuevas con facilidad
 
-- [ ] **D1. Comando «lámina nueva»** `[IA]` — `npm run lamina -- "Título del proyecto"` crea la carpeta con el slug, `es.md` y `en.md` con la cabecera completa y el siguiente número de `fig` libre. *Listo cuando:* después del comando, el sitio compila y la lámina aparece como «en preparación».
-- [ ] **D2. Plantilla comentada** `[IA]` — Un `es.md` de ejemplo en `docs/plantillas/` con cada convención a la vista: subtítulos numerados, pie de foto en cursiva, dos imágenes lado a lado, nota con `>`, tabla, código y video.
+- [x] **D1. Comando «lámina nueva»** `[IA]` — Hecho el 2026-11-15. `npm run lamina -- "Título del proyecto"` crea la carpeta con el slug, `es.md` y `en.md` con la cabecera (campos comentados para completar) y el siguiente número de `fig` libre; la lámina nace «en preparación». Probado: el sitio compila con la lámina creada.
+- [x] **D2. Plantilla comentada** `[IA]` — Hecho el 2026-11-15 en `docs/plantillas/lamina-ejemplo.md`: subtítulos numerados, pie de foto en cursiva, dos imágenes lado a lado, nota con `>`, tabla, código y video.
 - [ ] **D3. Más avisos al compilar** `[IA]` — Que el build falle con un mensaje claro si: `fig` difiere entre `es.md` y `en.md`, falta uno de los dos idiomas, una imagen citada no existe, falta el texto alternativo, o la fecha y las categorías no coinciden entre idiomas.
 - [ ] **D4. Preparar imágenes con un comando** `[IA]` — `npm run imagenes -- <carpeta>`: achica a 2400 px, borra metadatos (B7) y renombra a `01-descripcion.jpg`.
 - [ ] **D5. Comando de Claude para publicar** `[IA]` — Un comando propio (`/nueva-lamina`) que siga `docs/instructivo-publicar-proyecto.md` paso a paso: pregunta lo que falta, escribe los dos idiomas, corre el build y abre el pull request.
