@@ -1,12 +1,30 @@
 // Configuración de Astro. Documentación: https://docs.astro.build/en/reference/configuration-reference/
 import { createHash } from 'node:crypto';
+import { copyFileSync, existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import { marcarJs, prepararEntrada } from './src/scripts/en-linea.mjs';
 
 // Huella (hash) de un script en línea, en el formato que pide la política de contenido.
 const huella = (texto) => `sha256-${createHash('sha256').update(texto).digest('base64')}`;
 
+// Cloudflare busca la página 404 «más cercana» a la dirección pedida: para /en/algo busca /en/404.html
+// y recién después /404.html. Astro genera cada página como una carpeta (en/404/index.html), así que
+// al terminar el build se copia a en/404.html (y a es/404.html) para que Cloudflare la encuentre.
+const copiar404 = {
+  name: 'copiar-404-por-idioma',
+  hooks: {
+    'astro:build:done': ({ dir }) => {
+      for (const idioma of ['es', 'en']) {
+        const origen = fileURLToPath(new URL(`${idioma}/404/index.html`, dir));
+        if (existsSync(origen)) copyFileSync(origen, fileURLToPath(new URL(`${idioma}/404.html`, dir)));
+      }
+    },
+  },
+};
+
 export default defineConfig({
+  integrations: [copiar404],
   // Dirección pública del sitio. Se usa para armar URLs absolutas (sitemap, SEO).
   site: 'https://brunofrankenstein.com',
   // Todas las URLs terminan en "/" para que cada página tenga una sola dirección.

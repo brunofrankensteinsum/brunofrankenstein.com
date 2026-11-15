@@ -1,0 +1,7 @@
+---
+// Página 404 en inglés. Cloudflare la sirve (como en/404.html) para las direcciones inexistentes que empiezan con /en/.
+// El archivo se copia a dist/en/404.html al terminar el build (ver astro.config.mjs).
+import NotFoundPage from '../../components/pages/NotFoundPage.astro';
+---
+
+<NotFoundPage lang="en" />
