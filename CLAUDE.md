@@ -2,6 +2,7 @@
 
 Portfolio personal de Bruno Frankenstein. Sitio estático con Astro, bilingüe (es/en).
 El plan completo, las decisiones tomadas y el contrato de contenido están en `PLAN.md`: leerlo antes de trabajar.
+Lo que falta hacer, en orden de prioridad, está en `TAREAS.md`: marcar cada tarea al terminarla.
 
 ## Comandos
 
@@ -34,6 +35,9 @@ El plan completo, las decisiones tomadas y el contrato de contenido están en `P
 
 - Una página nueva necesita un envoltorio en `src/pages/es/` y otro en `src/pages/en/`, con las rutas de `PLAN.md`.
 - No cambiar el contrato de contenido sin avisar a Bruno.
+- No editar nada dentro de `dist/`: es el sitio ya compilado y se regenera entero en cada build. Los textos
+  se cambian en `src/` (por ejemplo `src/config/profile.ts` y `src/i18n/ui.ts`).
+- Publicar es unir un pull request con `main`; Cloudflare despliega solo. No hacer push directo a `main`.
 - Ningún secreto ni dato personal privado en el repositorio.
 - Bruno está aprendiendo Git, HTML y CSS: comentar el código en español y explicar los cambios en simple.
 - Antes de dar algo por terminado: `npm run build` y `npm run check` sin errores.
