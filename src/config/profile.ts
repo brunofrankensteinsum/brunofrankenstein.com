@@ -38,11 +38,11 @@ export const profile = {
     paragraphs: {
       es: [
         'Aprendo mejor cuando hay un proyecto de por medio. Me interesa lo que pasa adentro de una batería cuando algo sale mal: cómo se calienta, cómo se propaga y cómo se evita.',
-        '[UN PÁRRAFO MÁS: qué te mueve fuera de la facultad, qué estás aprendiendo ahora.]',
+        'Fuera de la facultad sigo con lo mismo, pero a escala de taller: opero y mantengo mis impresoras 3D, hago domótica con ESPHome y desarmo sistemas y componentes eléctricos para entender cómo funcionan. Si algo se puede medir o automatizar, termino armando una planilla con macros o un script en Python. Ahora estoy aprendiendo a simular vehículos en GT-SUITE para probar estrategias de control de la gestión energética, y a leer lo que dicen los equipos por el bus CAN.',
       ],
       en: [
         'I learn best when there is a project involved. I am interested in what happens inside a battery when something goes wrong: how it heats up, how it spreads and how to prevent it.',
-        '[ONE MORE PARAGRAPH: what drives you outside university, what you are learning now.]',
+        'Outside university it is the same thing at workshop scale: I run and maintain my 3D printers, do home automation with ESPHome and take electrical systems and components apart to understand how they work. If something can be measured or automated, I end up building a spreadsheet with macros or a Python script. Right now I am learning to simulate vehicles in GT-SUITE to test control strategies for energy management, and to read what devices say over the CAN bus.',
       ],
     },
     now: {
@@ -52,14 +52,20 @@ export const profile = {
     // «Lista de materiales»: tres columnas.
     materials: {
       es: [
-        { label: 'Investigo', items: 'Electroquímica de baterías · Modelado · Seguridad térmica' },
-        { label: 'Construyo', items: 'Impresión 3D · Home Automation · Vibe Code' },
-        { label: 'Herramientas', items: 'Fusion 360 · ESPHome · [OTRAS]' },
+        { label: 'Investigo', items: 'Electroquímica de baterías · Ensayos de baterías de litio · Seguridad térmica' },
+        { label: 'Diseño', items: 'Modelado 3D en Fusion 360 · Proyectos en Inventor · Modelado orientado a impresión 3D' },
+        { label: 'Simulo', items: 'Análisis de esfuerzos en Ansys · Vehículos y estrategias de control de gestión energética en GT-SUITE' },
+        { label: 'Fabrico', items: 'Impresión 3D: operación y mantenimiento de impresoras · Manejo de herramientas' },
+        { label: 'Electrónica', items: 'Protocolo de comunicación CAN · Ingeniería inversa de sistemas y componentes eléctricos · Home Automation · ESPHome' },
+        { label: 'Datos y código', items: 'Python · Excel avanzado (macros y fórmulas) · Prompts e IA · Vibe Code' },
       ],
       en: [
-        { label: 'I research', items: 'Battery electrochemistry · Modelling · Thermal safety' },
-        { label: 'I build', items: '3D Printing · Home Automation · Vibe Code' },
-        { label: 'Tools', items: 'Fusion 360 · ESPHome · [OTHERS]' },
+        { label: 'I research', items: 'Battery electrochemistry · Lithium battery testing · Thermal safety' },
+        { label: 'I design', items: '3D modelling in Fusion 360 · Inventor projects · Modelling for 3D printing' },
+        { label: 'I simulate', items: 'Stress analysis in Ansys · Vehicles and energy management control strategies in GT-SUITE' },
+        { label: 'I make', items: '3D printing: operating and maintaining printers · Hand and workshop tools' },
+        { label: 'Electronics', items: 'CAN communication protocol · Reverse engineering of electrical systems and components · Home Automation · ESPHome' },
+        { label: 'Data and code', items: 'Python · Advanced Excel (macros and formulas) · Prompting and AI · Vibe Code' },
       ],
     },
   },

@@ -1,0 +1,23 @@
+---
+// Página de inicio. Versión mínima de la etapa 1; la completa la pista A.
+import Base from '../../layouts/Base.astro';
+import ProjectList from '../ProjectList.astro';
+import { site, type Lang } from '../../config/site';
+import { pageUrl, otherLang } from '../../config/routes';
+import { t } from '../../i18n/ui';
+import { getProjects } from '../../lib/content';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const projects = (await getProjects(lang)).slice(0, 5);
+---
+
+<Base lang={lang} title={site.name} description={site.tagline[lang]} alternateUrl={pageUrl(otherLang(lang), 'home')}>
+  <h1>{site.name}</h1>
+  <p>{site.tagline[lang]}</p>
+  <h2>{t(lang, 'home.latest')}</h2>
+  <ProjectList lang={lang} projects={projects} />
+</Base>

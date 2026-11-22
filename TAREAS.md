@@ -26,7 +26,7 @@ Complementa a `PLAN.md`: el plan dice qué se decidió; esta lista dice qué hac
   - ~~Retrato~~ → hecho el 2026-11-15: `src/assets/retrato.jpg` (sin datos de ubicación) se ve en Inicio y Sobre mí. Para cambiarlo, reemplazar el archivo con el mismo nombre.
   - ~~Email público~~ → decidido: no se publica; se contacta por el formulario (H4).
   - ~~CV~~ → hecho: el botón «Ver CV» abre la página de CVuy (campo `cv` de `profile.ts`).
-  - Párrafo pendiente y herramientas de Sobre mí → `profile.ts`.
+  - ~~Párrafo pendiente y herramientas de Sobre mí~~ → borrador escrito el 2026-11-22 en `profile.ts` (párrafo + lista de materiales en 6 celdas). Falta que Bruno lo revise y lo ajuste con sus respuestas.
   - Años de inicio de Faraday Lab, Fing Hydrogen Racing y la carrera; rol en el equipo → `src/content/experiencias/*/es.md` y `en.md`.
   - Título, coautores y enlace del artículo en *Fire* → `src/content/experiencias/publicacion-fire/`.
 - [ ] **A3. No indexar hasta el lanzamiento** `[Bruno]` — El interruptor ya existe: `indexable` en `src/config/site.ts`. Con `false`, todas las páginas piden «no indexar» y el sitemap queda vacío. Hoy está en `true`. Falta decidir si se apaga mientras haya ejemplos y marcadores, y volver a prenderlo el día del lanzamiento.

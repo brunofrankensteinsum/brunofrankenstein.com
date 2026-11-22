@@ -199,10 +199,14 @@ const about = profile.about;
       align-items: start;
     }
     .materiales__grilla { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    /* Seis celdas en dos filas de tres: línea a la izquierda salvo la primera de cada fila,
+       y línea arriba en la segunda fila. */
     .materiales__celda + .materiales__celda {
       border-top: none;
       border-left: 1px dashed var(--c-line);
     }
+    .materiales__celda:nth-child(3n + 1) { border-left: none; }
+    .materiales__celda:nth-child(n + 4) { border-top: 1px dashed var(--c-line); }
   }
   @media (min-width: 1024px) {
     .sobre {

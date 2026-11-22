@@ -1,0 +1,54 @@
+---
+// Página de un proyecto. Versión mínima de la etapa 1; la completa la pista A.
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { getCategory, type Lang } from '../../config/site';
+import { projectUrl, otherLang } from '../../config/routes';
+import { t, formatDate } from '../../i18n/ui';
+import { projectExists, type Project } from '../../lib/content';
+
+interface Props {
+  lang: Lang;
+  project: Project;
+}
+
+const { lang, project } = Astro.props;
+const { data, slug } = project;
+// Convierte el Markdown del proyecto en un componente que se puede mostrar.
+const { Content } = await render(project);
+
+const other = otherLang(lang);
+const alternateUrl = (await projectExists(other, slug)) ? projectUrl(other, slug) : undefined;
+---
+
+<Base lang={lang} title={data.title} description={data.summary} alternateUrl={alternateUrl}>
+  <article>
+    <h1>{data.title}</h1>
+    <p class="muted">
+      {formatDate(lang, data.date)} · {t(lang, 'project.categories')}:{' '}
+      {data.categories.map((id) => getCategory(id)?.name[lang]).join(', ')}
+    </p>
+    <Image src={data.cover} alt={data.coverAlt} width={1200} loading="eager" />
+    <Content />
+    {
+      data.youtube && (
+        <div class="video">
+          <iframe
+            src={`https://www.youtube-nocookie.com/embed/${data.youtube}`}
+            title={data.title}
+            loading="lazy"
+            allowfullscreen
+          />
+        </div>
+      )
+    }
+    {
+      data.repo && (
+        <p>
+          <a href={data.repo}>{t(lang, 'project.repo')}</a>
+        </p>
+      )
+    }
+  </article>
+</Base>

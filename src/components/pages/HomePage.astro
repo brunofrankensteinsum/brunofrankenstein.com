@@ -150,7 +150,10 @@ const counts = categories.map((c) => ({
   /* ---------- Presentación + destacado ---------- */
   .hero {
     display: grid;
-    grid-template-columns: 1fr;
+    /* minmax(0, 1fr) y no 1fr: con 1fr la columna nunca es más angosta que su contenido,
+       y Safari (también Firefox en iPhone) toma la foto destacada de 1200 px como contenido
+       y estira la página a casi 3 pantallas de ancho. Así la columna se ajusta a la pantalla. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--s-14);
     padding-block: var(--s-10) var(--s-14);
   }
@@ -225,7 +228,7 @@ const counts = categories.map((c) => ({
   }
   .destacado__texto {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr); /* ver la nota en .hero */
     gap: var(--s-4);
     padding-top: var(--s-2);
   }
@@ -334,7 +337,7 @@ const counts = categories.map((c) => ({
   /* ---------- Más proyectos ---------- */
   .mas {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr); /* ver la nota en .hero: las tarjetas también tienen foto */
     gap: var(--s-12);
     padding: var(--frame-offset);
   }
